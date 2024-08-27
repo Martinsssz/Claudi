@@ -1,19 +1,18 @@
-import {View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
+import {View, StyleSheet, TextInput, TouchableOpacity, Appearance } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
+import coresEscuras from "../coresPadroes/coresEscuras"
 
-export default function PasswordInput(){
+export default function PasswordInput( {placeHolder, handleText} ){
   const [show, setShow] = useState(true)
-  const [input, setInput] = useState("")
 
   return(
     <View style ={styles.container}>
       <TextInput
-        placeholder='Senha'
+        placeholder = {placeHolder}
         style = {styles.passwordInput}
         secureTextEntry = {show}
-        value={input}
-        onChangeText={ (texto) => setInput(texto) }
+        onChangeText={ (texto) => handleText(texto) }
       ></TextInput>
 
       <TouchableOpacity style={styles.showPassword} onPress={ () => setShow(!show) }>
@@ -25,11 +24,12 @@ export default function PasswordInput(){
   )
 }
 
+const colorScheme = Appearance.getColorScheme()
+
 const styles = StyleSheet.create({
   container:{
-    backgroundColor: "black",
-    height: "25%",
-    backgroundColor: "#F5F5F5",
+    height: "auto",
+    backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
     flexDirection: "row",
 
     //borda
@@ -38,14 +38,14 @@ const styles = StyleSheet.create({
     borderBlockColor: "black",
     borderRadius: 7,
     //Fim da borda
-
   },
 
   passwordInput:{
     width: "85%",
     color: "black",
-    fontSize: 25,
-    paddingLeft: 7
+    fontSize: 19,
+    padding: 10,
+    paddingLeft: 7,
   },
 
   showPassword:{
