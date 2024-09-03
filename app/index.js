@@ -11,25 +11,81 @@ import {
 } from 'react-native'
 
 import coresEscuras from './coresPadroes/coresEscuras'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Logo from './components/Logo'
-import PasswordInput from './components/PasswordInput'
-
-const colorScheme = Appearance.getColorScheme();
+import PasswordInput from './components/PasswordInput' 
 
 export default function App(){
-
-  const[inputNome,setInputNome] = useState("")
+  //UseStates
+  const[inputName,setInputNome] = useState("")
   const[inputEmail,setInputEmail] = useState("")
   const[inputPassword,setInputPassword] = useState("")
   const[inputConfirmPass,setInputConfirmPass] = useState("")
+  const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
+  
 
-  function mudarTema(){
-    setScheme = colorScheme === "dark" ? "light" : "dark"
-    Appearance.setColorScheme(setScheme)
+  //Alteração automática de tema
+  useEffect(() => {
+    const listener = Appearance.addChangeListener(( scheme ) => {
+      setColorScheme(scheme.colorScheme)
+    })
 
-  }
+    return () => listener.remove()
+  }, [])
 
+  //Estylos
+  const styles = StyleSheet.create({ 
+    keyboard:{
+      flex: 1,
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4"
+    },
+    container:{
+      flex:1,
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4",
+      alignItems: "center",
+      justifyContent:"space-around",
+      flexDirection: "column",
+      padding: (1, 20),
+      flex: 1,
+      height: "100%",
+      
+    },
+    form:{
+      height: "30%",
+      gap: 20,
+    },
+    input:{
+      height: "auto",
+      padding: 10,
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
+      color: "black",
+      paddingLeft: 7,
+      fontSize: 19,
+      //borda
+      borderWidth: 1,
+      borderStyle: "solid",
+      borderColor: "black",
+      borderRadius: 7,
+      //Fim da borda
+    },
+    button:{
+      text:{
+        color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
+        textAlign: "center",
+        fontSize: 19
+      },
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulMedio : "#99B8D5",
+      padding: 13,
+      borderRadius: 7
+    },
+    siginWith:{
+      height: 200,
+      width: "auto",
+      backgroundColor: "black"
+    }
+  })
+
+  //Componentes
   return(
     <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -40,17 +96,17 @@ export default function App(){
           <Logo></Logo>
 
           <View style={styles.form}>
-            <TextInput
-              placeholder='Email'
-              maxLength={256}
-              style = {styles.input}>
-            </TextInput>
+           <TextInput
+             placeholder='Email'
+             maxLength={256}
+             style = {styles.input}>
+           </TextInput>
 
-            <TextInput
-              placeholder='Nome'
-              style = {styles.input}
-              maxLength={256}>
-            </TextInput>
+           <TextInput
+             placeholder='Nome'
+             style = {styles.input}
+             maxLength={256}>
+           </TextInput>
 
             <PasswordInput
               placeHolder = {"Senha"}
@@ -62,9 +118,9 @@ export default function App(){
               handleText = {setInputConfirmPass}>
             </PasswordInput>  
 
-            <Pressable style={styles.button} onPress={mudarTema}>
-              <Text style={styles.button.text}>Cadastrar</Text>
-            </Pressable>     
+            <Pressable style={styles.button}>
+              <Text style={styles.button.text}>Cadastrar-se</Text>
+            </Pressable>
           </View>
 
           <View style={styles.siginWith}></View>
@@ -73,65 +129,3 @@ export default function App(){
     </KeyboardAvoidingView>
   )
 }
-
-const styles = StyleSheet.create({
-  
-  keyboard:{
-    flex: 1,
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4"
-  },
-
-  container:{
-    flex:1,
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4",
-    alignItems: "center",
-    justifyContent:"space-around",
-    flexDirection: "column",
-    padding: (1, 20),
-    flex: 1,
-    height: "100%",
-    
-  },
-
-  form:{
-    height: "30%",
-    gap: 20,
-  },
-  
-  input:{
-    height: "auto",
-    padding: 10,
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
-    color: "black",
-    paddingLeft: 7,
-    fontSize: 19,
-
-    //borda
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderBlockColor: "black",
-    borderRadius: 7,
-    //Fim da borda
-  },
-
-  button:{
-    text:{
-      color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
-      textAlign: "center",
-      fontSize: 19
-    },
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulMedio : "#99B8D5",
-    padding: 15,
-    borderRadius: 7
-  },
-
-  siginWith:{
-    height: 200,
-    width: "auto",
-    backgroundColor: "black"
-  }
-
-
-
-
-})

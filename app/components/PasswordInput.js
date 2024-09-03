@@ -6,6 +6,39 @@ import coresEscuras from "../coresPadroes/coresEscuras"
 export default function PasswordInput( {placeHolder, handleText} ){
   const [show, setShow] = useState(true)
 
+  //Estilos
+  const colorScheme = Appearance.getColorScheme()
+  const styles = StyleSheet.create({
+    container:{
+      height: "auto",
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
+      flexDirection: "row",
+  
+      //borda
+      borderWidth: 1,
+      borderStyle: "solid",
+      borderBlockColor: "black",
+      borderRadius: 7,
+      //Fim da borda
+    },
+  
+    passwordInput:{
+      width: "85%",
+      color: "black",
+      fontSize: 19,
+      padding: 10,
+      paddingLeft: 7,
+    },
+  
+    showPassword:{
+      width: "15%",
+      alignItems: "center",
+      justifyContent: "center",
+    }
+  })
+
+
+  //Componentes
   return(
     <View style ={styles.container}>
       <TextInput
@@ -23,34 +56,3 @@ export default function PasswordInput( {placeHolder, handleText} ){
     </View>
   )
 }
-
-const colorScheme = Appearance.getColorScheme()
-
-const styles = StyleSheet.create({
-  container:{
-    height: "auto",
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
-    flexDirection: "row",
-
-    //borda
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderBlockColor: "black",
-    borderRadius: 7,
-    //Fim da borda
-  },
-
-  passwordInput:{
-    width: "85%",
-    color: "black",
-    fontSize: 19,
-    padding: 10,
-    paddingLeft: 7,
-  },
-
-  showPassword:{
-    width: "15%",
-    alignItems: "center",
-    justifyContent: "center",
-  }
-})

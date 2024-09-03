@@ -1,10 +1,6 @@
 import React from "react"
 import { View, Image, StyleSheet, Appearance} from "react-native"
 
-
-
-
-
 export default function Logo(){
   const colorScheme = Appearance.getColorScheme();
   if(colorScheme === "dark"){
@@ -13,6 +9,19 @@ export default function Logo(){
     var imagem = require("../../assets/images/logo.png")
   }
 
+  const styles = StyleSheet.create({
+    container:{
+      width: "100%",
+      height: 240,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    image:{
+      width: colorScheme === "dark" ?  "80%" : "100%"
+    }
+    
+  })
+  
   return(
     <View style={styles.container}>
       <Image
@@ -22,20 +31,7 @@ export default function Logo(){
       ></Image>
     </View>
   )
+
+
 }
-
-const styles = StyleSheet.create({
-  container:{
-    width: "100%",
-    height: 240,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  image:{
-    height: "100%",
-    width: "100%",
-  }
-  
-})
 
