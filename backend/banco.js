@@ -49,12 +49,12 @@ app.use(express.json());
 
 app.post("/cadastrar", async (req, res) => {
   const { name, email, password } = req.body;
-  let procurar = procurarUsuario(email) 
+  let procurar = await procurarUsuario(email) 
+  console.log(procurar)
 
   if (!procurar){
     try {
       const picture = 0; 
-      console.log(`Nome: ${name} email: ${email} senha: ${password}`)
       const newUser = await User.create({ name, email, password, picture });
       res.status(201).json(newUser);
     } catch (error) {
@@ -65,18 +65,37 @@ app.post("/cadastrar", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  let procurar =  await procurarUsuario(email)  
+  console.log(procurar)
+
+  if (procurar){
+    try {
+      const user = await User.findOne({ where: {email} });
+
+      if(user && user.dataValues.password === password){ 
+        res.status(200). json({ message: 'Sucesso' }) 
+      }
+      else { 
+        res.status(401).json({ error: 'Email ou senha incorretos' }) 
+      }
+
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao validar usuário' });
+    }
+  }else{
+    res.status(404).json({alreadyUser: "Usuário não encontrado"})
+  }
+});
+
 
 async function procurarUsuario(email){
   try {
     let verificacao = await User.findOne({
-      where: email
+      where: {email}
     })
-
-    if(verificacao){
-      return true
-    }else{
-      return false
-    }
+    return !!verificacao
     
   } catch (error) {
     return ({ error: 'Erro ao procurar usuário' });

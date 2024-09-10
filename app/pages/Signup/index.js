@@ -16,7 +16,7 @@ import PasswordInput from '../../components/PasswordInput'
 import Loginwith from '../../components/Loginwith'
 
 import { Link } from 'expo-router'
-import { checkData } from '../../Util/checkData'
+import { checkDataCadastro } from '../../Util/checkData'
 import Popup from '../../components/Popup'
 
 
@@ -48,12 +48,12 @@ export default function Signup(){
 
 //************************************************Funções**********************************************************************//
 async function  sendData(){
-  let dadosFiltrados = checkData(inputName, inputEmail, inputPassword, inputConfirmPass)
+  let dadosFiltrados = checkDataCadastro(inputName, inputEmail, inputPassword, inputConfirmPass)
   if(dadosFiltrados.validate
 
   ){
     try {
-      const response = await fetch('http://192.168.1.113:8080/cadastrar', {
+      const response = await fetch('http://localhost:8080/cadastrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

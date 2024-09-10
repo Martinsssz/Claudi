@@ -14,16 +14,24 @@ import React, { useState, useEffect, useRef } from 'react'
 import Logo from '../../components/Logo'
 import PasswordInput from '../../components/PasswordInput' 
 import Loginwith from '../../components/Loginwith'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+
+import { checkDataLogin } from '../../Util/checkData'
+import Popup from '../../components/Popup'
+
 
 
 export default function Login(){
 //**********************************************UseStates**********************************************************************//
-  const[inputName,setInputNome] = useState("")
   const[inputEmail,setInputEmail] = useState("")
   const[inputPassword,setInputPassword] = useState("")
-  const[inputConfirmPass,setInputConfirmPass] = useState("")
+
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
+
+  const[popupVisibility, setPopupVisibility] = useState(false)
+  const[popupText, setPopupText] = useState("")
+  const[popupOption, setPopupOption] = useState([])
+  const[popupColor, setPopupColor] = useState("")
 
 //**********************************************Alteração automática de tema*****************************************************//
   useEffect(() => {
@@ -33,11 +41,59 @@ export default function Login(){
     return () => listener.remove()
   }, [])
 
-  function teste(){
-    alert("hello")
+//**********************************************Animações**********************************************************************//
+
+
+//************************************************Funções**********************************************************************//
+async function  sendData(){
+
+  let dadosFiltrados = checkDataLogin(inputEmail, inputPassword)
+  if(dadosFiltrados.validate){
+    try {
+      const response = await fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: inputEmail, 
+          password: inputPassword, 
+        }),
+      });
+
+      const data = await response.json()
+
+      if (response.status === 200) {
+        popup("Efetivado", null, "green")
+        router.navigate("/pages/pagesWithHeader/HomePage")
+      } else if(response.status === 401){
+        popup("Email ou senha incorretos", null, "red")
+      }else if(response.status === 404){
+        popup("Usuário não encontrado", null, "red")
+      }else{
+        popup("O login falhou. Tente novamente mais tarde", null, "orange")
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      alert("Erro de rede ou no servidor.")
+    }
+  }else{
+    popup(dadosFiltrados.message, null, "red")
+  }
+}
+
+function popup(text, options=null, color=null){
+  setPopupVisibility(true)
+  setPopupText(text)
+
+  if(options){
+    setPopupOption([... options])
   }
 
-//**********************************************Animações**********************************************************************//
+  if(color){
+    setPopupColor(color)
+  }
+}
 
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
@@ -56,7 +112,8 @@ export default function Login(){
   
     form:{
       height: "45%",
-      gap: 15,
+      gap: 20,
+      justifyContent:"center"
     },
     input:{
       height: "auto",
@@ -107,49 +164,56 @@ export default function Login(){
 
 //***********************************************Tela****************************************************************************//
   return(
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
-      <Logo/>
-      <View style={styles.form}>
-        <TextInput
-          placeholder='Email'
-          maxLength={256}
-          style = {styles.input}>
-        </TextInput>
+    <>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
+        <Logo/>
+        <View style={styles.form}>
+          <TextInput
+            placeholder='Email'
+            maxLength={256}
+            style = {styles.input}
+            onChangeText = {setInputEmail} >
+          </TextInput>
 
-        <TextInput
-          placeholder='Nome'
-          style = {styles.input}
-          maxLength={256}>
-        </TextInput>
+          <PasswordInput
+            placeHolder = {"Senha"}
+            handleText = {setInputPassword}>
+          </PasswordInput> 
 
-        <PasswordInput
-          placeHolder = {"Senha"}
-          handleText = {setInputPassword}>
-        </PasswordInput> 
+          <Pressable style={styles.button} onPress={sendData}>
+            <Text style={styles.button.text}>Entrar</Text>
+          </Pressable>
+        </View>
 
-        <Pressable style={styles.button}>
-          <Text style={styles.button.text}>Cadastrar-se</Text>
-        </Pressable>
-      </View>
+        <View style={styles.opcoesAlternativas}>
+          <Pressable>
+            <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
+          </Pressable>
+          <Pressable>
+            <Link replace href={"/pages/Signup"}>
+              <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
+            </Link>
+          </Pressable>
+        </View>
+        
 
-      <View style={styles.opcoesAlternativas}>
-        <Pressable onPress={teste}>
-          <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
-        </Pressable>
-        <Pressable onPress={teste}>
-          <Link replace href={"/pages/Signup"}>
-            <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
-          </Link>
-        </Pressable>
-      </View>
-      
+        <Animated.View style={styles.siginWith}>
+          <Loginwith tipo = "0"></Loginwith>
+          <Loginwith tipo = "1"></Loginwith>
+          <Loginwith tipo = "2"></Loginwith>
+        </Animated.View>
+      </ScrollView>
 
-      <Animated.View style={styles.siginWith}>
-        <Loginwith tipo = "0"></Loginwith>
-        <Loginwith tipo = "1"></Loginwith>
-        <Loginwith tipo = "2"></Loginwith>
-      </Animated.View>
-    </ScrollView>
+      {popupVisibility && (
+        <Popup 
+          message={popupText} 
+          cor={popupColor} 
+          option= {popupOption.length !== 0 ? popupOption[0] : ""} 
+          link= {popupOption.length !== 0 ? popupOption[1] : ""} 
+          handle={setPopupVisibility}
+        />
+      )}
+    </>
 
   )
 }

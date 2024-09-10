@@ -6,8 +6,6 @@ import coresEscuras from '../../Util/coresEscuras'
 export default function Popup({message, cor, option, link, handle}){
   let colorScheme = Appearance.getColorScheme()
 
-
-  console.log(cor)
   const styles = StyleSheet.create({
     container:{
       ...StyleSheet.absoluteFillObject, // Preenche toda a área disponível
