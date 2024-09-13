@@ -2,6 +2,34 @@ const express = require('express');
 const cors = require('cors')
 const { Sequelize, DataTypes } = require('sequelize');
 
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'menppclaudi@gmail.com',
+    pass: 'hypw guap gxfw gjyk'
+  }
+});
+
+function sendEmail(para,assunto,texto){
+  const mailOptions = {
+    from: 'menppclaudi@gmail.com',
+    to: para,
+    subject: assunto,
+    text: texto
+  };
+  
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Email sent: ' + info.response);
+  });
+}
+
+
+
 // ********************************Conectando ao banco de dados MYSQL**********************************************************//
 const sequelize = new Sequelize('claudi_menpp', 'root', '', {
   host: 'localhost',
@@ -35,6 +63,11 @@ const User = sequelize.define('User', {
     type: DataTypes.INTEGER,
     allowNull: false,
     field: "picture"
+  },
+  token: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: "token"
   }
 }, {
   tableName: 'users', // Nome da tabela 
@@ -54,8 +87,9 @@ app.post("/cadastrar", async (req, res) => {
 
   if (!procurar){
     try {
-      const picture = 0; 
-      const newUser = await User.create({ name, email, password, picture });
+      const picture = 0;
+      const token = ''
+      const newUser = await User.create({ name, email, password, picture, token});
       res.status(201).json(newUser);
     } catch (error) {
       res.status(500).json({ error: 'Erro ao criar usuário' });
@@ -103,6 +137,56 @@ async function procurarUsuario(email){
 
 }
 
+async function updateUserResetPasswordToken(userId, newToken){
+  try {
+    const user = await User.findByPk(userId);    
+    if (user) {
+      await user.update({ token: newToken });    } 
+  } catch (err) {
+    console.error('Error updating user:', err);
+  }
+}
+
+//função de redefinição de senha
+app.post("/forgotPassword", async (req, res) => {
+  try {
+    const { email } = req.body;
+    let user = await User.findOne({
+      where: {email}})    
+      if (!user) {
+      return res.status(404).send({ message: "Usuário não encontrado" });
+    }
+    const token = generateToken();
+    await updateUserResetPasswordToken(user.id, token);
+    sendEmail(email, "Redefinição de Senha", `Olá ${user.name},
+Recebemos uma solicitação para redefinir a sua senha. Para prosseguir com a redefinição, por favor, utilize o código abaixo:
+
+Código de Redefinição: ${token}
+
+Insira este código na página de redefinição de senha para criar uma nova senha. Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Se precisar de ajuda, entre em contato com o suporte.
+
+Atenciosamente,
+MENPP`);
+    res.send({ message: "Link de redefinição de senha enviado para o seu e-mail" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Erro ao enviar link de redefinição de senha" });
+  }
+});
+
+function generateToken(){
+  let result = '';
+  const caracteres = '0123456789';
+  const caracteresLength = caracteres.length
+  let counter = 0;
+  while (counter < 6) {
+    result += caracteres.charAt(Math.floor(Math.random() * caracteresLength))
+    counter += 1;
+  }
+  return result;
+}
+
+
 sequelize.sync()
   .then(() => {
     app.listen(8080, () => {
@@ -113,3 +197,5 @@ sequelize.sync()
     console.log('Erro ao sincronizar com o banco de dados:', error);
   });
 
+  
+                  
