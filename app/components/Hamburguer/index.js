@@ -1,16 +1,12 @@
 
 ///Import de componentes
 import { 
-  View , 
-  Text, 
-  StyleSheet,
   Pressable} from "react-native";
 
 
 //********************************************Import de depêndencias e componentes**********************************************//
 import React from "react";
 import { useState, useEffect } from "react";
-import coresEscuras from "../../Util/coresEscuras";
 import { Appearance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
   
@@ -29,8 +25,6 @@ useEffect(() => {
   return () => listener.remove()
 }, [])
 
-//**********************************************Animações**********************************************************************//
-
 
 //************************************************Funções**********************************************************************//
 function sidebar(){
@@ -40,12 +34,6 @@ function sidebar(){
   let sidebar = tipoMenu == "menu" 
   handleSidebar(sidebar)
 }
-
-
-//***********************************************Estilos************************************************************************//
-const styles = StyleSheet.create({
-
-})
 //***********************************************Tela****************************************************************************//
 return(
   <Pressable onPress={sidebar}>

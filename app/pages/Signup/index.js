@@ -6,20 +6,19 @@ import {
   Pressable,
   ScrollView,
   Animated,
-  Appearance
+  Appearance,
+  ActivityIndicator
 } from 'react-native'
 //********************************************Import de depêndencias e componentes***********************************************//
-import coresEscuras from '../../Util/coresEscuras'
+import cores from '../../Util/coresPadrao'
 import React, { useState, useEffect, useRef } from 'react'
 import Logo from '../../components/Logo'
 import PasswordInput from '../../components/PasswordInput' 
 import Loginwith from '../../components/Loginwith'
 
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { checkDataCadastro } from '../../Util/checkData'
 import Popup from '../../components/Popup'
-
-
 
 
 export default function Signup(){
@@ -43,17 +42,20 @@ export default function Signup(){
     return () => listener.remove()
   }, [])
 
-//**********************************************Animações**********************************************************************//
-
-
+  
+  
 //************************************************Funções**********************************************************************//
-async function  sendData(){
+async function sendData(){
+ 
+  clique()
+  
+ 
   let dadosFiltrados = checkDataCadastro(inputName, inputEmail, inputPassword, inputConfirmPass)
   if(dadosFiltrados.validate
-
+    
   ){
     try {
-      const response = await fetch('http://localhost:8080/cadastrar', {
+      const response = await fetch('http://192.168.1.113:8080/cadastrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,20 +93,57 @@ function popup(text, options=null, color=null){
   if(options){
     setPopupOption([... options])
   }
-
+  
   if(color){
     setPopupColor(color)
   }
-
-  console.log(popupOption)
 }
 
+//**********************************************Animações**********************************************************************//
 
+//Inicio
+const opacityForm = useRef(new Animated.Value(0)).current
+Animated.timing(opacityForm, {
+  toValue:1,
+  duration: 150,
+  useNativeDriver: true
+}).start()
+
+//Clique no pressable
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const opacityAni = useRef(new Animated.Value(1)).current;  
+function clique(){
+  Animated.sequence([
+    Animated.timing(opacityAni, {
+      toValue:0.3,
+      duration: 100,
+      useNativeDriver: false
+    }),
+    Animated.timing(opacityAni, {
+      toValue:1,
+      duration: 100,
+      useNativeDriver: false
+    }),
+  ]).start()
+}
+
+//Transicionar para tela de login
+function transition(){
+  Animated.timing(opacityForm, {
+    toValue:0,
+    duration: 150,
+    useNativeDriver: true
+  }).start()
+
+  setTimeout(() =>{
+    router.replace("/pages/Login")
+  }, 150)
+}
 
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
     scroll:{
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4",
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       padding: 20,
       height: "100%",
     },
@@ -113,17 +152,19 @@ function popup(text, options=null, color=null){
       justifyContent: "space-between",
       gap:5,
       alignItems:"center", 
-      paddingVertical:50
+      paddingVertical:50,
+      left:0
     },
   
     form:{
       height: "50%",
       gap: 15,
+      opacity: opacityForm
     },
     input:{
       height: "auto",
       padding: 10,
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
+      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       color: "black",
       paddingLeft: 7,
       fontSize: 19,
@@ -140,9 +181,10 @@ function popup(text, options=null, color=null){
         textAlign: "center",
         fontSize: 19
       },
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulMedio : "#99B8D5",
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       padding: 13,
-      borderRadius: 7
+      borderRadius: 7,
+      opacity: opacityAni
     },
 
     opcoesAlternativas:{
@@ -163,7 +205,8 @@ function popup(text, options=null, color=null){
       width: "100%",
       flexDirection:"row",
       justifyContent:"center",
-      gap:50
+      gap:50,
+      opacity: opacityForm
     },
   })
 
@@ -172,7 +215,7 @@ function popup(text, options=null, color=null){
     <>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
         <Logo/>
-        <View style={styles.form}>
+        <Animated.View style={styles.form}>
           <TextInput
             placeholder='Nome'
             style = {styles.input}
@@ -198,16 +241,16 @@ function popup(text, options=null, color=null){
             handleText = {setInputConfirmPass}>
           </PasswordInput> 
 
-          <Pressable style={styles.button} onPress={sendData}>
+          <AnimatedPressable style={styles.button} onPress={sendData}>
             <Text style={styles.button.text}>Cadastrar-se</Text>
-          </Pressable>
-        </View>
+          </AnimatedPressable>
+        </Animated.View>
 
-        <Link replace href={"/pages/Login"} asChild>
-          <Pressable style={styles.opcoesAlternativas}>
-            <Text style={styles.opcoesAlternativasText}>Já tenho uma conta</Text>
-          </Pressable>
-        </Link>
+        
+        <Pressable style={styles.opcoesAlternativas} onPress={transition}>
+          <Text style={styles.opcoesAlternativasText}>Já tenho uma conta</Text>
+        </Pressable>
+        
 
         
         <Animated.View style={styles.siginWith}>
@@ -215,6 +258,7 @@ function popup(text, options=null, color=null){
           <Loginwith tipo = "1"></Loginwith>
           <Loginwith tipo = "2"></Loginwith>
         </Animated.View>
+        
       </ScrollView>
       {popupVisibility && (
         <Popup 

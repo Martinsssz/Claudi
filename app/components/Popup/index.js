@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Appearance } from "react-native";
 import { Link } from "expo-router";
-import coresEscuras from '../../Util/coresEscuras'
+import cores from '../../Util/coresPadrao'
 
 export default function Popup({message, cor, option, link, handle}){
   let colorScheme = Appearance.getColorScheme()
@@ -17,7 +17,7 @@ export default function Popup({message, cor, option, link, handle}){
     },
     popup:{
       borderColor: cor ? cor : "yellow",
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4",
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       borderStyle: "solid",
       borderWidth: 2,
       width: "100%",
@@ -43,7 +43,7 @@ export default function Popup({message, cor, option, link, handle}){
       flexDirection:"row",
       justifyContent: "center",
       padding: 10,
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulMedio : "#99B8D5",
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
     },
     optionText:{
       fontSize:16,
@@ -60,11 +60,11 @@ export default function Popup({message, cor, option, link, handle}){
         </Text>
 
         <View style={styles.options} >
-          <Pressable style={styles.optionsButton} onPress={() => { handle(false) }}>  
+          <Pressable style={styles.optionsButton} onPress={() =>  handle(false) }>  
             <Text style={styles.optionText}>Voltar</Text>  
           </Pressable>
           {option && option != "" && (
-            <Link href={link} asChild>
+            <Link replace href={link} asChild>
               <Pressable style={styles.optionsButton}>
                 <Text style={styles.optionText}> {option} </Text>
               </Pressable>

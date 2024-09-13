@@ -1,7 +1,7 @@
-import {View, StyleSheet, TextInput, TouchableOpacity, Appearance } from 'react-native'
+import {View, StyleSheet, TextInput, TouchableOpacity, Appearance, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
-import coresEscuras from "../../Util/coresEscuras"
+import cores from "../../Util/coresPadrao"
 
 export default function PasswordInput( {placeHolder, handleText} ){
   const [show, setShow] = useState(true)
@@ -14,21 +14,24 @@ export default function PasswordInput( {placeHolder, handleText} ){
   const styles = StyleSheet.create({
     container:{
       height: "auto",
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
+      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       flexDirection: "row",
+      flex:4,
+      justifyContent:"space-between",
+  
   
       //borda
       borderWidth: 1,
       borderStyle: "solid",
       borderBlockColor: "black",
       borderRadius: 7,
+      paddingRight: 7,
       //Fim da borda
     },
   
     passwordInput:{
-      width: "85%",
       color: "black",
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulBaixo : "#F5F5F5",
+      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
       padding: 10,
       borderRadius: 7,
@@ -36,7 +39,6 @@ export default function PasswordInput( {placeHolder, handleText} ){
     },
   
     showPassword:{
-      width: "15%",
       alignItems: "center",
       justifyContent: "center",
     }
@@ -45,7 +47,7 @@ export default function PasswordInput( {placeHolder, handleText} ){
 
   //Componentes
   return(
-    <View style ={styles.container}>
+    <View style = {styles.container}>
       <TextInput
         placeholder = {placeHolder}
         style = {styles.passwordInput}
@@ -53,9 +55,9 @@ export default function PasswordInput( {placeHolder, handleText} ){
         onChangeText={ (texto) => handleText(texto) }
       ></TextInput>
 
-      <TouchableOpacity style={styles.showPassword} onPress={ () => setShow(!show) }>
+      <Pressable style={styles.showPassword} onPress={ () => setShow(!show) }>
         <Ionicons name={show ? 'eye-off' : 'eye'} color={eyeColor} size={25}/>
-      </TouchableOpacity> 
+      </Pressable> 
 
       
     </View>

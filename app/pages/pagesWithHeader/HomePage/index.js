@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons"
 import React from "react"
 import { useState, useEffect } from "react"
 import { Appearance } from "react-native"
-import coresEscuras from "../../../Util/coresEscuras"
+import cores from "../../../Util/coresPadrao"
 import { Link } from "expo-router"
 
 
@@ -36,7 +36,7 @@ useEffect(() => {
 //***********************************************Estilos************************************************************************//
 const styles = StyleSheet.create({
   fundo:{
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4",
+    backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
     padding: 20,
     height: "100%",
   },
@@ -58,14 +58,14 @@ const styles = StyleSheet.create({
   },
   dashboard:{
     height: 50,
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulMedio : "#99B8D5",
+    backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
     alignItems:"center",
     
   },
   circulo:{
     width: "15%",         
     aspectRatio:1,        
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulMedio : "#99B8D5",
+    backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
     borderRadius: 50,
     alignItems:"center",
     justifyContent:"center",   
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
       </ScrollView>
 
       <View style={styles.dashboard}>
-        <Link href={"%"} asChild>
+        <Link href={"pages/pagesWithHeader/ChoiceTimeline"} asChild>
         
           <Pressable style={styles.circulo}>
             <Ionicons 

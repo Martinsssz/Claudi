@@ -9,15 +9,15 @@ import {
 //********************************************Import de depêndencias e componentes**********************************************//
 import React from "react";
 import { useState, useEffect } from "react";
-import coresEscuras from "../../Util/coresEscuras";
+import cores from "../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Hamburguer from "../Hamburguer";
   
 
-export default function Header(){
+export default function Header({handle}){
 //**********************************************UseStates**********************************************************************//
-const[sidebarVisibility, setSidebarVisibility] = useState(false)
+
 //**********************************************Alteração automática de tema**************************************************//
 const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 
@@ -35,12 +35,16 @@ useEffect(() => {
 //***********************************************Estilos************************************************************************//
 const styles = StyleSheet.create({
   fundo:{
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulMedio : "#99B8D5",
+    backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
     height: 90,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal:20,
+    zIndex:3,
+
+    borderBottomColor:"black",
+    borderBottomWidth: 1
   },
 
   userInfo:{
@@ -76,7 +80,7 @@ return(
       <Text style={styles.nome}>Nome</Text>
     </View>
 
-    <Hamburguer handleSidebar={setSidebarVisibility}/>
+    <Hamburguer handleSidebar={handle}/>
     
   </View>
 )

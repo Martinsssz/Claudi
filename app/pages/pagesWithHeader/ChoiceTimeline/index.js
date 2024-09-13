@@ -5,15 +5,17 @@ import {
   Text, 
   StyleSheet,
   Pressable,
+  Animated,
   } from "react-native"
+
 
 //********************************************Import de depêndencias e componentes**********************************************//
 import { Ionicons } from "@expo/vector-icons"
-import React from "react"
+import React, { useRef } from "react"
 import Header from "../../../components/Header"
 import { useState, useEffect } from "react"
 import { Appearance } from "react-native"
-import coresEscuras from "../../../Util/coresEscuras"
+import cores from "../../../Util/coresPadrao"
 import { Link } from "expo-router"
 
 
@@ -30,14 +32,38 @@ useEffect(() => {
   })
   return () => listener.remove()
 }, [])
-//**********************************************Animações**********************************************************************//
 
 //************************************************Funções**********************************************************************//
+
+//**********************************************Animações**********************************************************************//
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const opacityAni = useRef(new Animated.Value(1)).current; 
+const [activeId, setActiveId] = useState(null);
+
+function clique(id){
+
+  setActiveId(id);
+
+  Animated.sequence([
+    Animated.timing(opacityAni, {
+      toValue:0.3,
+      duration: 200,
+      useNativeDriver: false
+    }),
+    Animated.timing(opacityAni, {
+      toValue:1,
+      duration: 200,
+      useNativeDriver: false
+    }),
+  ]).start(() => {
+    setActiveId(null);
+  });
+}
 
 //***********************************************Estilos************************************************************************//
 const styles = StyleSheet.create({
   corpo:{
-    backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuro : "#D7E6F4",
+    backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
     paddingHorizontal: 30,
     paddingVertical: 50,
     height: "100%",
@@ -54,47 +80,57 @@ const styles = StyleSheet.create({
   option:{
     flexDirection: "row",
     alignItems: "center",
-    gap: 20
+    gap: 20,
+    opacity: opacityAni
   },
 
   optionText:{
     color: "#000000",
     fontSize:25,
-    backgroundColor:  "#F5F5F5",
+    backgroundColor:  cores.ghostWhite,
     flex: 1,
-    padding: 20
+    padding: 20,
+    borderWidth:2,
+    borderColor: "black",
+    borderRadius: 5,
   },
   youtube:{
     top: 200,
     left:280,
-
+    
   }
   
 })
 //***********************************************Tela***************************************************************************//
   return(
     <>
-      <Header/>
-
       <View style={styles.corpo}>
         <View style={styles.options}>
           <Text style={styles.h1}>O que deseja fazer?</Text>
 
-          <Pressable style={styles.option}>
+          <AnimatedPressable 
+            style= {[ styles.option, { opacity: activeId === "a" ? opacityAni : 1} ]}
+            onPress={() => clique("a")} 
+          >
             <Ionicons name="person-outline" color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} size={50}/>
             <Text style={styles.optionText}>Rotina de Estudo</Text>
-          </Pressable> 
+          </AnimatedPressable> 
 
-          <Pressable style={styles.option}>
+          <AnimatedPressable 
+            style= {[ styles.option, { opacity: activeId === "b" ? opacityAni : 1} ]}
+            onPress={() => clique("b")} 
+          >
             <Ionicons name="school" color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} size={50}/>
             <Text style={styles.optionText}>Horário Escolar</Text>
-          </Pressable> 
+          </AnimatedPressable> 
 
-          <Pressable style={styles.option}>
+          <AnimatedPressable 
+            style= {[ styles.option, { opacity: activeId === "c" ? opacityAni : 1} ]}
+            onPress={() => clique("c")} 
+          >
             <Ionicons name="arrow-redo-outline" color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} size={50}/>
             <Text style={styles.optionText}>Compartilhado</Text>
-          </Pressable> 
-
+          </AnimatedPressable> 
         </View>
 
         <View style={styles.youtube}>
@@ -102,8 +138,6 @@ const styles = StyleSheet.create({
         </View> 
 
       </View>
-
-
     </>
     
   )
