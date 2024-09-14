@@ -2,15 +2,16 @@ import React, { useEffect } from "react";
 import Signup from "./pages/Signup";
 import HomePage from "./pages/pagesWithHeader/HomePage";
 import { Redirect, useRouter, useFocusEffect } from "expo-router";
+import ResetPassword from "./pages/resetPassword";
 
 export default function App(){
   const router = useRouter()
 
-  useFocusEffect(()=>{
+  /*useFocusEffect(()=>{
     router.replace("pages/pagesWithoutHeader/AccountSettings")
-  })
+  }) */
   return (
-    <Signup></Signup>
+    <ResetPassword></ResetPassword>
     
   )
   

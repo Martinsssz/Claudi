@@ -7,7 +7,7 @@ import React from "react";
 import { Link, router } from "expo-router";
 import Popup from "../../components/Popup";
 
-export default function ChangePassword() {
+export default function ResetPassword() {
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
 
@@ -21,34 +21,73 @@ export default function ChangePassword() {
   //**********************************************Animações**********************************************************************//
 
   //************************************************Funções**********************************************************************/
-  const [email, setEmail] = useState("");
+  const [token, setToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(null);
+
   const [popupVisibility, setPopupVisibility] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupOption, setPopupOption] = useState([]);
   const [popupColor, setPopupColor] = useState("");
 
-  async function handleResetPassword() {
-    try {
-      const response = await fetch("http://192.168.3.14:8080/forgotPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+  async function handleSubmit() {
+    if (newPassword !== confirmPassword) {
+      setPopupVisibility(true);
+      setPopupText("As senhas não são iguais. Tente novamente.");
+      setPopupColor(coresEscuras.erro);
+      setPopupOption([
+        {
+          text: "Ok",
+          onPress: () => setPopupVisibility(false),
         },
-        body: JSON.stringify({ email }),
-      });
+      ]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://192.168.3.14:8080/resetPasswordConfirm",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: token, 
+            password: newPassword, 
+          }),
+        }
+      );
       const data = await response.json();
-      if (data.message && email.trim() !== "") {
-        popup("Enviamos um e-mail para a conta", null, "green");
-        setSuccess(data.message);
-        router.replace("/pages/resetPassword");
+      
+      if (response.data.message) {
+        setPopupVisibility(true);
+        setPopupText(data.message);
+        setPopupColor(coresEscuras.sucesso);
+        setPopupOption([
+          {
+            text: "Ok",
+            onPress: () => setPopupVisibility(false),
+          },
+        ]);
+        router.replace("/pages/Login")
       } else {
-        popup("Erro ao enviar e-mail para a conta", null, "red");
-        setError(data.error);
+        setPopupVisibility(true);
+        setPopupText("Erro ao tentar resetar a senha");
+        setPopupColor(coresEscuras.erro);
+        setPopupOption([
+          {
+            text: "Ok",
+            onPress: () => setPopupVisibility(false),
+          },
+        ]);
       }
     } catch (error) {
-      setError(error.message);
+      setPopupVisibility(true);
+      setPopupText("Erro ao tentar resetar a senha");
+      setPopupColor(coresEscuras.erro);
     }
   }
 
@@ -130,22 +169,34 @@ export default function ChangePassword() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable>
-            <Link replace href={"/pages/Login"}>
+            <Link replace href={"/pages/changePassword"}>
               <Icon name="arrow-back" size={24} color="#FFF" />
             </Link>
           </Pressable>
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>
-            Informe seu e-mail para alterar a sua senha:
-          </Text>
+          <Text style={styles.title}>Confirmação de redefinição de senha</Text>
           <TextInput
             style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
+            placeholder="Código"
+            value={token}
+            onChangeText={(text) => setToken(text)}
           />
-          <Pressable style={styles.button} onPress={handleResetPassword}>
+          <TextInput
+            style={styles.input}
+            secureTextEntry
+            placeholder="Digite a sua nova senha"
+            value={newPassword}
+            onChangeText={(text) => setNewPassword(text)}
+          />
+          <TextInput
+            style={styles.input}
+            secureTextEntry
+            placeholder="Confirme sua nova senha"
+            value={confirmPassword}
+            onChangeText={(text) => setConfirmPassword(text)}
+          />
+          <Pressable style={styles.button} onPress={handleSubmit}>
             <Text style={styles.button.text}>Redefinir senha</Text>
           </Pressable>
         </View>
