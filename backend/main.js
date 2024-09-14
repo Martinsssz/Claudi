@@ -1,9 +1,11 @@
+//**********************************************************Imports*****************************************************/
 const express = require("express");
 const cors = require("cors");
-const { Sequelize, DataTypes } = require("sequelize");
-
+const { Sequelize } = require("sequelize");
 const nodemailer = require("nodemailer");
+import {User, Token} from "./models"
 
+//**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -27,61 +29,31 @@ function sendEmail(para, assunto, texto) {
     console.log("Email sent: " + info.response);
   });
 }
-
-// ********************************Conectando ao banco de dados MYSQL**********************************************************//
+// ********************************SEQUELIZE*****************************************************************************//
 const sequelize = new Sequelize("claudi_menpp", "root", "", {
   host: "localhost",
   dialect: "mysql",
 });
 
-//******************************************************Definindo a tabela e seu modelo **************************************************//
-const User = sequelize.define(
-  "User",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-      field: "user_id",
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "username",
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "user_email",
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "user_password",
-    },
-    picture: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: "picture",
-    },
-    token: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: "token",
-    },
-  },
-  {
-    tableName: "users", // Nome da tabela
-    timestamps: false,
-  }
-);
-
 //******************************************************Iniciando servidor*****************************************************//
 const app = express();
+app.use(express.json());
 app.use(cors());
 
-app.use(express.json());
+sequelize
+  .sync()
+  .then(() => {
+    app.listen(8080, () => {
+      console.log("Servidor rodando na porta 8080");
+    });
+  })
+  .catch((error) => {
+    console.log("Erro ao sincronizar com o banco de dados:", error);
+  });
 
+
+
+//**************************************************REQUISIÇÕES*************************************************************/
 app.post("/cadastrar", async (req, res) => {
   const { name, email, password } = req.body;
   let procurar = await procurarUsuario(email);
@@ -129,6 +101,23 @@ app.post("/login", async (req, res) => {
   }
 });
 
+//função de confirmação de redefinição de senha
+app.post("/resetPasswordConfirm", async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const user = await User.findOne({ token });
+    if (user) {
+      return res.status(404).send({ message: "Token inválido" });
+    }
+    await updateUserResetPasswordToken(user.id, token);    
+    res.send({ message: "Senha alterada com sucesso" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Erro ao alterar senha" });
+  }
+});
+
+//*********************************************************FUNÇÕES******************************************************/
 async function procurarUsuario(email) {
   try {
     let verificacao = await User.findOne({
@@ -176,17 +165,19 @@ Insira este código na página de redefinição de senha para criar uma nova sen
 Atenciosamente,
 MENPP`
     );
+
     res.send({
-      message: "Link de redefinição de senha enviado para o seu e-mail",
+      message: "Token de redefinição de senha enviado para o seu e-mail",
     });
   } catch (error) {
     console.error(error);
     res
-      .status(500)
-      .send({ message: "Erro ao enviar link de redefinição de senha" });
-  }
+    .status(500)
+      .send({ message: "Erro ao enviar token de redefinição de senha" });
+    }
 });
 
+//Testando se o token já existe
 async function testToken(token){
   try {
     let verificacao = await User.findOne({
@@ -194,7 +185,7 @@ async function testToken(token){
     })
     console.log(!!verificacao)
     return !!verificacao
-
+    
   } catch (error) {
     return ({ error: 'Erro ao procurar token' });
   } 
@@ -219,29 +210,4 @@ async function generateToken() {
 }
 
 
-//função de confirmação de redefinição de senha
-app.post("/resetPasswordConfirm", async (req, res) => {
-  try {
-    const { token, password } = req.body;
-    const user = await User.findOne({ token });
-    if (user) {
-      return res.status(404).send({ message: "Token inválido" });
-    }
-    await updateUserResetPasswordToken(user.id, token);    
-    res.send({ message: "Senha alterada com sucesso" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Erro ao alterar senha" });
-  }
-});
 
-sequelize
-  .sync()
-  .then(() => {
-    app.listen(8080, () => {
-      console.log("Servidor rodando na porta 8080");
-    });
-  })
-  .catch((error) => {
-    console.log("Erro ao sincronizar com o banco de dados:", error);
-  });
