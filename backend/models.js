@@ -34,11 +34,6 @@ const User = sequelize.define(
       allowNull: false,
       field: "picture",
     },
-    token: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: "token",
-    },
   },
   {
     tableName: "users", // Nome da tabela
@@ -78,7 +73,7 @@ const Token = sequelize.define('PasswordResetToken', {
   timestamps: false,
 });
 
-User.hasMany(PasswordResetToken, { foreignKey: 'user_id' });
+User.hasMany(Token, { foreignKey: 'user_id' });
 Token.belongsTo(User, { foreignKey: 'user_id' });
 
-export default {User, Token}
+module.exports = { User, Token }

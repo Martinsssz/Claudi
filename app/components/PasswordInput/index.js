@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
 import cores from "../../Util/coresPadrao"
 
-export default function PasswordInput( {placeHolder, handleText} ){
+export default function PasswordInput( {placeHolder, handleText, style} ){
   const [show, setShow] = useState(true)
 
   let colorScheme = Appearance.getColorScheme()
@@ -13,41 +13,29 @@ export default function PasswordInput( {placeHolder, handleText} ){
   //Esti
   const styles = StyleSheet.create({
     container:{
-      height: "auto",
-      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       flexDirection: "row",
-      flex:4,
-      justifyContent:"space-between",
-  
-  
-      //borda
-      borderWidth: 1,
-      borderStyle: "solid",
-      borderBlockColor: "black",
-      borderRadius: 7,
-      paddingRight: 7,
-      //Fim da borda
+      justifyContent:"space-between",  
     },
   
     passwordInput:{
       color: "black",
-      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: 10,
-      borderRadius: 7,
-      paddingLeft: 7,
+      zIndex: 1,
+      flex: 9
     },
   
     showPassword:{
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
+      zIndex: 2
     }
   })
 
 
   //Componentes
   return(
-    <View style = {styles.container}>
+    <View style ={[style, styles.container]}>
       <TextInput
         placeholder = {placeHolder}
         style = {styles.passwordInput}
@@ -58,8 +46,6 @@ export default function PasswordInput( {placeHolder, handleText} ){
       <Pressable style={styles.showPassword} onPress={ () => setShow(!show) }>
         <Ionicons name={show ? 'eye-off' : 'eye'} color={eyeColor} size={25}/>
       </Pressable> 
-
-      
     </View>
   )
 }

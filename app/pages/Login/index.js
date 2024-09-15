@@ -49,7 +49,7 @@ export default function Login(){
   let dadosFiltrados = checkDataLogin(inputEmail, inputPassword)
   if(dadosFiltrados.validate){
     try {
-      const response = await fetch('http://192.168.3.14:8080/login', {
+      const response = await fetch('http://192.168.1.113:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,7 +147,6 @@ const styles = StyleSheet.create({
       flexDirection:"column",
       justifyContent: "space-between",
       gap:5,
-      alignItems:"center", 
       paddingVertical:50
     },
   
@@ -220,8 +219,9 @@ const styles = StyleSheet.create({
 
           <PasswordInput
             placeHolder = {"Senha"}
-            handleText = {setInputPassword}>
-          </PasswordInput> 
+            handleText = {setInputPassword}
+            style={styles.input}
+          /> 
 
           <AnimatedPressable style={styles.button} onPress={sendData}>
             <Text style={styles.button.text}>Entrar</Text>
@@ -229,16 +229,17 @@ const styles = StyleSheet.create({
         </Animated.View>
 
         <View style={styles.opcoesAlternativas}>
+
           <Pressable>
             <Link replace href={"/pages/changePassword"}>
-            <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
+              <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
             </Link>
           </Pressable>
-          <Pressable>
-            <Link replace href={"/pages/Signup"} onPress={transition}>
+
+          <Pressable onPress={transition} >
               <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
-            </Link>
           </Pressable>
+          
         </View>
         
 

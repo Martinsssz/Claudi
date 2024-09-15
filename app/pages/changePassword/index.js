@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import React from "react";
 import { Link, router } from "expo-router";
 import Popup from "../../components/Popup";
+import Logo from "../../components/Logo";
+import { checkEmail } from "../../Util/checkData";
 
 export default function ChangePassword() {
   //**********************************************Alteração automática de tema***************************************************//
@@ -30,25 +32,30 @@ export default function ChangePassword() {
   const [popupColor, setPopupColor] = useState("");
 
   async function handleResetPassword() {
-    try {
-      const response = await fetch("http://192.168.3.14:8080/forgotPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-      const data = await response.json();
-      if (data.message && email.trim() !== "") {
-        popup("Enviamos um e-mail para a conta", null, "green");
-        setSuccess(data.message);
-        router.replace("/pages/resetPassword");
-      } else {
-        popup("Erro ao enviar e-mail para a conta", null, "red");
-        setError(data.error);
+    let emailVerification = checkEmail(email)
+
+    if(emailVerification.validate){
+      try {
+        const response = await fetch("http://192.168.1.113:8080/forgotPassword", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+        const data = await response.json();
+        if (response.status == 200) {
+          popup(`Enviamos um e-mail para a conta ${email}`, null, "green");
+          router.replace("/pages/resetPassword");
+        } else {
+          popup("Erro ao enviar e-mail para a conta", null, "red");
+          setError(data.error);
+        }
+      } catch (error) {
+        setError(error.message);
       }
-    } catch (error) {
-      setError(error.message);
+    }else{
+      popup(emailVerification.message, null, "red")
     }
   }
 
@@ -85,14 +92,24 @@ export default function ChangePassword() {
     },
     content: {
       padding: 20,
+      paddingVertical:50,
+      gap:25,
+      justifyContent:"center",
     },
+
+    form:{
+      height: "50%",
+      gap: 0,
+    },
+
     title: {
-      marginTop: 120,
       fontSize: 18,
       fontWeight: "bold",
       marginBottom: 20,
       color: "#FFFF",
+      textAlign:"center"
     },
+
     input: {
       height: "auto",
       padding: 10,
@@ -110,6 +127,7 @@ export default function ChangePassword() {
       borderRadius: 7,
       marginTop: 20,
     },
+
     button: {
       text: {
         color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
@@ -135,19 +153,23 @@ export default function ChangePassword() {
             </Link>
           </Pressable>
         </View>
+
         <View style={styles.content}>
-          <Text style={styles.title}>
-            Informe seu e-mail para alterar a sua senha:
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-          />
-          <Pressable style={styles.button} onPress={handleResetPassword}>
-            <Text style={styles.button.text}>Redefinir senha</Text>
-          </Pressable>
+          <Logo/>
+          <View style={styles.form}>
+            <Text style={styles.title}> Informe seu e-mail para alterar a sua senha: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+            />
+
+            <Pressable style={styles.button} onPress={handleResetPassword}>
+              <Text style={styles.button.text}>Redefinir senha</Text>
+            </Pressable>
+          </View>
+
         </View>
       </View>
 

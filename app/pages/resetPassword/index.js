@@ -6,6 +6,10 @@ import { useState, useEffect } from "react";
 import React from "react";
 import { Link, router } from "expo-router";
 import Popup from "../../components/Popup";
+import PasswordInput from "../../components/PasswordInput";
+import Logo from "../../components/Logo";
+import { ScrollView } from "moti";
+import { checkPassword } from "../../Util/checkData";
 
 export default function ResetPassword() {
   //**********************************************Alteração automática de tema***************************************************//
@@ -33,61 +37,35 @@ export default function ResetPassword() {
   const [popupColor, setPopupColor] = useState("");
 
   async function handleSubmit() {
-    if (newPassword !== confirmPassword) {
-      setPopupVisibility(true);
-      setPopupText("As senhas não são iguais. Tente novamente.");
-      setPopupColor(coresEscuras.erro);
-      setPopupOption([
-        {
-          text: "Ok",
-          onPress: () => setPopupVisibility(false),
-        },
-      ]);
-      return;
-    }
+    let passwordVerification = checkPassword(newPassword, confirmPassword)
 
-    try {
-      const response = await fetch(
-        "http://192.168.3.14:8080/resetPasswordConfirm",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: token, 
-            password: newPassword, 
-          }),
+    if(passwordVerification.validate){
+      try {
+        const response = await fetch(
+          "http://192.168.1.113:8080/resetPasswordConfirm",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              token: token, 
+              password: newPassword, 
+            }),
+          }
+        );
+        const data = await response.json();
+        
+        if (response.status === 200) {
+          popup("Senha alterada com sucesso", ["Ir para tela de login", "/pages/Login"], "green")
+        } else {
+          popup("Código inválido", null, "red")
         }
-      );
-      const data = await response.json();
-      
-      if (response.data.message) {
-        setPopupVisibility(true);
-        setPopupText(data.message);
-        setPopupColor(coresEscuras.sucesso);
-        setPopupOption([
-          {
-            text: "Ok",
-            onPress: () => setPopupVisibility(false),
-          },
-        ]);
-        router.replace("/pages/Login")
-      } else {
-        setPopupVisibility(true);
-        setPopupText("Erro ao tentar resetar a senha");
-        setPopupColor(coresEscuras.erro);
-        setPopupOption([
-          {
-            text: "Ok",
-            onPress: () => setPopupVisibility(false),
-          },
-        ]);
+      } catch (error) {
+        popup("Erro no sistema, tente novamente mais tarde", null, "orange")
       }
-    } catch (error) {
-      setPopupVisibility(true);
-      setPopupText("Erro ao tentar resetar a senha");
-      setPopupColor(coresEscuras.erro);
+    }else{
+      popup(passwordVerification.message, null, "red")
     }
   }
 
@@ -108,37 +86,40 @@ export default function ResetPassword() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor:
-        colorScheme === "dark"
-          ? coresEscuras.azulEscuroDark
-          : cores.azulClaro1Light,
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuroDark : cores.azulClaro1Light,
     },
+
     header: {
-      backgroundColor:
-        colorScheme === "dark" ? coresEscuras.azulDark : "#99B8D5",
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulDark : "#99B8D5",
       height: 60,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       paddingHorizontal: 20,
     },
+
     content: {
       padding: 20,
     },
+    
+    contentContainer:{
+      flexDirection:"column",
+      justifyContent: "space-between",
+      gap:5,
+      paddingVertical:30,
+      left:0
+    },
+
     title: {
-      marginTop: 120,
       fontSize: 18,
       fontWeight: "bold",
-      marginBottom: 20,
       color: "#FFFF",
+      textAlign:"center"
     },
     input: {
       height: "auto",
       padding: 10,
-      backgroundColor:
-        colorScheme === "dark"
-          ? coresEscuras.azulClaroDark
-          : coresEscuras.ghostWhite,
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulClaroDark : coresEscuras.ghostWhite,
       color: "black",
       paddingLeft: 7,
       fontSize: 19,
@@ -149,14 +130,14 @@ export default function ResetPassword() {
       borderRadius: 7,
       marginTop: 20,
     },
+
     button: {
       text: {
         color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
         textAlign: "center",
         fontSize: 19,
       },
-      backgroundColor:
-        colorScheme === "dark" ? coresEscuras.azulDark : coresEscuras.azulLight,
+      backgroundColor: colorScheme === "dark" ? coresEscuras.azulDark : coresEscuras.azulLight,
       padding: 13,
       borderRadius: 7,
       marginTop: 40,
@@ -167,6 +148,7 @@ export default function ResetPassword() {
   return (
     <>
       <View style={styles.container}>
+      
         <View style={styles.header}>
           <Pressable>
             <Link replace href={"/pages/changePassword"}>
@@ -174,7 +156,9 @@ export default function ResetPassword() {
             </Link>
           </Pressable>
         </View>
-        <View style={styles.content}>
+
+        <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+          <Logo/>
           <Text style={styles.title}>Confirmação de redefinição de senha</Text>
           <TextInput
             style={styles.input}
@@ -182,24 +166,23 @@ export default function ResetPassword() {
             value={token}
             onChangeText={(text) => setToken(text)}
           />
-          <TextInput
+
+          <PasswordInput
+            placeHolder= {"Digite sua nova senha"}
+            handleText={setNewPassword}
             style={styles.input}
-            secureTextEntry
-            placeholder="Digite a sua nova senha"
-            value={newPassword}
-            onChangeText={(text) => setNewPassword(text)}
           />
-          <TextInput
+
+          <PasswordInput
+            placeHolder= {"Repita sua nova senha"}
+            handleText={setConfirmPassword}
             style={styles.input}
-            secureTextEntry
-            placeholder="Confirme sua nova senha"
-            value={confirmPassword}
-            onChangeText={(text) => setConfirmPassword(text)}
           />
+
           <Pressable style={styles.button} onPress={handleSubmit}>
             <Text style={styles.button.text}>Redefinir senha</Text>
           </Pressable>
-        </View>
+        </ScrollView>
       </View>
 
       {popupVisibility && (

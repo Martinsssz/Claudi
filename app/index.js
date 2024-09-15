@@ -4,6 +4,7 @@ import HomePage from "./pages/pagesWithHeader/HomePage";
 import { Redirect, useRouter, useFocusEffect } from "expo-router";
 import ResetPassword from "./pages/resetPassword";
 
+
 export default function App(){
   const router = useRouter()
 
@@ -11,7 +12,7 @@ export default function App(){
     router.replace("pages/pagesWithoutHeader/AccountSettings")
   }) */
   return (
-    <ResetPassword></ResetPassword>
+    <Signup></Signup>
     
   )
   

@@ -55,7 +55,7 @@ async function sendData(){
     
   ){
     try {
-      const response = await fetch('http://192.168.3.14:8080/cadastrar', {
+      const response = await fetch('http://192.168.1.113:8080/cadastrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -150,8 +150,7 @@ function transition(){
     contentContainer:{
       flexDirection:"column",
       justifyContent: "space-between",
-      gap:5,
-      alignItems:"center", 
+      gap:10,
       paddingVertical:50,
       left:0
     },
@@ -233,13 +232,15 @@ function transition(){
 
           <PasswordInput
             placeHolder = {"Senha"}
-            handleText = {setInputPassword}>
-          </PasswordInput> 
+            handleText = {setInputPassword}
+            style={styles.input}
+          /> 
 
           <PasswordInput
             placeHolder = {"Confirmar senha"}
-            handleText = {setInputConfirmPass}>
-          </PasswordInput> 
+            handleText = {setInputConfirmPass}
+            style={styles.input}
+          /> 
 
           <AnimatedPressable style={styles.button} onPress={sendData}>
             <Text style={styles.button.text}>Cadastrar-se</Text>
@@ -260,6 +261,7 @@ function transition(){
         </Animated.View>
         
       </ScrollView>
+      
       {popupVisibility && (
         <Popup 
           message={popupText} 
