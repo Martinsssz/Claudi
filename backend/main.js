@@ -275,6 +275,3 @@ async function generateToken(user) {
   }
   
 }
-
-
-

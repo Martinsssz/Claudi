@@ -64,7 +64,9 @@ export default function Sidebar({rotaAtual}){
       paddingHorizontal: 10,
       paddingVertical: 30,
       justifyContent:"space-between",
-      left: left
+      left: left,
+      borderTopLeftRadius:5,
+      borderBottomLeftRadius: 5
     },
 
     options:{

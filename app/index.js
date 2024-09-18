@@ -8,9 +8,9 @@ import ResetPassword from "./pages/resetPassword";
 export default function App(){
   const router = useRouter()
 
-  /*useFocusEffect(()=>{
-    router.replace("pages/pagesWithoutHeader/AccountSettings")
-  }) */
+  useFocusEffect(()=>{
+    router.replace("pages/pagesWithHeader/HomePage")
+  }) 
   return (
     <Signup></Signup>
     
