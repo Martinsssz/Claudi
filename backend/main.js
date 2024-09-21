@@ -1,10 +1,9 @@
 //**********************************************************Imports*****************************************************/
 const express = require("express");
 const cors = require("cors");
-const { Sequelize } = require("sequelize");
+const { Sequelize, where } = require("sequelize");
 const nodemailer = require("nodemailer");
 const { User, Token } = require("./models");
-
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -51,8 +50,6 @@ sequelize
   .catch((error) => {
     console.log("Erro ao sincronizar com o banco de dados:", error);
   });
-
-
 
 //**************************************************REQUISIÇÕES*************************************************************/
 app.post("/cadastrar", async (req, res) => {
@@ -104,17 +101,16 @@ app.post("/login", async (req, res) => {
 app.post("/resetPasswordConfirm", async (req, res) => {
   try {
     const { token, password } = req.body;
-    const tokenValido = await verificarToken(token)
+    const tokenValido = await verificarToken(token);
 
     if (!tokenValido) {
       return res.status(404).send({ message: "Token inválido" });
     }
 
     let user = await testToken(token);
-    await invalidOldTokensByToken(token);   
+    await invalidOldTokensByToken(token);
     await alterarSenha(user.user_id, password);
     res.status(200).send({ message: "Senha alterada com sucesso" });
-
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Erro ao alterar senha" });
@@ -137,21 +133,23 @@ app.post("/forgotPassword", async (req, res) => {
     sendEmail(
       email,
       "Redefinição de Senha",
-      `Olá, ${user.name}. \n\n`+
-      "Recebemos uma solicitação para redefinir a sua senha. Para prosseguir com a redefinição, por favor, utilize o código abaixo: \n\n"+
-      `Código de Redefinição: ${token} \n\n` +
-      "Insira este código na página de redefinição de senha para criar uma nova senha. Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Se precisar de ajuda, entre em contato com o suporte. \n\n"+
-      "Atenciosamente, \n"+
-      "MENPP"
+      `Olá, ${user.name}. \n\n` +
+        "Recebemos uma solicitação para redefinir a sua senha. Para prosseguir com a redefinição, por favor, utilize o código abaixo: \n\n" +
+        `Código de Redefinição: ${token} \n\n` +
+        "Insira este código na página de redefinição de senha para criar uma nova senha. Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Se precisar de ajuda, entre em contato com o suporte. \n\n" +
+        "Atenciosamente, \n" +
+        "MENPP"
     );
 
-    res.status(200).send({ message: "Token de redefinição de senha enviado para o seu e-mail" });
-   
+    res.status(200).send({
+      message: "Token de redefinição de senha enviado para o seu e-mail",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: "Erro ao enviar token de redefinição de senha" });
+    res
+      .status(500)
+      .send({ message: "Erro ao enviar token de redefinição de senha" });
   }
-
 });
 
 //*********************************************************FUNÇÕES******************************************************/
@@ -166,54 +164,48 @@ async function procurarUsuario(email) {
   }
 }
 
-async function alterarSenha(userId, newPassword){
+async function alterarSenha(userId, newPassword) {
   try {
-    User.update(
-      {password: newPassword},
-      { where: {id: userId} }
-    )
+    User.update({ password: newPassword }, { where: { id: userId } });
   } catch (error) {
-    return ({ error: 'Erro ao alterar a senha do usuário' });
-  } 
-
+    return { error: "Erro ao alterar a senha do usuário" };
+  }
 }
 
 //Lógica de tokens
 
-async function verificarToken(token){
+async function verificarToken(token) {
   try {
     let tokenOfDB = await Token.findOne({
-      where: {token: token}
-    })
-    let now = new Date( Date.now() )
-    
-    if(tokenOfDB){
-      if(!tokenOfDB.used && tokenOfDB.expires_at > now){
-        return true //token ainda válido
-      }else{
-        return false //token invalido
+      where: { token: token },
+    });
+    let now = new Date(Date.now());
+
+    if (tokenOfDB) {
+      if (!tokenOfDB.used && tokenOfDB.expires_at > now) {
+        return true; //token ainda válido
+      } else {
+        return false; //token invalido
       }
-    }else{
-      return false //token não existe
+    } else {
+      return false; //token não existe
     }
   } catch (error) {
-    return ({ error: 'Erro ao procurar token' });
+    return { error: "Erro ao procurar token" };
   }
-
-
 }
 
 async function updateUserResetPasswordToken(userId, token) {
   try {
     const user = await User.findByPk(userId);
     if (user) {
-      let limitTime = new Date(Date.now() + 900000)
-      
-      const  newToken = await Token.create({
-        user_id: userId,        
+      let limitTime = new Date(Date.now() + 900000);
+
+      const newToken = await Token.create({
+        user_id: userId,
         token: token,
-        expires_at: limitTime,   
-        used: false,    
+        expires_at: limitTime,
+        used: false,
       });
     }
   } catch (err) {
@@ -221,38 +213,38 @@ async function updateUserResetPasswordToken(userId, token) {
   }
 }
 //Testando se o token já existe
-async function testToken(token){
+async function testToken(token) {
   try {
     let verificacao = await Token.findOne({
-      where: {token: token}
-    })
+      where: { token: token },
+    });
 
-    return verificacao
+    return verificacao;
   } catch (error) {
-    return ({ error: 'Erro ao procurar token' });
-  } 
+    return { error: "Erro ao procurar token" };
+  }
 }
 
-async function invalidOldTokensByUser(userdId){
+async function invalidOldTokensByUser(userdId) {
   try {
     await Token.update(
-      {used:true},
-      {where: {user_id: userdId, used: false }}
-    )
+      { used: true },
+      { where: { user_id: userdId, used: false } }
+    );
   } catch (error) {
-    return ({ error: 'Erro ao procurar token' });
-  } 
+    return { error: "Erro ao procurar token" };
+  }
 }
 
-async function invalidOldTokensByToken(token){
+async function invalidOldTokensByToken(token) {
   try {
     await Token.update(
-      {used:true},
-      {where: {token:token, used: false }}
-    )
+      { used: true },
+      { where: { token: token, used: false } }
+    );
   } catch (error) {
-    return ({ error: 'Erro ao procurar token' });
-  } 
+    return { error: "Erro ao procurar token" };
+  }
 }
 
 async function generateToken(user) {
@@ -265,16 +257,32 @@ async function generateToken(user) {
     counter += 1;
   }
 
-  let validado =  !! ( await testToken(result) )
-  await invalidOldTokensByUser(user)
-  
-  if(!validado){
+  let validado = !!(await testToken(result));
+  await invalidOldTokensByUser(user);
+
+  if (!validado) {
     return result;
-  }else{
-    generateToken()
+  } else {
+    generateToken();
   }
-  
 }
 
-
-
+app.delete("/delete-account", async (req, res) => {
+  const userId = req.body;
+  const user = await User.findOne({where: { id: userId }})
+  if (user) {
+  try {
+    await User.destroy({
+      where: {
+        id: userId
+      },
+    });
+    res.json({ message: "Conta deletada com sucesso!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  } 
+  } else {
+    console.error("userId is undefined");
+  }
+});
