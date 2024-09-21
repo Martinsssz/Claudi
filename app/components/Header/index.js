@@ -13,6 +13,7 @@ import cores from "../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Hamburguer from "../Hamburguer";
+import Logo from "../Logo";
   
 
 export default function Header({handle}){
@@ -40,9 +41,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal:20,
+    paddingHorizontal:10,
     zIndex:3,
-
     borderBottomColor:"black",
     borderBottomWidth: 1
   },
@@ -50,19 +50,15 @@ const styles = StyleSheet.create({
   userInfo:{
     flexDirection: "row",
     alignItems: "center",
-    gap: 10
   },
   foto:{
-    width: "34%",
+    width: "40%",
     aspectRatio: 1,
-    backgroundColor: colorScheme === "dark" ? "#000000" : "#FFFFFF",
-    borderRadius: 500,
-
     justifyContent:"center",
     alignItems: "center"
   },
   nome:{
-    fontSize: 25,
+    fontSize: 40,
     color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
   },
   hamburguer:{
@@ -75,9 +71,9 @@ return(
 
     <View style={styles.userInfo}>
       <View style={styles.foto}>
-        <Ionicons name="person" color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} size={45}></Ionicons>
+        <Logo/>
       </View>
-      <Text style={styles.nome}>Nome</Text>
+      <Text style={styles.nome}>Claudi</Text>
     </View>
 
     <Hamburguer handleSidebar={handle}/>

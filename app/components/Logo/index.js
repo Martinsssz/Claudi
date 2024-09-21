@@ -1,7 +1,7 @@
 import React from "react"
 import { View, Image, StyleSheet, Appearance} from "react-native"
 
-export default function Logo(){
+export default function Logo(header){
   const colorScheme = Appearance.getColorScheme();
   if(colorScheme === "dark"){
     var imagem = require("../../../assets/images/logoDarkMode.png")
