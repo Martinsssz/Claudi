@@ -6,6 +6,10 @@ async function abrirBanco() {
   db = await SQLite.openDatabaseAsync("claudi");
 }
 
+async function drop(){
+  await db.execAsync("DROP TABLE IF EXISTS user");
+}
+
 export async function criarTabela() {
   await abrirBanco();
   await db.execAsync(
@@ -41,18 +45,18 @@ export async function atualizarTabelaUsuario(id, nome, email, senha) {
   });
 }
 
-export async function deletarUsuario(id) {
+export async function deletarUsuario() {
   //Void
   await criarTabela();
-  const statement = await db.prepareAsync(`DELETE FROM user WHERE id = $i`);
-  await statement.executeAsync({ $i: id });
+  await db.execAsync(`DELETE FROM user`);
+
 }
 
 export async function mostrarUsuario() {
   //Array
-  await criarTabela()
+  await criarTabela();
   let pessoas = await db.getAllAsync(`SELECT * from user;`)
-  const pessoa = pessoas[0]
-  console.log(pessoas[0])
-  return pessoa;
+  console.log(pessoas)
+  return pessoas[0];
+
 }
