@@ -85,7 +85,8 @@ app.post("/login", async (req, res) => {
       const user = await User.findOne({ where: { email } });
 
       if (user && user.dataValues.password === password) {
-        res.status(200).json({ message: "Sucesso" });
+        res.status(200).json({user: user.dataValues, message: "Sucesso"});
+        console.log(user)
       } else {
         res.status(401).json({ error: "Email ou senha incorretos" });
       }
@@ -149,6 +150,23 @@ app.post("/forgotPassword", async (req, res) => {
     res
       .status(500)
       .send({ message: "Erro ao enviar token de redefinição de senha" });
+  }
+});
+
+app.post("/delete-account", async (req, res) => {
+  const { userId } = req.body;
+  console.log(userId)
+  const user = await User.findByPk(userId)
+  if (user) {
+    try {
+      await user.destroy();
+      res.json({ message: "Conta deletada com sucesso!" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    } 
+  } else {
+    console.error("userId is undefined");
   }
 });
 
@@ -267,22 +285,6 @@ async function generateToken(user) {
   }
 }
 
-app.delete("/delete-account", async (req, res) => {
-  const userId = req.body;
-  const user = await User.findOne({ where: { id: userId } });
-  if (user) {
-    try {
-      await User.destroy({
-        where: {
-          id: userId,
-        },
-      });
-      res.json({ message: "Conta deletada com sucesso!" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  } else {
-    console.error("userId is undefined");
-  }
-});
+
+  
+

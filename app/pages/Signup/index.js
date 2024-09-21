@@ -46,10 +46,8 @@ export default function Signup(){
   
 //************************************************Funções**********************************************************************//
 async function sendData(){
- 
   clique()
   
- 
   let dadosFiltrados = checkDataCadastro(inputName, inputEmail, inputPassword, inputConfirmPass)
   if(dadosFiltrados.validate
     
