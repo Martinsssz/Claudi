@@ -269,23 +269,20 @@ async function generateToken(user) {
 
 app.delete("/delete-account", async (req, res) => {
   const userId = req.body;
-  const user = await User.findOne({where: { id: userId }})
+  const user = await User.findOne({ where: { id: userId } });
   if (user) {
-  try {
-    await User.destroy({
-      where: {
-        id: userId
-      },
-    });
-    res.json({ message: "Conta deletada com sucesso!" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  } 
+    try {
+      await User.destroy({
+        where: {
+          id: userId,
+        },
+      });
+      res.json({ message: "Conta deletada com sucesso!" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   } else {
     console.error("userId is undefined");
   }
 });
-
-  
-
