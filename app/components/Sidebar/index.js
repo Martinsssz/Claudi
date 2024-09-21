@@ -141,7 +141,7 @@ export default function Sidebar({rotaAtual}){
           option  = "Sair da conta"
           link    = "/pages/Signup" 
           handle  = {setPopup}
-          spececialHandle = {sairDaConta}
+          specialHandle = {sairDaConta}
         />
       )}
 
