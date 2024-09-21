@@ -10,7 +10,6 @@ export default function Layout() {
   useEffect(() => {
     setCurrentScreen(pathname);
   }, [pathname]);
-console.log(currentScreen)
 
   const [sidebar, setSidebar] = useState(false)
   return (

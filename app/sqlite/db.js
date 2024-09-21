@@ -1,5 +1,6 @@
-import * as SQLite from 'expo-sqlite';
+import * as SQLite from 'expo-sqlite'
 
-const db = SQLite.openDatabaseAsync("claudi.db")
+const db = await SQLite.openDatabaseAsync('claudi')
+
 
 export default db
