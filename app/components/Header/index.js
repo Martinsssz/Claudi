@@ -16,7 +16,7 @@ import Hamburguer from "../Hamburguer";
 import Logo from "../Logo";
   
 
-export default function Header({handle}){
+export default function Header({handle, showMenu}){
 //**********************************************UseStates**********************************************************************//
 
 //**********************************************Alteração automática de tema**************************************************//
@@ -75,8 +75,9 @@ return(
       </View>
       <Text style={styles.nome}>Claudi</Text>
     </View>
-
-    <Hamburguer handleSidebar={handle}/>
+    {showMenu && (
+      <Hamburguer handleSidebar={handle}/>
+    )}
     
   </View>
 )

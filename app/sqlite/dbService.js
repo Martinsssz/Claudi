@@ -15,7 +15,7 @@ export async function criarTabela() {
 
 export async function criarUsuario(user) {
   //Void
-  await abrirBanco();
+  await criarTabela();
   const statement = await db.prepareAsync(
     `INSERT INTO user (id, username, email, password) VALUES ($i , $n, $e, $s);`
   );
@@ -29,7 +29,7 @@ export async function criarUsuario(user) {
 
 export async function atualizarTabelaUsuario(id, nome, email, senha) {
   //Void
-  await abrirBanco();
+  await criarTabela();
   const statement = await db.prepareAsync(
     `UPDATE user SET  username = $n, email = $e, password = $s WHERE user_id = $i;`
   );
@@ -43,14 +43,14 @@ export async function atualizarTabelaUsuario(id, nome, email, senha) {
 
 export async function deletarUsuario(id) {
   //Void
-  await abrirBanco();
+  await criarTabela();
   const statement = await db.prepareAsync(`DELETE FROM user WHERE id = $i`);
   await statement.executeAsync({ $i: id });
 }
 
 export async function mostrarUsuario() {
   //Array
-  await abrirBanco();
+  await criarTabela();
   let pessoas = await db.getAllAsync(`SELECT * from user;`)
   console.log(pessoas)
   return pessoas[0];

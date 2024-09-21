@@ -46,7 +46,7 @@ const user = mostrarUsuario()
 
     try {
       const response = await fetch(
-        'http://192.168.3.14:8080/delete-account',
+        'http://192.168.15.162:8080/delete-account',
         {
           method: "DELETE",
           headers: {

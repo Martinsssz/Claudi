@@ -11,7 +11,7 @@ export default function App(){
   let user = mostrarUsuario()
   console.log(user)
 
-  if(user){
+  if(user.email){
     useFocusEffect(()=>{
       router.replace("pages/pagesWithHeader/HomePage")
     })
