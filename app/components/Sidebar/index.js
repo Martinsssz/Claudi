@@ -46,7 +46,9 @@ export default function Sidebar({rotaAtual}){
   }).start();
 
 //************************************************Funções**********************************************************************//
-
+  async function sairDaConta(){
+    deletar
+  }
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
     container:{
@@ -139,6 +141,7 @@ export default function Sidebar({rotaAtual}){
           option  = "Sair da conta"
           link    = "/pages/Signup" 
           handle  = {setPopup}
+          spececialHandle = {sairDaConta}
         />
       )}
 

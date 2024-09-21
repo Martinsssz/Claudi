@@ -18,6 +18,7 @@ import cores from "../../../Util/coresPadrao";
 import { Link } from "expo-router";
 import InputLabel from "../../../components/InputLabel";
 import Popup from "../../../components/Popup";
+import { mostrarUsuario, deletarUsuario } from "../../../sqlite/dbService";
 
 export default function HomePage() {
   //**********************************************UseStates**********************************************************************//
@@ -36,9 +37,13 @@ export default function HomePage() {
     return () => listener.remove();
   }, []);
 
-  //************************************************Funções**********************************************************************//
+//***********************************************Constantes****************************************************************//
+const user = mostrarUsuario()
+
+//************************************************Funções**********************************************************************//
 
   const deleteAccount = async () => {
+
     try {
       const response = await fetch(
         'http://192.168.3.14:8080/delete-account',
@@ -47,7 +52,9 @@ export default function HomePage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email: inputEmail }),
+          body: JSON.stringify({
+            userId: user.id
+          }),
         }
       );
   
@@ -168,17 +175,14 @@ export default function HomePage() {
           style={styles.form}
           contentContainerStyle={styles.formContent}
         >
-          {/*<View style={styles.profile}>
-            <Pressable onPress={this.pickImage}>
-              <Ionicons name="person-circle" size={50}/>  
-            </Pressable>
-          </View> */}
+
           <InputLabel label="Nome" handleText={setInputNome} typeInput="text" />
 
           <InputLabel
             label="Email"
             handleText={setInputEmail}
             typeInput="text"
+            value = {user.email}
           />
 
           <InputLabel

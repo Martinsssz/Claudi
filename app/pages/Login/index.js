@@ -18,6 +18,7 @@ import { Link, router } from 'expo-router'
 
 import { checkDataLogin } from '../../Util/checkData'
 import Popup from '../../components/Popup'
+import { criarUsuario, deletarUsuario, mostrarUsuario } from '../../sqlite/dbService'
 
 
 
@@ -65,6 +66,9 @@ export default function Login(){
       if (response.status === 200) {
         popup("Efetivado", null, "green")
         router.replace("/pages/pagesWithHeader/HomePage")
+        criarUsuario(data.user)
+        mostrarUsuario()
+
       } else if(response.status === 401){
         popup("Email ou senha incorretos", null, "red")
       }else if(response.status === 404){
