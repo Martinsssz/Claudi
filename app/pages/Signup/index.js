@@ -55,7 +55,7 @@ async function sendData(){
     
   ){
     try {
-      const response = await fetch('http://192.168.1.113:8080/cadastrar', {
+      const response = await fetch('http://192.168.3.14:8080/cadastrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

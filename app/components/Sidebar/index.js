@@ -103,9 +103,9 @@ export default function Sidebar({rotaAtual}){
               </Pressable>
             </Link>
 
-            <Link href={"#"} asChild>
+            <Link href={"/pages/pagesWithoutHeader/AccountSettings"} asChild>
               <Pressable 
-                style={tela === "/pages/pagesWithHeader/AccountSettings" ? styles.selecionado : styles.option}
+                style={tela === "/pages/pagesWithoutHeader/AccountSettings" ? styles.selecionado : styles.option}
               >
                 <Text style={styles.optionText}>Configurações da conta</Text>
               </Pressable>
