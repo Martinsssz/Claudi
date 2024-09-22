@@ -19,6 +19,7 @@ import { Link } from "expo-router";
 import InputLabel from "../../../components/InputLabel";
 import Popup from "../../../components/Popup";
 import { mostrarUsuario, deletarUsuario } from "../../../sqlite/dbService";
+import EditableInputLabel from "../../../components/EditableInputLabel";
 
 export default function HomePage() {
   //**********************************************UseStates**********************************************************************//
@@ -37,30 +38,27 @@ export default function HomePage() {
     return () => listener.remove();
   }, []);
 
-//***********************************************Constantes****************************************************************//
+  //***********************************************Constantes****************************************************************//
 
-//************************************************Funções**********************************************************************//
+  //************************************************Funções**********************************************************************//
 
   const deleteAccount = async () => {
-    let user = await mostrarUsuario()
+    let user = await mostrarUsuario();
     try {
-      const response = await fetch(
-        'http://192.168.3.14:8080/delete-account',
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: user.id
-          }),
-        }
-      );
-  
+      const response = await fetch("http://192.168.3.14:8080/delete-account", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      });
+
       if (!response.ok) {
         throw new Error(`Error deleting account: ${response.status}`);
       }
-  
+
       const data = await response.json();
       if (response.ok) {
         setPopup(true);
@@ -90,17 +88,16 @@ export default function HomePage() {
     fundo: {
       backgroundColor:
         colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-      height: "80%",
+      height: "100%",
       paddingHorizontal: 20,
-      paddingVertical: 120,
+      paddingVertical: 70,
     },
 
     contentContainer: {
       flexDirection: "column",
-      height: "100%",
+      height: "93%",
       gap: 20,
       alignItems: "center",
-      marginBottom: 100,
     },
 
     form: {
@@ -113,17 +110,11 @@ export default function HomePage() {
     formContent: {
       flexDirection: "column",
       justifyContent: "space-around",
-      gap: 50,
+      gap: 40,
       zIndex: 1000,
-      marginTop: 40,
+      marginTop: 20,
     },
 
-    profile: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      marginLeft: 20,
-    },
     text: {
       fontSize: 25,
       color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
@@ -174,30 +165,18 @@ export default function HomePage() {
           style={styles.form}
           contentContainerStyle={styles.formContent}
         >
+          <EditableInputLabel label="Nome" />
 
-          <InputLabel 
-          label="Nome" 
-          handleText={setInputNome} 
-          typeInput="text"
-          />
+          <EditableInputLabel label="Email" />
 
-          <InputLabel
-            label="Email"
-            handleText={setInputEmail}
-            typeInput="text"
-          />
-
-          <InputLabel
-            label="Senha"
-            handleText={setInputPassword}
-            typeInput="password"
-
-          />
+          <EditableInputLabel label="Senha" />
         </ScrollView>
 
         <Pressable
           style={styles.deleteAccount}
-          onPress={() => {setPopup(true)}}
+          onPress={() => {
+            setPopup(true);
+          }}
         >
           <Text style={styles.text}>Excluir conta</Text>
         </Pressable>
