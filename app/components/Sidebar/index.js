@@ -16,6 +16,7 @@ import { Appearance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import Popup from "../Popup";
+import { deletarUsuario } from "../../sqlite/dbService";
   
 
 export default function Sidebar({rotaAtual}){
@@ -47,8 +48,9 @@ export default function Sidebar({rotaAtual}){
 
 //************************************************Funções**********************************************************************//
   async function sairDaConta(){
-    deletar
+    await deletarUsuario();    
   }
+
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
     container:{
@@ -141,7 +143,7 @@ export default function Sidebar({rotaAtual}){
           option  = "Sair da conta"
           link    = "/pages/Signup" 
           handle  = {setPopup}
-          spececialHandle = {sairDaConta}
+          specialHandle = {sairDaConta}
         />
       )}
 

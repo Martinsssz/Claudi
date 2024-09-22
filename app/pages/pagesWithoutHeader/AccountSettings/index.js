@@ -38,17 +38,16 @@ export default function HomePage() {
   }, []);
 
 //***********************************************Constantes****************************************************************//
-const user = mostrarUsuario()
 
 //************************************************Funções**********************************************************************//
 
   const deleteAccount = async () => {
-
+    let user = await mostrarUsuario()
     try {
       const response = await fetch(
         'http://192.168.15.162:8080/delete-account',
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -176,25 +175,29 @@ const user = mostrarUsuario()
           contentContainerStyle={styles.formContent}
         >
 
-          <InputLabel label="Nome" handleText={setInputNome} typeInput="text" />
+          <InputLabel 
+          label="Nome" 
+          handleText={setInputNome} 
+          typeInput="text"
+          />
 
           <InputLabel
             label="Email"
             handleText={setInputEmail}
             typeInput="text"
-            value = {user.email}
           />
 
           <InputLabel
             label="Senha"
             handleText={setInputPassword}
             typeInput="password"
+
           />
         </ScrollView>
 
         <Pressable
           style={styles.deleteAccount}
-          onPress={deleteAccount}
+          onPress={() => {setPopup(true)}}
         >
           <Text style={styles.text}>Excluir conta</Text>
         </Pressable>
@@ -210,6 +213,7 @@ const user = mostrarUsuario()
           option="Excluir conta"
           link="/pages/Signup"
           handle={setPopup}
+          specialHandle={deleteAccount}
         />
       )}
     </>

@@ -153,16 +153,12 @@ app.post("/forgotPassword", async (req, res) => {
   }
 });
 
-app.delete("/delete-account", async (req, res) => {
+app.post("/delete-account", async (req, res) => {
   const { userId } = req.body;
-  const user = await User.findOne({where: { id: userId }})
+  const user = await User.findByPk(userId)
   if (user) {
     try {
-      await User.destroy({
-        where: {
-          id: userId
-        },
-      });
+      await user.destroy();
       res.json({ message: "Conta deletada com sucesso!" });
     } catch (error) {
       console.error(error);

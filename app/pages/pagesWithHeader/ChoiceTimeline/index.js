@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
   youtube:{
     top: 200,
     left:280,
-    
   }
   
 })

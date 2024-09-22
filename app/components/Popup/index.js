@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Appearance } from "react-native";
 import { Link } from "expo-router";
 import cores from '../../Util/coresPadrao'
 
-export default function Popup({message, cor, option, link, handle}){
+export default function Popup({message, cor, option, link, handle, specialHandle}){
   let colorScheme = Appearance.getColorScheme()
 
   const styles = StyleSheet.create({
@@ -65,7 +65,7 @@ export default function Popup({message, cor, option, link, handle}){
           </Pressable>
           {option && option != "" && (
             <Link replace href={link} asChild>
-              <Pressable style={styles.optionsButton}>
+              <Pressable style={styles.optionsButton} onPress={specialHandle}>
                 <Text style={styles.optionText}> {option} </Text>
               </Pressable>
             </Link>
