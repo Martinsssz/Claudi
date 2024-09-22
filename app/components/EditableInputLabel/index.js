@@ -12,8 +12,12 @@ import { Ionicons } from "@expo/vector-icons";
 import cores from "../../Util/coresPadrao";
 import PasswordInput from "../PasswordInput";
 
-
-export default function EditableInputLabel({ label, type, value, handleInputChange}) {
+export default function EditableInputLabel({
+  label,
+  type,
+  value,
+  handleInputChange,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   let colorScheme = Appearance.getColorScheme();
 
@@ -24,7 +28,7 @@ export default function EditableInputLabel({ label, type, value, handleInputChan
   //Estilos
   const styles = StyleSheet.create({
     container: {
-        width: "100%"
+      width: "100%",
     },
     inputAfter: {
       flex: 4,
@@ -41,7 +45,7 @@ export default function EditableInputLabel({ label, type, value, handleInputChan
       borderBlockColor: "grey",
       borderRadius: 7,
       paddingRight: 7,
-      width: "90%"
+      width: "90%",
       //Fim da borda
     },
     inputBefore: {
@@ -59,18 +63,18 @@ export default function EditableInputLabel({ label, type, value, handleInputChan
       borderBlockColor: "black",
       borderRadius: 7,
       paddingRight: 7,
-      width: "60%"
+      width: "60%",
       //Fim da borda
     },
     text: {
       flex: 1,
       fontSize: 20,
       color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
-      paddingBottom: 10
+      paddingBottom: 10,
     },
     icon: {
-        marginLeft: 50
-    }
+      marginLeft: 50,
+    },
   });
 
   return (
@@ -78,32 +82,60 @@ export default function EditableInputLabel({ label, type, value, handleInputChan
       <Text style={styles.text}>{label}:</Text>
 
       {isEditing ? (
-       type === "password" ? (
-        <PasswordInput
-          placeHolder={"Senha"}
-          handleText={handleInputChange}
-          value={value}
-          style={styles.inputAfter}
-        />
-      ) : (
-        <TextInput
-          value={value}
-          onChangeText={ (texto) => handleInputChange(texto)} 
-          autoFocus={true}
-          placeholder={label}
-          style={styles.inputAfter}
-        />
-      )
-        
+        type === "password" ? (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <PasswordInput
+              placeHolder={"Senha"}
+              handleText={handleInputChange}
+              value={value}
+              style={styles.inputAfter}
+            />
+            <View styles={styles.icon}>
+              <TouchableOpacity onPress={handleEditClick}>
+                <Ionicons
+                  name="close-circle"
+                  size={24}
+                  color={cores.black}
+                  alignSelf="flex-end"
+                  padding={5}
+                ></Ionicons>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TextInput
+              value={value}
+              onChangeText={(texto) => handleInputChange(texto)}
+              autoFocus={true}
+              placeholder={label}
+              style={styles.inputAfter}
+            />
+            <View styles={styles.icon}>
+              <TouchableOpacity onPress={handleEditClick}>
+                <Ionicons
+                  name="close-circle"
+                  size={24}
+                  color={cores.black}
+                  alignSelf="flex-end"
+                  padding={5}
+                ></Ionicons>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={styles.inputBefore}>
-            {value}
-          </Text>
+          <Text style={styles.inputBefore}>{value}</Text>
           <View styles={styles.icon}>
-          <TouchableOpacity onPress={handleEditClick}>
-            <Ionicons name="pencil" size={24} color={cores.black} marginLeft={10}></Ionicons>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={handleEditClick}>
+              <Ionicons
+                name="pencil"
+                size={24}
+                color={cores.black}
+                marginLeft={10}
+              ></Ionicons>
+            </TouchableOpacity>
           </View>
         </View>
       )}

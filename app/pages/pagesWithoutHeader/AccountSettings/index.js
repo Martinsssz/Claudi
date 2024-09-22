@@ -7,6 +7,7 @@ import {
   Pressable,
   Image,
   Button,
+  KeyboardAvoidingView
 } from "react-native";
 
 //********************************************Import de depêndencias e componentes**********************************************//
@@ -20,6 +21,8 @@ import InputLabel from "../../../components/InputLabel";
 import Popup from "../../../components/Popup";
 import { mostrarUsuario, deletarUsuario } from "../../../sqlite/dbService";
 import EditableInputLabel from "../../../components/EditableInputLabel";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 export default function HomePage() {
   //**********************************************UseStates**********************************************************************//
@@ -155,13 +158,14 @@ export default function HomePage() {
         <Text style={styles.text}>Configurações</Text>
       </View>
 
-      <ScrollView
+      
+      <KeyboardAwareScrollView
         style={styles.fundo}
         contentContainerStyle={styles.contentContainer}
       >
         <Text style={styles.text}> Perfil do usuário </Text>
 
-        <ScrollView
+        <KeyboardAwareScrollView
           style={styles.form}
           contentContainerStyle={styles.formContent}
         >
@@ -172,7 +176,7 @@ export default function HomePage() {
 
           <EditableInputLabel label="Senha" type="password" value={inputPassword} handleInputChange={setInputPassword}/>
           
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
         <Pressable
           style={styles.deleteAccount}
@@ -185,7 +189,7 @@ export default function HomePage() {
         <Pressable style={styles.save}>
           <Text style={styles.text}>Salvar</Text>
         </Pressable>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {popup && (
         <Popup

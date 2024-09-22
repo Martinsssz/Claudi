@@ -50,7 +50,7 @@ export default function Login(){
   let dadosFiltrados = checkDataLogin(inputEmail, inputPassword)
   if(dadosFiltrados.validate){
     try {
-      const response = await fetch('http://192.168.15.162:8080/login', {
+      const response = await fetch('http://192.168.3.14:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import coresEscuras from "../../Util/coresPadrao";
+import cores from "../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
@@ -78,12 +78,12 @@ export default function ChangePassword() {
       flex: 1,
       backgroundColor:
         colorScheme === "dark"
-          ? coresEscuras.azulEscuroDark
+          ? cores.azulEscuroDark
           : cores.azulClaro1Light,
     },
     header: {
       backgroundColor:
-        colorScheme === "dark" ? coresEscuras.azulDark : "#99B8D5",
+        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       height: 60,
       flexDirection: "row",
       alignItems: "center",
@@ -106,7 +106,7 @@ export default function ChangePassword() {
       fontSize: 18,
       fontWeight: "bold",
       marginBottom: 20,
-      color: "#FFFF",
+      color: "#000",
       textAlign:"center"
     },
 
@@ -115,8 +115,8 @@ export default function ChangePassword() {
       padding: 10,
       backgroundColor:
         colorScheme === "dark"
-          ? coresEscuras.azulClaroDark
-          : coresEscuras.ghostWhite,
+          ? cores.azulClaroDark
+          : cores.ghostWhite,
       color: "black",
       paddingLeft: 7,
       fontSize: 19,
@@ -135,7 +135,7 @@ export default function ChangePassword() {
         fontSize: 19,
       },
       backgroundColor:
-        colorScheme === "dark" ? coresEscuras.azulDark : coresEscuras.azulLight,
+        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       padding: 13,
       borderRadius: 7,
       marginTop: 40,
@@ -149,7 +149,7 @@ export default function ChangePassword() {
         <View style={styles.header}>
           <Pressable>
             <Link replace href={"/pages/Login"}>
-              <Icon name="arrow-back" size={24} color="#FFF" />
+              <Icon name="arrow-back" size={24} color="#1E384D" />
             </Link>
           </Pressable>
         </View>
