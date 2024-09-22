@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
 import cores from "../../Util/coresPadrao"
 
-export default function PasswordInput( {placeHolder, handleText, style} ){
+export default function PasswordInput( {placeHolder, handleText, style, value=undefined} ){
   const [show, setShow] = useState(true)
 
   let colorScheme = Appearance.getColorScheme()
@@ -41,6 +41,7 @@ export default function PasswordInput( {placeHolder, handleText, style} ){
         style = {styles.passwordInput}
         secureTextEntry = {show}
         onChangeText={ (texto) => handleText(texto) }
+        value={value}
       ></TextInput>
 
       <Pressable style={styles.showPassword} onPress={ () => setShow(!show) }>

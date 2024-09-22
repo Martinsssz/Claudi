@@ -10,18 +10,15 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import cores from "../../Util/coresPadrao";
+import PasswordInput from "../PasswordInput";
 
-export default function EditableInputLabel({ label }) {
+
+export default function EditableInputLabel({ label, type, value, handleInputChange}) {
   const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState("");
   let colorScheme = Appearance.getColorScheme();
 
   const handleEditClick = () => {
     setIsEditing(true);
-  };
-
-  const handleInputChange = (text) => {
-    setInputValue(text);
   };
 
   //Estilos
@@ -81,17 +78,27 @@ export default function EditableInputLabel({ label }) {
       <Text style={styles.text}>{label}:</Text>
 
       {isEditing ? (
-        <TextInput
-          value={inputValue}
-          onChangeText={handleInputChange}
-          autoFocus={true}
-          placeholder="Nome"
+       type === "password" ? (
+        <PasswordInput
+          placeHolder={"Senha"}
+          handleText={handleInputChange}
+          value={value}
           style={styles.inputAfter}
         />
       ) : (
+        <TextInput
+          value={value}
+          onChangeText={ (texto) => handleInputChange(texto)} 
+          autoFocus={true}
+          placeholder={label}
+          style={styles.inputAfter}
+        />
+      )
+        
+      ) : (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={styles.inputBefore}>
-            {inputValue || "Esperando informações..."}
+            {value}
           </Text>
           <View styles={styles.icon}>
           <TouchableOpacity onPress={handleEditClick}>

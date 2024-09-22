@@ -165,11 +165,13 @@ export default function HomePage() {
           style={styles.form}
           contentContainerStyle={styles.formContent}
         >
-          <EditableInputLabel label="Nome" />
 
-          <EditableInputLabel label="Email" />
+          <EditableInputLabel label="Nome" type="text" value={inputNome} handleInputChange={setInputNome}/>
 
-          <EditableInputLabel label="Senha" />
+          <EditableInputLabel label="Email" type="text" value={inputEmail} handleInputChange={setInputEmail}/>
+
+          <EditableInputLabel label="Senha" type="password" value={inputPassword} handleInputChange={setInputPassword}/>
+          
         </ScrollView>
 
         <Pressable
