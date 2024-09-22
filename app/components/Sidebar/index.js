@@ -85,7 +85,7 @@ export default function Sidebar({rotaAtual}){
       padding: 20,
     },
     selecionado:{
-      backgroundColor: colorScheme === "dark" ? `${cores.azulEscuroDark}CC`: `${cores.azulEscuro2Light}`,
+      backgroundColor: colorScheme === "dark" ? `${cores.azulEscuroDark}CC`: `${cores.azulEscuro2Light}CC`,
       padding: 20,
       borderRadius:10,
       

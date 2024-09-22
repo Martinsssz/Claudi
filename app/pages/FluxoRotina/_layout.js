@@ -1,7 +1,6 @@
-import { View, Text} from "react-native";
-import Header from "../../../components/Header";
-import Sidebar from "../../../components/Sidebar"
-import { Slot, Stack, usePathname } from "expo-router";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar"
+import { Slot, usePathname } from "expo-router";
 import { useEffect, useState } from "react";
 
 export default function Layout() {

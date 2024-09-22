@@ -1,5 +1,5 @@
 const cores = {
-  black: "#0000000",
+  black: "#000000",
   azulEscuroDark: "#153B59",
   azulDark: "#336790",
   azulClaroDark: "#D7E6F4",

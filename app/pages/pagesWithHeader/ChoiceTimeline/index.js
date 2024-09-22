@@ -43,7 +43,6 @@ const [activeId, setActiveId] = useState(null);
 function clique(id){
 
   setActiveId(id);
-
   Animated.sequence([
     Animated.timing(opacityAni, {
       toValue:0.3,
@@ -57,9 +56,9 @@ function clique(id){
     }),
   ]).start(() => {
     setActiveId(null);
+    router.navigate("../../FluxoRotina/TimelineDays")
   });
 }
-
 //***********************************************Estilos************************************************************************//
 const styles = StyleSheet.create({
   corpo:{
