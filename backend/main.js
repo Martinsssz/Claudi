@@ -155,7 +155,6 @@ app.post("/forgotPassword", async (req, res) => {
 
 app.post("/delete-account", async (req, res) => {
   const { userId } = req.body;
-  console.log(userId)
   const user = await User.findByPk(userId)
   if (user) {
     try {

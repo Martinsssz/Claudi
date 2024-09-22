@@ -36,7 +36,7 @@ export default function ChangePassword() {
 
     if(emailVerification.validate){
       try {
-        const response = await fetch("http://192.168.1.113:8080/forgotPassword", {
+        const response = await fetch("http://192.168.15.162:8080/forgotPassword", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

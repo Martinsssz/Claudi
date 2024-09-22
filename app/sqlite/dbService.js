@@ -48,7 +48,8 @@ export async function atualizarTabelaUsuario(id, nome, email, senha) {
 export async function deletarUsuario() {
   //Void
   await criarTabela();
-  const statement = await db.execAsync(`DELETE FROM user`);
+  await db.execAsync(`DELETE FROM user`);
+
 }
 
 export async function mostrarUsuario() {
@@ -57,4 +58,5 @@ export async function mostrarUsuario() {
   let pessoas = await db.getAllAsync(`SELECT * from user;`)
   console.log(pessoas)
   return pessoas[0];
+
 }
