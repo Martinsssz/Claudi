@@ -36,7 +36,7 @@ export default function ChangePassword() {
 
     if(emailVerification.validate){
       try {
-        const response = await fetch("http://192.168.15.162:8080/forgotPassword", {
+        const response = await fetch("http://192.168.3.14:8080/forgotPassword", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export default function ChangePassword() {
       fontSize: 18,
       fontWeight: "bold",
       marginBottom: 20,
-      color: "#000",
+      color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
       textAlign:"center"
     },
 
@@ -149,7 +149,7 @@ export default function ChangePassword() {
         <View style={styles.header}>
           <Pressable>
             <Link replace href={"/pages/Login"}>
-              <Icon name="arrow-back" size={24} color="#1E384D" />
+              <Icon name="arrow-back" size={24} color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} />
             </Link>
           </Pressable>
         </View>

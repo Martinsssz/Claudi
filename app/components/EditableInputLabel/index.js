@@ -24,6 +24,9 @@ export default function EditableInputLabel({
   const handleEditClick = () => {
     setIsEditing(true);
   };
+  const handleCancelClick = () => {
+    setIsEditing(false);
+    };
 
   //Estilos
   const styles = StyleSheet.create({
@@ -85,17 +88,17 @@ export default function EditableInputLabel({
         type === "password" ? (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <PasswordInput
-              placeHolder={"Senha"}
+              placeholder={"Senha"}
               handleText={handleInputChange}
               value={value}
               style={styles.inputAfter}
             />
             <View styles={styles.icon}>
-              <TouchableOpacity onPress={handleEditClick}>
+              <TouchableOpacity onPress={handleCancelClick}>
                 <Ionicons
                   name="close-circle"
                   size={24}
-                  color={cores.black}
+                  color={colorScheme === "dark" ? "#FFFFFF" : "#000000"}
                   alignSelf="flex-end"
                   padding={5}
                 ></Ionicons>
@@ -106,23 +109,24 @@ export default function EditableInputLabel({
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TextInput
               value={value}
-              onChangeText={(texto) => handleInputChange(texto)}
+              onChangeText={(text) => handleInputChange(text)}
               autoFocus={true}
               placeholder={label}
               style={styles.inputAfter}
             />
             <View styles={styles.icon}>
-              <TouchableOpacity onPress={handleEditClick}>
+              <TouchableOpacity onPress={handleCancelClick}>
                 <Ionicons
                   name="close-circle"
                   size={24}
-                  color={cores.black}
+                  color={colorScheme === "dark" ? "#FFFFFF" : "#000000"}
                   alignSelf="flex-end"
                   padding={5}
                 ></Ionicons>
               </TouchableOpacity>
             </View>
           </View>
+          
         )
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -132,7 +136,7 @@ export default function EditableInputLabel({
               <Ionicons
                 name="pencil"
                 size={24}
-                color={cores.black}
+                color={colorScheme === "dark" ? "#FFFFFF" : "#000000"}                
                 marginLeft={10}
               ></Ionicons>
             </TouchableOpacity>

@@ -58,5 +58,4 @@ export async function mostrarUsuario() {
   let pessoas = await db.getAllAsync(`SELECT * from user;`)
   console.log(pessoas)
   return pessoas[0];
-
 }

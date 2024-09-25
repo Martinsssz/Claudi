@@ -7,7 +7,7 @@ import {
   Pressable,
   Image,
   Button,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from "react-native";
 
 //********************************************Import de depêndencias e componentes**********************************************//
@@ -19,10 +19,13 @@ import cores from "../../../Util/coresPadrao";
 import { Link } from "expo-router";
 import InputLabel from "../../../components/InputLabel";
 import Popup from "../../../components/Popup";
-import { mostrarUsuario, deletarUsuario } from "../../../sqlite/dbService";
+import {
+  mostrarUsuario,
+  deletarUsuario,
+  atualizarTabelaUsuario,
+} from "../../../sqlite/dbService";
 import EditableInputLabel from "../../../components/EditableInputLabel";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function HomePage() {
   //**********************************************UseStates**********************************************************************//
@@ -35,6 +38,7 @@ export default function HomePage() {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
 
   useEffect(() => {
+    fetchUserData();
     const listener = Appearance.addChangeListener((scheme) => {
       setColorScheme(scheme.colorScheme);
     });
@@ -71,6 +75,24 @@ export default function HomePage() {
     }
   };
 
+  const fetchUserData = async () => {
+    const user = await mostrarUsuario();
+    if (user) {
+      setInputNome(user.username);
+      setInputEmail(user.email);
+      setInputPassword(user.password);
+    }
+  };
+
+  const updateUserData = async () => {
+    try {
+      await atualizarTabelaUsuario(id, nome, email, senha);
+    } catch (error) {
+      console.error(error);
+      
+    }
+  };
+
   //**********************************************Animações**********************************************************************//
 
   //***********************************************Estilos************************************************************************//
@@ -91,14 +113,13 @@ export default function HomePage() {
     fundo: {
       backgroundColor:
         colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-      height: "100%",
+      height: 740,
       paddingHorizontal: 20,
-      paddingVertical: 70,
+      paddingVertical: 90,
     },
 
     contentContainer: {
       flexDirection: "column",
-      height: "93%",
       gap: 20,
       alignItems: "center",
     },
@@ -108,14 +129,14 @@ export default function HomePage() {
       height: "60%",
       width: "100%",
       borderRadius: 10,
-      padding: 10,
+      padding: 20,
     },
     formContent: {
       flexDirection: "column",
       justifyContent: "space-around",
       gap: 40,
       zIndex: 1000,
-      marginTop: 20,
+      marginBottom: 10,
     },
 
     text: {
@@ -144,39 +165,51 @@ export default function HomePage() {
   });
   //***********************************************Tela***************************************************************************//
   return (
-    <>
+    <KeyboardAwareScrollView>
       <View style={styles.navbar}>
         <Pressable>
           <Link replace href={"/pages/pagesWithHeader/HomePage"}>
             <Ionicons
-              name="arrow-back-circle-outline"
+              name="arrow-back"
               color={colorScheme === "dark" ? "#FFFFFF" : "#000000"}
-              size={50}
+              size={30}
             />
           </Link>
         </Pressable>
         <Text style={styles.text}>Configurações</Text>
       </View>
 
-      
-      <KeyboardAwareScrollView
+      <ScrollView
         style={styles.fundo}
         contentContainerStyle={styles.contentContainer}
       >
         <Text style={styles.text}> Perfil do usuário </Text>
 
-        <KeyboardAwareScrollView
+        <ScrollView
           style={styles.form}
           contentContainerStyle={styles.formContent}
         >
+          <EditableInputLabel
+            label="Nome"
+            type="text"
+            value={inputNome}
+            handleInputChange={setInputNome}
+          />
 
-          <EditableInputLabel label="Nome" type="text" value={inputNome} handleInputChange={setInputNome}/>
+          <EditableInputLabel
+            label="Email"
+            type="text"
+            value={inputEmail}
+            handleInputChange={setInputEmail}
+          />
 
-          <EditableInputLabel label="Email" type="text" value={inputEmail} handleInputChange={setInputEmail}/>
-
-          <EditableInputLabel label="Senha" type="password" value={inputPassword} handleInputChange={setInputPassword}/>
-          
-        </KeyboardAwareScrollView>
+          <EditableInputLabel
+            label="Senha"
+            type="password"
+            value={inputPassword}
+            handleInputChange={setInputPassword}
+          />
+        </ScrollView>
 
         <Pressable
           style={styles.deleteAccount}
@@ -186,10 +219,10 @@ export default function HomePage() {
         >
           <Text style={styles.text}>Excluir conta</Text>
         </Pressable>
-        <Pressable style={styles.save}>
+        <Pressable style={styles.save} onPress={updateUserData}>
           <Text style={styles.text}>Salvar</Text>
         </Pressable>
-      </KeyboardAwareScrollView>
+      </ScrollView>
 
       {popup && (
         <Popup
@@ -201,6 +234,6 @@ export default function HomePage() {
           specialHandle={deleteAccount}
         />
       )}
-    </>
+    </KeyboardAwareScrollView>
   );
 }

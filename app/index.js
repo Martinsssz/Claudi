@@ -18,7 +18,7 @@ export default function App(){
   }, []);
   useFocusEffect(() =>{
     if(user){
-      router.replace("pages/PagesWithHeader/HomePage")
+      router.replace("pages/pagesWithHeader/HomePage")
     }
   })
   return user ? null : <Signup/>

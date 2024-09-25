@@ -1,6 +1,6 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import coresEscuras from "../../Util/coresPadrao";
+import cores from "../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
@@ -42,7 +42,7 @@ export default function ResetPassword() {
     if(passwordVerification.validate){
       try {
         const response = await fetch(
-          "http://192.168.1.113:8080/resetPasswordConfirm",
+          "http://192.168.3.14:8080/resetPasswordConfirm",
           {
             method: "POST",
             headers: {
@@ -86,11 +86,11 @@ export default function ResetPassword() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulEscuroDark : cores.azulClaro1Light,
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
     },
 
     header: {
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulDark : "#99B8D5",
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : "#99B8D5",
       height: 60,
       flexDirection: "row",
       alignItems: "center",
@@ -119,7 +119,7 @@ export default function ResetPassword() {
     input: {
       height: "auto",
       padding: 10,
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulClaroDark : coresEscuras.ghostWhite,
+      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       color: "black",
       paddingLeft: 7,
       fontSize: 19,
@@ -137,7 +137,7 @@ export default function ResetPassword() {
         textAlign: "center",
         fontSize: 19,
       },
-      backgroundColor: colorScheme === "dark" ? coresEscuras.azulDark : coresEscuras.azulLight,
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       padding: 13,
       borderRadius: 7,
       marginTop: 40,
