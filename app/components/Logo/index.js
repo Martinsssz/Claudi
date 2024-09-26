@@ -12,12 +12,12 @@ export default function Logo(header){
   const styles = StyleSheet.create({
     container:{ 
       width: "100%", 
-      height: 240,
       justifyContent: "center",
       alignItems: "center",
     },
     image:{
-      width: colorScheme === "dark" ?  "80%" : "100%"
+      height:"100%",
+      width: colorScheme === "dark" ?  "80%" : "100%",
     }
     
   })

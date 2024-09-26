@@ -21,5 +21,8 @@ export default function App(){
       router.replace("pages/pagesWithHeader/HomePage")
     }
   })
-  return user ? null : <Signup/>
+
+  setTimeout(() => {
+    return user ? null : <Signup/>
+  }, 3000);
 }

@@ -11,6 +11,8 @@ import Logo from "../../components/Logo";
 import { ScrollView } from "moti";
 import { checkPassword } from "../../Util/checkData";
 
+import ip from "../../Util/localhost";
+
 export default function ResetPassword() {
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -42,7 +44,7 @@ export default function ResetPassword() {
     if(passwordVerification.validate){
       try {
         const response = await fetch(
-          "http://192.168.3.14:8080/resetPasswordConfirm",
+          `${ip}/resetPasswordConfirm`,
           {
             method: "POST",
             headers: {

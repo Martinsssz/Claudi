@@ -1,13 +1,12 @@
 //Import de componentes
 import {
-  View,Text,
+  Text,
   StyleSheet,
   TextInput,
   Pressable,
   ScrollView,
   Animated,
   Appearance,
-  ActivityIndicator
 } from 'react-native'
 //********************************************Import de depêndencias e componentes***********************************************//
 import cores from '../../Util/coresPadrao'
@@ -16,9 +15,11 @@ import Logo from '../../components/Logo'
 import PasswordInput from '../../components/PasswordInput' 
 import Loginwith from '../../components/Loginwith'
 
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
 import { checkDataCadastro } from '../../Util/checkData'
 import Popup from '../../components/Popup'
+
+import ip from '../../Util/localhost'
 
 
 export default function Signup(){
@@ -53,7 +54,7 @@ async function sendData(){
     
   ){
     try {
-      const response = await fetch('http://192.168.3.14:8080/cadastrar', {
+      const response = await fetch(`${ip}/cadastrar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

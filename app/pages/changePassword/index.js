@@ -9,6 +9,8 @@ import Popup from "../../components/Popup";
 import Logo from "../../components/Logo";
 import { checkEmail } from "../../Util/checkData";
 
+import ip from "../../Util/localhost";
+
 export default function ChangePassword() {
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -36,7 +38,7 @@ export default function ChangePassword() {
 
     if(emailVerification.validate){
       try {
-        const response = await fetch("http://192.168.3.14:8080/forgotPassword", {
+        const response = await fetch(`${ip}/forgotPassword`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

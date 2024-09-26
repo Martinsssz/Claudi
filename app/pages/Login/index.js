@@ -20,6 +20,8 @@ import { checkDataLogin } from '../../Util/checkData'
 import Popup from '../../components/Popup'
 import { criarUsuario, deletarUsuario, mostrarUsuario } from '../../sqlite/dbService'
 
+import ip from '../../Util/localhost'
+
 
 
 export default function Login(){
@@ -50,7 +52,7 @@ export default function Login(){
   let dadosFiltrados = checkDataLogin(inputEmail, inputPassword)
   if(dadosFiltrados.validate){
     try {
-      const response = await fetch('http://192.168.3.14:8080/login', {
+      const response = await fetch(`${ip}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

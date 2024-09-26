@@ -12,17 +12,16 @@ import {
 //********************************************Import de depêndencias e componentes**********************************************//
 import { Ionicons } from "@expo/vector-icons"
 import React, { useRef } from "react"
-import Header from "../../../components/Header"
 import { useState, useEffect } from "react"
 import { Appearance } from "react-native"
 import cores from "../../../Util/coresPadrao"
-import { Link } from "expo-router"
+import { useRouter } from "expo-router"
 
 
 
 export default function ChoiceTimeline(){
-//**********************************************UseStates**********************************************************************//
-
+//**********************************************Hooks**********************************************************************//
+  const router = useRouter()
 //**********************************************Alteração automática de tema***************************************************//
 const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 
@@ -34,7 +33,7 @@ useEffect(() => {
 }, [])
 
 //************************************************Funções**********************************************************************//
-
+  
 //**********************************************Animações**********************************************************************//
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const opacityAni = useRef(new Animated.Value(1)).current; 

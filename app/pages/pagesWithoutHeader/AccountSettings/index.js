@@ -25,7 +25,10 @@ import {
   atualizarTabelaUsuario,
 } from "../../../sqlite/dbService";
 import EditableInputLabel from "../../../components/EditableInputLabel";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+import ip from "../../../Util/localhost";
+
 
 export default function HomePage() {
   //**********************************************UseStates**********************************************************************//
@@ -52,7 +55,7 @@ export default function HomePage() {
   const deleteAccount = async () => {
     let user = await mostrarUsuario();
     try {
-      const response = await fetch("http://192.168.3.14:8080/delete-account", {
+      const response = await fetch(`${ip}/delete-account`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
