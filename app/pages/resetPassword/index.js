@@ -30,8 +30,6 @@ export default function ResetPassword() {
   const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(null);
 
   const [popupVisibility, setPopupVisibility] = useState(false);
   const [popupText, setPopupText] = useState("");
@@ -102,14 +100,15 @@ export default function ResetPassword() {
 
     content: {
       padding: 20,
+      width: "100%"
     },
     
     contentContainer:{
       flexDirection:"column",
-      justifyContent: "space-between",
+      justifyContent: "center",
+      alignItems: "center",
       gap:5,
       paddingVertical:30,
-      left:0
     },
 
     title: {
@@ -120,6 +119,7 @@ export default function ResetPassword() {
     },
     input: {
       height: "auto",
+      width: "100%",
       padding: 10,
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       color: "black",

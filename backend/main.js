@@ -4,6 +4,7 @@ const cors = require("cors");
 const { Sequelize, where } = require("sequelize");
 const nodemailer = require("nodemailer");
 const { User, Token } = require("./models");
+const { SlideInDown } = require("react-native-reanimated");
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -152,6 +153,28 @@ app.post("/forgotPassword", async (req, res) => {
       .send({ message: "Erro ao enviar token de redefinição de senha" });
   }
 });
+
+app.post("/returnUser", async(req, res) => {
+  const { userId } = req.body;
+  const user = await User.findByPk(userId)
+  console.log(user)
+
+  if (user) {
+    try {
+      res.status(200).send({
+        message: "User found",
+        user: user
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    } 
+  } else {
+    console.error("userId is undefined");
+    res.status(404).json({ error: "User not found" });
+  }
+
+})
 
 app.post("/delete-account", async (req, res) => {
   const { userId } = req.body;

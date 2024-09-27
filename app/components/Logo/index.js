@@ -1,7 +1,7 @@
 import React from "react"
 import { View, Image, StyleSheet, Appearance} from "react-native"
 
-export default function Logo(header){
+export default function Logo({header}){
   const colorScheme = Appearance.getColorScheme();
   if(colorScheme === "dark"){
     var imagem = require("../../../assets/images/logoDarkMode.png")
@@ -11,13 +11,14 @@ export default function Logo(header){
 
   const styles = StyleSheet.create({
     container:{ 
-      width: "100%", 
+      width: "80%",
       justifyContent: "center",
       alignItems: "center",
+      aspectRatio: 1,
     },
     image:{
-      height:"100%",
-      width: colorScheme === "dark" ?  "80%" : "100%",
+      height:"120%",
+      aspectRatio: 1,
     }
     
   })

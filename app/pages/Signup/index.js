@@ -20,6 +20,8 @@ import { checkDataCadastro } from '../../Util/checkData'
 import Popup from '../../components/Popup'
 
 import ip from '../../Util/localhost'
+import { KeyboardAvoidingView } from 'react-native-web'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 
 export default function Signup(){
@@ -141,23 +143,30 @@ function transition(){
 
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
+    keyboard:{
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+    },
     scroll:{
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       padding: 20,
-      height: "100%",
+      flex: 1
+      
     },
     contentContainer:{
       flexDirection:"column",
-      justifyContent: "space-between",
+      justifyContent: "center",
+      alignItems: "center",
       gap:10,
-      paddingVertical:50,
-      left:0
+      left:0,
+      height: "100%",
     },
   
     form:{
-      height: "50%",
+      height: "45%",
+      width: "100%",
       gap: 15,
-      opacity: opacityForm
+      opacity: opacityForm,
+   
     },
     input:{
       height: "auto",
@@ -190,7 +199,7 @@ function transition(){
       paddingHorizontal:10,
       flexDirection:"row",
       justifyContent:"center",
-      marginBottom:20,
+      marginBottom:10,
     },
     opcoesAlternativasText:{
       fontSize:20,
@@ -211,56 +220,58 @@ function transition(){
 //***********************************************Tela****************************************************************************//
   return(
     <>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
-        <Logo/>
-        <Animated.View style={styles.form}>
-          <TextInput
-            placeholder='Nome'
-            style = {styles.input}
-            maxLength={256}
-            onChangeText={ (texto) => setInputNome(texto)}>
-          </TextInput>
+      <KeyboardAwareScrollView style={styles.keyboard}>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
+          <Logo header={false}/>
+          <Animated.View style={styles.form}>
+            <TextInput
+              placeholder='Nome'
+              style = {styles.input}
+              maxLength={256}
+              onChangeText={ (texto) => setInputNome(texto)}>
+            </TextInput>
 
-          <TextInput
-            placeholder='Email'
-            maxLength={256}
-            style = {styles.input}
-            onChangeText={ (texto) => setInputEmail(texto) }>
-          </TextInput>
+            <TextInput
+              placeholder='Email'
+              maxLength={256}
+              style = {styles.input}
+              onChangeText={ (texto) => setInputEmail(texto) }>
+            </TextInput>
 
 
-          <PasswordInput
-            placeHolder = {"Senha"}
-            handleText = {setInputPassword}
-            style={styles.input}
-          /> 
+            <PasswordInput
+              placeHolder = {"Senha"}
+              handleText = {setInputPassword}
+              style={styles.input}
+            /> 
 
-          <PasswordInput
-            placeHolder = {"Confirmar senha"}
-            handleText = {setInputConfirmPass}
-            style={styles.input}
-          /> 
+            <PasswordInput
+              placeHolder = {"Confirmar senha"}
+              handleText = {setInputConfirmPass}
+              style={styles.input}
+            /> 
 
-          <AnimatedPressable style={styles.button} onPress={sendData}>
-            <Text style={styles.button.text}>Cadastrar-se</Text>
-          </AnimatedPressable>
-        </Animated.View>
+            <AnimatedPressable style={styles.button} onPress={sendData}>
+              <Text style={styles.button.text}>Cadastrar-se</Text>
+            </AnimatedPressable>
+          </Animated.View>
 
+          
+          <Pressable style={styles.opcoesAlternativas} onPress={transition}>
+            <Text style={styles.opcoesAlternativasText}>Já tenho uma conta</Text>
+          </Pressable>
+          
+
+          
+          <Animated.View style={styles.siginWith}>
+            <Loginwith tipo = "0"></Loginwith>
+            <Loginwith tipo = "1"></Loginwith>
+            <Loginwith tipo = "2"></Loginwith>
+          </Animated.View>
+          
+        </ScrollView>
         
-        <Pressable style={styles.opcoesAlternativas} onPress={transition}>
-          <Text style={styles.opcoesAlternativasText}>Já tenho uma conta</Text>
-        </Pressable>
-        
-
-        
-        <Animated.View style={styles.siginWith}>
-          <Loginwith tipo = "0"></Loginwith>
-          <Loginwith tipo = "1"></Loginwith>
-          <Loginwith tipo = "2"></Loginwith>
-        </Animated.View>
-        
-      </ScrollView>
-      
+      </KeyboardAwareScrollView>
       {popupVisibility && (
         <Popup 
           message={popupText} 
@@ -270,7 +281,6 @@ function transition(){
           handle={setPopupVisibility}
         />
       )}
-      
     </>
   )
 }

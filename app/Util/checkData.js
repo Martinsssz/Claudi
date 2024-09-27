@@ -37,6 +37,16 @@ export function checkDataLogin(email, senha){
   return {message: "ok", validate:true}
 }
 
+export function checkName(nome){
+  if( nome === ""){
+    return {message: "Preencha todos os campos", validate:false}
+  }else if( nome.trim().length === 0){
+    return {message: "Preencha os campos corretamente", validate:false}
+  }
+
+  return {message: "ok", validate:true}
+}
+
 export function checkEmail(email){
   const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 

@@ -10,6 +10,7 @@ import Logo from "../../components/Logo";
 import { checkEmail } from "../../Util/checkData";
 
 import ip from "../../Util/localhost";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function ChangePassword() {
   //**********************************************Alteração automática de tema***************************************************//
@@ -76,6 +77,13 @@ export default function ChangePassword() {
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
+
+    main:{
+      backgroundColor:
+        colorScheme === "dark"
+          ? cores.azulEscuroDark
+          : cores.azulClaro1Light,
+    },
     container: {
       flex: 1,
       backgroundColor:
@@ -97,10 +105,12 @@ export default function ChangePassword() {
       paddingVertical:50,
       gap:25,
       justifyContent:"center",
+      alignItems: "center"
     },
 
     form:{
       height: "50%",
+      width: "100%",
       gap: 0,
     },
 
@@ -109,7 +119,7 @@ export default function ChangePassword() {
       fontWeight: "bold",
       marginBottom: 20,
       color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
-      textAlign:"center"
+      textAlign:"left",
     },
 
     input: {
@@ -146,34 +156,36 @@ export default function ChangePassword() {
 
   //***********************************************Tela***************************************************************************//
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Pressable>
-            <Link replace href={"/pages/Login"}>
-              <Icon name="arrow-back" size={24} color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} />
-            </Link>
-          </Pressable>
-        </View>
-
-        <View style={styles.content}>
-          <Logo/>
-          <View style={styles.form}>
-            <Text style={styles.title}> Informe seu e-mail para alterar a sua senha: </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-            />
-
-            <Pressable style={styles.button} onPress={handleResetPassword}>
-              <Text style={styles.button.text}>Redefinir senha</Text>
+      <>
+      <KeyboardAwareScrollView style={styles.main}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Pressable>
+              <Link replace href={"/pages/Login"}>
+                <Icon name="arrow-back" size={24} color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} />
+              </Link>
             </Pressable>
           </View>
 
+          <View style={styles.content}>
+            <Logo/>
+            <View style={styles.form}>
+              <Text style={styles.title}>Informe seu e-mail para alterar a sua senha: </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+              />
+
+              <Pressable style={styles.button} onPress={handleResetPassword}>
+                <Text style={styles.button.text}>Redefinir senha</Text>
+              </Pressable>
+            </View>
+
+          </View>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
 
       {popupVisibility && (
         <Popup

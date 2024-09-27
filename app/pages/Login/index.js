@@ -21,6 +21,7 @@ import Popup from '../../components/Popup'
 import { criarUsuario, deletarUsuario, mostrarUsuario } from '../../sqlite/dbService'
 
 import ip from '../../Util/localhost'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 
 
@@ -144,6 +145,10 @@ function clique(){
 
 //***********************************************Estilos************************************************************************//
 const styles = StyleSheet.create({ 
+    keyboard:{
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+      height: "100%"
+    },
     scroll:{
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       padding: 20,
@@ -151,13 +156,16 @@ const styles = StyleSheet.create({
     },
     contentContainer:{
       flexDirection:"column",
-      justifyContent: "space-between",
-      gap:5,
-      paddingVertical:50
+      justifyContent: "center",
+      alignItems: "center",
+      gap:20,
+      paddingVertical:60,
+      height: "100%"
     },
   
     form:{
-      height: "45%",
+      width: "100%",
+      height: "30%",
       gap: 20,
       justifyContent:"center",
       opacity: opacityForm
@@ -175,7 +183,7 @@ const styles = StyleSheet.create({
       borderColor: "black",
       borderRadius: 7,
       //Fim da borda
-    },
+    },    
     button:{
       text:{
         color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
@@ -213,48 +221,50 @@ const styles = StyleSheet.create({
 //***********************************************Tela****************************************************************************//
   return(
     <>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
-        <Logo/>
-        <Animated.View style={styles.form}>
-          <TextInput
-            placeholder='Email'
-            maxLength={256}
-            style = {styles.input}
-            onChangeText = {setInputEmail} >
-          </TextInput>
+      <KeyboardAwareScrollView style={styles.keyboard}>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
+          <Logo/>
+          <Animated.View style={styles.form}>
+            <TextInput
+              placeholder='Email'
+              maxLength={256}
+              style = {styles.input}
+              onChangeText = {setInputEmail} >
+            </TextInput>
 
-          <PasswordInput
-            placeHolder = {"Senha"}
-            handleText = {setInputPassword}
-            style={styles.input}
-          /> 
+            <PasswordInput
+              placeHolder = {"Senha"}
+              handleText = {setInputPassword}
+              style={styles.input}
+            /> 
 
-          <AnimatedPressable style={styles.button} onPress={sendData}>
-            <Text style={styles.button.text}>Entrar</Text>
-          </AnimatedPressable>
-        </Animated.View>
+            <AnimatedPressable style={styles.button} onPress={sendData}>
+              <Text style={styles.button.text}>Entrar</Text>
+            </AnimatedPressable>
+          </Animated.View>
 
-        <View style={styles.opcoesAlternativas}>
+          <View style={styles.opcoesAlternativas}>
 
-          <Pressable>
-            <Link replace href={"/pages/changePassword"}>
-              <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
-            </Link>
-          </Pressable>
+            <Pressable>
+              <Link replace href={"/pages/changePassword"}>
+                <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
+              </Link>
+            </Pressable>
 
-          <Pressable onPress={transition} >
-              <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
-          </Pressable>
+            <Pressable onPress={transition} >
+                <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
+            </Pressable>
+            
+          </View>
           
-        </View>
-        
 
-        <Animated.View style={styles.siginWith}>
-          <Loginwith tipo = "0"></Loginwith>
-          <Loginwith tipo = "1"></Loginwith>
-          <Loginwith tipo = "2"></Loginwith>
-        </Animated.View>
-      </ScrollView>
+          <Animated.View style={styles.siginWith}>
+            <Loginwith tipo = "0"></Loginwith>
+            <Loginwith tipo = "1"></Loginwith>
+            <Loginwith tipo = "2"></Loginwith>
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAwareScrollView>
 
       {popupVisibility && (
         <Popup 

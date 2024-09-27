@@ -1,4 +1,4 @@
-const ip = "http://192.168.1.113:8080"
+const ip = "http://192.168.137.55:8080"
 
 export default ip
 

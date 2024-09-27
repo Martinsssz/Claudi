@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal:10,
+    paddingHorizontal:6,
     zIndex:3,
     borderBottomColor:"black",
     borderBottomWidth: 1
@@ -61,9 +61,6 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
   },
-  hamburguer:{
-    
-  },
 })
 //***********************************************Tela****************************************************************************//
 return(
@@ -71,7 +68,7 @@ return(
 
     <View style={styles.userInfo}>
       <View style={styles.foto}>
-        <Logo/>
+        <Logo header={true}/>
       </View>
       <Text style={styles.nome}>Claudi</Text>
     </View>

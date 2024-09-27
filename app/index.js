@@ -19,10 +19,10 @@ export default function App(){
   useFocusEffect(() =>{
     if(user){
       router.replace("pages/pagesWithHeader/HomePage")
+      
     }
   })
+  return user ? null : <Signup/>
 
-  setTimeout(() => {
-    return user ? null : <Signup/>
-  }, 3000);
+
 }

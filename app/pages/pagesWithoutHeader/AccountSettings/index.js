@@ -78,6 +78,29 @@ export default function HomePage() {
     }
   };
 
+  const fetchSuperUserData = async() => {
+    let userLogged = await mostrarUsuario();
+    let idUserLogged = userLogged.id
+    try {
+      const response = await fetch(`${ip}/returnUser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: idUserLogged.id,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.data == 200) {
+        return(response.user)
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const fetchUserData = async () => {
     const user = await mostrarUsuario();
     if (user) {
@@ -89,7 +112,14 @@ export default function HomePage() {
 
   const updateUserData = async () => {
     try {
-      await atualizarTabelaUsuario(id, nome, email, senha);
+      const user =  await mostrarUsuario();
+      const id =  user.id;
+
+      let superUser = await fetchSuperUserData();
+
+      console.log(superUser)
+
+      await atualizarTabelaUsuario(id, inputNome, inputEmail, inputPassword);
     } catch (error) {
       console.error(error);
       
@@ -100,9 +130,11 @@ export default function HomePage() {
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
+    main:{
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+    },
     navbar: {
-      backgroundColor:
-        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       height: 90,
       flexDirection: "row",
       alignItems: "center",
@@ -116,7 +148,7 @@ export default function HomePage() {
     fundo: {
       backgroundColor:
         colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-      height: 740,
+      height: "100%",
       paddingHorizontal: 20,
       paddingVertical: 90,
     },
@@ -144,7 +176,11 @@ export default function HomePage() {
 
     text: {
       fontSize: 25,
-      color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
+      color: cores.ghostWhite
+    },
+    titulo:{
+      fontSize: 25,
+      color: colorScheme == "dark" ? cores.ghostWhite : cores.black
     },
 
     deleteAccount: {
@@ -168,7 +204,7 @@ export default function HomePage() {
   });
   //***********************************************Tela***************************************************************************//
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView style={styles.main}>
       <View style={styles.navbar}>
         <Pressable>
           <Link replace href={"/pages/pagesWithHeader/HomePage"}>
@@ -179,14 +215,14 @@ export default function HomePage() {
             />
           </Link>
         </Pressable>
-        <Text style={styles.text}>Configurações</Text>
+        <Text style={styles.titulo}>Configurações</Text>
       </View>
 
       <ScrollView
         style={styles.fundo}
         contentContainerStyle={styles.contentContainer}
       >
-        <Text style={styles.text}> Perfil do usuário </Text>
+        <Text style={styles.titulo}> Perfil do usuário </Text>
 
         <ScrollView
           style={styles.form}

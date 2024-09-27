@@ -35,7 +35,7 @@ export async function atualizarTabelaUsuario(id, nome, email, senha) {
   //Void
   await criarTabela();
   const statement = await db.prepareAsync(
-    `UPDATE user SET  username = $n, email = $e, password = $s WHERE user_id = $i;`
+    `UPDATE user SET  username = $n, email = $e, password = $s WHERE id = $i;`
   );
   await statement.executeAsync({
     $i: id,
@@ -56,6 +56,5 @@ export async function mostrarUsuario() {
   //Array
   await criarTabela();
   let pessoas = await db.getAllAsync(`SELECT * from user;`)
-  console.log(pessoas)
   return pessoas[0];
 }
