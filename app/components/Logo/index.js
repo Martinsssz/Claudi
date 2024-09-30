@@ -17,7 +17,7 @@ export default function Logo({header}){
       aspectRatio: 1,
     },
     image:{
-      height:"120%",
+      height: header ? "100%" : "120%",
       aspectRatio: 1,
     }
     

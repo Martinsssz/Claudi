@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 export default function Layout() {
   const pathname = usePathname();
   const [currentScreen, setCurrentScreen] = useState('');
+  
   useEffect(() => {
     setCurrentScreen(pathname);
   }, [pathname]);

@@ -1,17 +1,17 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import cores from "../../Util/coresPadrao";
+import cores from "../../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
 import { Link, router } from "expo-router";
-import Popup from "../../components/Popup";
-import PasswordInput from "../../components/PasswordInput";
-import Logo from "../../components/Logo";
+import Popup from "../../../components/Popup";
+import PasswordInput from "../../../components/PasswordInput";
+import Logo from "../../../components/Logo";
 import { ScrollView } from "moti";
-import { checkPassword } from "../../Util/checkData";
+import { checkPassword } from "../../../Util/checkData";
 
-import ip from "../../Util/localhost";
+import ip from "../../../Util/localhost";
 
 export default function ResetPassword() {
   //**********************************************Alteração automática de tema***************************************************//
@@ -142,6 +142,7 @@ export default function ResetPassword() {
       backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       padding: 13,
       borderRadius: 7,
+      width: "100%",
       marginTop: 40,
     },
   });
@@ -153,7 +154,7 @@ export default function ResetPassword() {
       
         <View style={styles.header}>
           <Pressable>
-            <Link replace href={"/pages/changePassword"}>
+            <Link replace href={"../changePassword"}>
               <Icon name="arrow-back" size={24} color="#FFF" />
             </Link>
           </Pressable>

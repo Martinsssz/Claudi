@@ -1,16 +1,16 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import cores from "../../Util/coresPadrao";
+import cores from "../../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
 import { Link, router } from "expo-router";
-import Popup from "../../components/Popup";
-import Logo from "../../components/Logo";
-import { checkEmail } from "../../Util/checkData";
+import Popup from "../../../components/Popup";
+import Logo from "../../../components/Logo";
+import { sendToken } from "../../../Util/sendToken";
 
-import ip from "../../Util/localhost";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 
 export default function ChangePassword() {
   //**********************************************Alteração automática de tema***************************************************//
@@ -23,44 +23,15 @@ export default function ChangePassword() {
     return () => listener.remove();
   }, []);
 
-  //**********************************************Animações**********************************************************************//
-
-  //************************************************Funções**********************************************************************/
+  //************************************************HOOKS*****************************************************/
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(null);
   const [popupVisibility, setPopupVisibility] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupOption, setPopupOption] = useState([]);
   const [popupColor, setPopupColor] = useState("");
+  //**********************************************Animações**********************************************************************//
 
-  async function handleResetPassword() {
-    let emailVerification = checkEmail(email)
-
-    if(emailVerification.validate){
-      try {
-        const response = await fetch(`${ip}/forgotPassword`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        });
-        const data = await response.json();
-        if (response.status == 200) {
-          popup(`Enviamos um e-mail para a conta ${email}`, null, "green");
-          router.replace("/pages/resetPassword");
-        } else {
-          popup("Erro ao enviar e-mail para a conta", null, "red");
-          setError(data.error);
-        }
-      } catch (error) {
-        setError(error.message);
-      }
-    }else{
-      popup(emailVerification.message, null, "red")
-    }
-  }
+  //************************************************Funções**********************************************************************/
 
   function popup(text, options = null, color = null) {
     setPopupVisibility(true);
@@ -75,6 +46,9 @@ export default function ChangePassword() {
     }
   }
 
+  function changePage(){
+    router.navigate("../resetPassword")
+  }
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
 
@@ -152,6 +126,13 @@ export default function ChangePassword() {
       borderRadius: 7,
       marginTop: 40,
     },
+    opcoesAlternativasText:{
+      fontSize:20,
+      color: colorScheme == "dark" ? "white" : "black",
+      textDecorationLine: "underline",
+      marginTop: "5%",
+      textAlign: "center"
+    },
   });
 
   //***********************************************Tela***************************************************************************//
@@ -161,7 +142,7 @@ export default function ChangePassword() {
         <View style={styles.container}>
           <View style={styles.header}>
             <Pressable>
-              <Link replace href={"/pages/Login"}>
+              <Link replace href={"../Login"}>
                 <Icon name="arrow-back" size={24} color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} />
               </Link>
             </Pressable>
@@ -178,9 +159,14 @@ export default function ChangePassword() {
                 onChangeText={(text) => setEmail(text)}
               />
 
-              <Pressable style={styles.button} onPress={handleResetPassword}>
-                <Text style={styles.button.text}>Redefinir senha</Text>
+              <Pressable style={styles.button} onPress={() => sendToken(popup, email)}>
+                <Text style={styles.button.text}>Enviar código</Text>
               </Pressable>
+
+              <Pressable style={styles.opcoesAlternativas} onPress={changePage}>
+                <Text style={styles.opcoesAlternativasText}>Já tenho um código</Text>
+              </Pressable>
+
             </View>
 
           </View>

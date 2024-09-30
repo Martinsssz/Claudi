@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import Signup from "./pages/Signup";
+import Signup from "./pages/fluxoAccount/Signup";
 import {useRouter, useFocusEffect } from "expo-router";
 import {mostrarUsuario} from "./sqlite/dbService";
 

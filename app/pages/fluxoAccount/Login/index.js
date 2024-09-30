@@ -1,35 +1,35 @@
 //Import de componentes
 import {
-  Text,
+  View,Text,
   StyleSheet,
   TextInput,
   Pressable,
   ScrollView,
   Animated,
-  Appearance,
+  Appearance
 } from 'react-native'
 //********************************************Import de depêndencias e componentes***********************************************//
-import cores from '../../Util/coresPadrao'
+import cores from '../../../Util/coresPadrao'
 import React, { useState, useEffect, useRef } from 'react'
-import Logo from '../../components/Logo'
-import PasswordInput from '../../components/PasswordInput' 
-import Loginwith from '../../components/Loginwith'
+import Logo from '../../../components/Logo'
+import PasswordInput from '../../../components/PasswordInput' 
+import Loginwith from '../../../components/Loginwith'
+import { Link, router } from 'expo-router'
 
-import { router } from 'expo-router'
-import { checkDataCadastro } from '../../Util/checkData'
-import Popup from '../../components/Popup'
+import { checkDataLogin } from '../../../Util/checkData'
+import Popup from '../../../components/Popup'
+import { criarUsuario, deletarUsuario, mostrarUsuario } from '../../../sqlite/dbService'
 
-import ip from '../../Util/localhost'
-import { KeyboardAvoidingView } from 'react-native-web'
+import ip from '../../../Util/localhost'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 
-export default function Signup(){
+
+export default function Login(){
 //**********************************************UseStates**********************************************************************//
-  const[inputName,setInputNome] = useState("")
   const[inputEmail,setInputEmail] = useState("")
   const[inputPassword,setInputPassword] = useState("")
-  const[inputConfirmPass,setInputConfirmPass] = useState("")
+
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 
   const[popupVisibility, setPopupVisibility] = useState(false)
@@ -47,36 +47,37 @@ export default function Signup(){
 
   
   
-//************************************************Funções**********************************************************************//
-async function sendData(){
-  clique()
-  
-  let dadosFiltrados = checkDataCadastro(inputName, inputEmail, inputPassword, inputConfirmPass)
-  if(dadosFiltrados.validate
-    
-  ){
+  //************************************************Funções**********************************************************************//
+  async function  sendData(){
+
+  let dadosFiltrados = checkDataLogin(inputEmail, inputPassword)
+  if(dadosFiltrados.validate){
     try {
-      const response = await fetch(`${ip}/cadastrar`, {
+      const response = await fetch(`${ip}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: inputName, 
           email: inputEmail, 
           password: inputPassword, 
         }),
       });
 
-  
       const data = await response.json()
-      if (response.status === 201) {
-        popup("Usuario cadastrado com sucesso", ["Ir para tela de login", "/pages/Login"], "green")
-      } else if(response.status === 500){
-        popup("Email já cadastrado", ["Fazer login", "/pages/Login"], "yellow")
-      }else {
-        alert("Erro ao criar usuário.")
-        popup("Erro ao criar usuário. Tente novamente mais tarde", null, "orange")
+
+      if (response.status === 200) {
+        popup("Efetivado", null, "green")
+        router.replace("/pages/pagesWithHeader/HomePage")
+        criarUsuario(data.user)
+        mostrarUsuario()
+
+      } else if(response.status === 401){
+        popup("Email ou senha incorretos", null, "red")
+      }else if(response.status === 404){
+        popup("Usuário não encontrado", null, "red")
+      }else{
+        popup("O login falhou. Tente novamente mais tarde", null, "orange")
       }
     } catch (error) {
       console.error('Erro na requisição:', error)
@@ -102,13 +103,26 @@ function popup(text, options=null, color=null){
 
 //**********************************************Animações**********************************************************************//
 
-//Inicio
+//inicio
 const opacityForm = useRef(new Animated.Value(0)).current
 Animated.timing(opacityForm, {
   toValue:1,
-  duration: 150,
+  duration: 350,
   useNativeDriver: true
 }).start()
+
+//Transicionar para tela de cadastro
+function transition(){
+  Animated.timing(opacityForm, {
+    toValue:0,
+    duration: 150,
+    useNativeDriver: true
+  }).start()
+
+  setTimeout(() =>{
+    router.navigate("../Signup")
+  }, 150)
+}
 
 //Clique no pressable
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
@@ -128,45 +142,33 @@ function clique(){
   ]).start()
 }
 
-//Transicionar para tela de login
-function transition(){
-  Animated.timing(opacityForm, {
-    toValue:0,
-    duration: 150,
-    useNativeDriver: true
-  }).start()
-
-  setTimeout(() =>{
-    router.replace("/pages/Login")
-  }, 150)
-}
 
 //***********************************************Estilos************************************************************************//
-  const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({ 
     keyboard:{
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+      height: "100%"
     },
     scroll:{
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       padding: 20,
-      flex: 1
-      
+      height: "100%",
     },
     contentContainer:{
       flexDirection:"column",
       justifyContent: "center",
       alignItems: "center",
-      gap:10,
-      left:0,
-      height: "100%",
+      gap:20,
+      paddingVertical:60,
+      height: "100%"
     },
   
     form:{
-      height: "45%",
       width: "100%",
-      gap: 15,
-      opacity: opacityForm,
-   
+      height: "30%",
+      gap: 20,
+      justifyContent:"center",
+      opacity: opacityForm
     },
     input:{
       height: "auto",
@@ -181,7 +183,7 @@ function transition(){
       borderColor: "black",
       borderRadius: 7,
       //Fim da borda
-    },
+    },    
     button:{
       text:{
         color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
@@ -190,16 +192,15 @@ function transition(){
       },
       backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       padding: 13,
-      borderRadius: 7,
-      opacity: opacityAni
+      borderRadius: 7
     },
 
     opcoesAlternativas:{
       width: "100%",
       paddingHorizontal:10,
       flexDirection:"row",
-      justifyContent:"center",
-      marginBottom:10,
+      justifyContent:"space-between",
+      marginBottom:20,
     },
     opcoesAlternativasText:{
       fontSize:20,
@@ -222,22 +223,14 @@ function transition(){
     <>
       <KeyboardAwareScrollView style={styles.keyboard}>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
-          <Logo header={false}/>
+          <Logo/>
           <Animated.View style={styles.form}>
-            <TextInput
-              placeholder='Nome'
-              style = {styles.input}
-              maxLength={256}
-              onChangeText={ (texto) => setInputNome(texto)}>
-            </TextInput>
-
             <TextInput
               placeholder='Email'
               maxLength={256}
               style = {styles.input}
-              onChangeText={ (texto) => setInputEmail(texto) }>
+              onChangeText = {setInputEmail} >
             </TextInput>
-
 
             <PasswordInput
               placeHolder = {"Senha"}
@@ -245,33 +238,34 @@ function transition(){
               style={styles.input}
             /> 
 
-            <PasswordInput
-              placeHolder = {"Confirmar senha"}
-              handleText = {setInputConfirmPass}
-              style={styles.input}
-            /> 
-
             <AnimatedPressable style={styles.button} onPress={sendData}>
-              <Text style={styles.button.text}>Cadastrar-se</Text>
+              <Text style={styles.button.text}>Entrar</Text>
             </AnimatedPressable>
           </Animated.View>
 
-          
-          <Pressable style={styles.opcoesAlternativas} onPress={transition}>
-            <Text style={styles.opcoesAlternativasText}>Já tenho uma conta</Text>
-          </Pressable>
+          <View style={styles.opcoesAlternativas}>
+
+            <Pressable>
+              <Link replace href={"../changePassword"}>
+                <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
+              </Link>
+            </Pressable>
+
+            <Pressable onPress={transition} >
+                <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
+            </Pressable>
+            
+          </View>
           
 
-          
           <Animated.View style={styles.siginWith}>
             <Loginwith tipo = "0"></Loginwith>
             <Loginwith tipo = "1"></Loginwith>
             <Loginwith tipo = "2"></Loginwith>
           </Animated.View>
-          
         </ScrollView>
-        
       </KeyboardAwareScrollView>
+
       {popupVisibility && (
         <Popup 
           message={popupText} 
@@ -282,5 +276,6 @@ function transition(){
         />
       )}
     </>
+
   )
 }

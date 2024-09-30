@@ -1,10 +1,9 @@
 //**********************************************************Imports*****************************************************/
 const express = require("express");
 const cors = require("cors");
-const { Sequelize, where } = require("sequelize");
+const { Sequelize } = require("sequelize");
 const nodemailer = require("nodemailer");
 const { User, Token } = require("./models");
-const { SlideInDown } = require("react-native-reanimated");
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -256,7 +255,7 @@ async function updateUserResetPasswordToken(userId, token) {
 async function testToken(token) {
   try {
     let verificacao = await Token.findOne({
-      where: { token: token },
+      where: { token: token, used:true},
     });
 
     return verificacao;
@@ -306,7 +305,3 @@ async function generateToken(user) {
     generateToken();
   }
 }
-
-
-  
-

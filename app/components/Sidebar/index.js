@@ -141,7 +141,7 @@ export default function Sidebar({rotaAtual}){
           message = "Tem certeza que deseja sair?"
           cor     = "yellow"
           option  = "Sair da conta"
-          link    = "/pages/Signup" 
+          link    = "/pages/fluxoAccount/Signup" 
           handle  = {setPopup}
           specialHandle = {sairDaConta}
         />
