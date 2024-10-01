@@ -12,7 +12,8 @@ import cores from '../../Util/coresPadrao'
 
 export default function WeekDays({handleWeek, orientation}){
 //**********************************************Hooks**********************************************************************//
-const [days,setDays] = useState([])
+
+const [json, setJson] = useState({})
 
 //********************************************Variáveis******************************************************************//
 const labelDias = ['D','S','T','Q','Q','S',"S"]
@@ -30,21 +31,22 @@ const labelDias = ['D','S','T','Q','Q','S',"S"]
   
 //************************************************Funções**********************************************************************//  
 const getColor = (id) => {
-  const value = days.includes(id) ? cores.azulDark : null;
+  const value = id in json ? cores.azulDark : null;
 
   return value;
 };
 
-function clique(id){
+function clique(id) {
+  const updatedJson = { ...json }
 
-  if( days.includes(id) ){
-    newDays = days.filter( (day) => day != id )
-  }else{
-    newDays = [...days, id]
+  if (id in updatedJson) {
+    delete updatedJson[id]
+  } else {
+    updatedJson[id] = undefined 
   }
-  setDays(newDays)
-  handleWeek(newDays)
 
+  setJson(updatedJson)
+  handleWeek(updatedJson)
 }
 //**********************************************Animações**********************************************************************//
 
@@ -81,7 +83,7 @@ function clique(id){
 //***********************************************Tela****************************************************************************//
   return(
     <View style={styles.principal}>
-      {["d","s","t","q","qu","se","sa"].map( (day,index) => (
+      {["1","2","3","4","5","6","7"].map( (day,index) => (
         <Pressable 
           key={day}
           style={[
@@ -90,7 +92,10 @@ function clique(id){
           ]} 
           onPress={ () => clique(day) }
         >
-          <Text style={ [styles.text, {color: days.includes(day) ? "white" : "black"} ] }>{labelDias[index]}</Text>
+          <Text style={ [styles.text, {color: day in json ? "white" : "black"} ] }> 
+            {labelDias[index]}
+          </Text>
+
         </Pressable>
       ))}
 

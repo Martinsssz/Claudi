@@ -1,19 +1,20 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import cores from "../../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
-import { Link, router } from "expo-router";
+import { Link, router, useRouter } from "expo-router";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+//**********************************************COMPONENTES************************************************************/
 import Popup from "../../../components/Popup";
 import Logo from "../../../components/Logo";
 import { sendToken } from "../../../Util/sendToken";
-
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import cores from "../../../Util/coresPadrao";
 
 
 export default function ChangePassword() {
-  //**********************************************Alteração automática de tema***************************************************//
+//**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
 
   useEffect(() => {
@@ -23,15 +24,17 @@ export default function ChangePassword() {
     return () => listener.remove();
   }, []);
 
-  //************************************************HOOKS*****************************************************/
+//************************************************HOOKS*****************************************************/
   const [email, setEmail] = useState("");
   const [popupVisibility, setPopupVisibility] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupOption, setPopupOption] = useState([]);
   const [popupColor, setPopupColor] = useState("");
-  //**********************************************Animações**********************************************************************//
 
-  //************************************************Funções**********************************************************************/
+  const router = useRouter()
+//**********************************************Animações**********************************************************************//
+
+//************************************************Funções**********************************************************************/
 
   function popup(text, options = null, color = null) {
     setPopupVisibility(true);
@@ -47,9 +50,21 @@ export default function ChangePassword() {
   }
 
   function changePage(){
-    router.navigate("../resetPassword")
+    router.navigate({ pathname:"../resetPassword",  params:{email: undefined} });
   }
-  //***********************************************Estilos************************************************************************//
+
+  async function tokenGenerate(){
+    const response = await sendToken(popup, email);
+
+    if(response){
+      setTimeout(()=>{
+        router.navigate({ pathname:"../resetPassword", params:{email: email} })
+      },3000)
+    }
+  }
+
+
+//***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
 
     main:{
@@ -126,6 +141,7 @@ export default function ChangePassword() {
       borderRadius: 7,
       marginTop: 40,
     },
+
     opcoesAlternativasText:{
       fontSize:20,
       color: colorScheme == "dark" ? "white" : "black",
@@ -135,7 +151,7 @@ export default function ChangePassword() {
     },
   });
 
-  //***********************************************Tela***************************************************************************//
+//***********************************************Tela*********************************************************************//
   return (
       <>
       <KeyboardAwareScrollView style={styles.main}>
@@ -159,7 +175,7 @@ export default function ChangePassword() {
                 onChangeText={(text) => setEmail(text)}
               />
 
-              <Pressable style={styles.button} onPress={() => sendToken(popup, email)}>
+              <Pressable style={styles.button} onPress={tokenGenerate}>
                 <Text style={styles.button.text}>Enviar código</Text>
               </Pressable>
 

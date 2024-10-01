@@ -1,20 +1,23 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import cores from "../../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
-import { Link, router } from "expo-router";
+import { Link, router, useGlobalSearchParams} from "expo-router";
+
+import { ScrollView } from "moti";
+
+//**************************************COMPONENTES***********************************************************************/
+import ip from "../../../Util/localhost";
 import Popup from "../../../components/Popup";
 import PasswordInput from "../../../components/PasswordInput";
 import Logo from "../../../components/Logo";
-import { ScrollView } from "moti";
+import cores from "../../../Util/coresPadrao";
 import { checkPassword } from "../../../Util/checkData";
-
-import ip from "../../../Util/localhost";
+import { sendToken } from "../../../Util/sendToken";
 
 export default function ResetPassword() {
-  //**********************************************Alteração automática de tema***************************************************//
+//**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
 
   useEffect(() => {
@@ -24,9 +27,12 @@ export default function ResetPassword() {
     return () => listener.remove();
   }, []);
 
-  //**********************************************Animações**********************************************************************//
+//**********************************************Animações**********************************************************************//
+const { email } = useGlobalSearchParams();
 
-  //************************************************Funções**********************************************************************/
+//**********************************************HOOKS**********************************************************************//
+
+//************************************************Funções**********************************************************************/
   const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -57,7 +63,7 @@ export default function ResetPassword() {
         const data = await response.json();
         
         if (response.status === 200) {
-          popup("Senha alterada com sucesso", ["Ir para tela de login", "/pages/Login"], "green")
+          popup("Senha alterada com sucesso", ["Ir para tela de login", "../Login"], "green")
         } else {
           popup("Código inválido", null, "red")
         }
@@ -82,7 +88,11 @@ export default function ResetPassword() {
     }
   }
 
-  //***********************************************Estilos************************************************************************//
+  function reSendCode(){
+    sendToken(email)
+  }
+
+//***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -108,7 +118,7 @@ export default function ResetPassword() {
       justifyContent: "center",
       alignItems: "center",
       gap:5,
-      paddingVertical:30,
+      paddingVertical:10,
     },
 
     title: {
@@ -145,9 +155,17 @@ export default function ResetPassword() {
       width: "100%",
       marginTop: 40,
     },
+
+    opcoesAlternativasText:{
+      fontSize:20,
+      color: colorScheme == "dark" ? "white" : "black",
+      textDecorationLine: "underline",
+      marginTop: "5%",
+      textAlign: "center"
+    },
   });
 
-  //***********************************************Tela***************************************************************************//
+//***********************************************Tela***************************************************************************//
   return (
     <>
       <View style={styles.container}>
@@ -185,6 +203,12 @@ export default function ResetPassword() {
           <Pressable style={styles.button} onPress={handleSubmit}>
             <Text style={styles.button.text}>Redefinir senha</Text>
           </Pressable>
+
+          {email && (
+            <Pressable onPress={reSendCode}>
+              <Text style={styles.opcoesAlternativasText}>Reenviar código</Text>
+            </Pressable>
+          )}
         </ScrollView>
       </View>
 

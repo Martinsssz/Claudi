@@ -6,14 +6,21 @@ import {
   Animated,
   Appearance,
   TextInput,
+  Dimensions
 } from 'react-native'
-//********************************************Import de depêndencias e componentes******************************************//
+
 import React, { useState, useEffect } from 'react'
+//********************************************COMPONENTES******************************************************************//
 import cores from '../../Util/coresPadrao'
 
 
-export default function LabelAndHour({label1, label2, handleData, isActived}){
+
+export default function LabelAndHour({label1, label2, handleData, isActived, id, data}){
 //**********************************************Hooks**********************************************************************//
+const {width,  height} = Dimensions.get('window')
+
+const [valueAcordar, setValueAcordar] = useState("")
+const [valueDormir, setValueDormir] = useState("")
 
 
 //********************************************Variáveis******************************************************************//
@@ -31,7 +38,24 @@ export default function LabelAndHour({label1, label2, handleData, isActived}){
   }, [])
   
 //************************************************Funções**********************************************************************//  
+  function formatar(text, handleInput, value){
+    const regex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
+    if(value.length > text.length &&  text.length == 2 && value.includes(":")){
+      formatedText = text.slice(0, -1)
+      handleInput(formatedText)
+      
+    }else if(text.length == 2 && !text.includes(":")){
+      formatedText = text + ":"
+      handleInput(formatedText)
+
+    }else if( text.length == 5 && !regex.test(text) ){
+      handleInput("")
+      
+    }else{
+      handleInput(text)
+    }
+  }
 //**********************************************Animações**********************************************************************//
 
 //***********************************************Estilos************************************************************************//
@@ -48,18 +72,17 @@ export default function LabelAndHour({label1, label2, handleData, isActived}){
     input:{
       borderColor: cores.black,
       borderWidth: 1,
-      flexGrow: .2,
       padding: 5,
-      paddingHorizontal: 20,
+      paddingHorizontal: 10,
       fontSize: 20,
-      backgroundColor: cores.ghostWhite,
+      backgroundColor: isActived ? cores.ghostWhite : "gray" ,
       color: cores.black,
       placeholderTextColor: cores.black
     },
     text:{
       color:"white",
       marginRight: 10,
-      fontSize: 15
+      fontSize: 16
     }
   })
 //***********************************************Tela****************************************************************************//
@@ -68,20 +91,29 @@ export default function LabelAndHour({label1, label2, handleData, isActived}){
       <View style={styles.inputArea}>
         <Text style={styles.text}>{label1}</Text>
         <TextInput
-          placeholder='xx:xx'
+          placeholder='hh:mm'
           style={styles.input}
-          keyboardType='numeric'
+          keyboardType='number-pad'
+          maxLength={5}
+          editable={isActived}
+          value={valueAcordar}
+          onChangeText={ (text) => formatar(text, setValueAcordar, valueAcordar) }
         />
       </View>
 
       <View style={styles.inputArea}>
         <Text style={styles.text}>{label2}</Text>
         <TextInput
-          placeholder='xx:xx'
+          placeholder='hh:mm'
           style={styles.input}
+          keyboardType='numeric'
+          maxLength={5}
+          editable={isActived}
+          value={valueDormir}
+          onChangeText={ (text) => formatar(text, setValueDormir, valueDormir) }
         />
       </View>
-     
+
     </View>
   )
 }

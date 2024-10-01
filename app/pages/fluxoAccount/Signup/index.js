@@ -7,25 +7,26 @@ import {
   ScrollView,
   Animated,
   Appearance,
+  Dimensions,
+  PixelRatio
 } from 'react-native'
-//********************************************Import de depêndencias e componentes***********************************************//
+
+import { router } from 'expo-router'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import React, { useState, useEffect, useRef} from 'react'
+//********************************************componentes*****************************************************************//
 import cores from '../../../Util/coresPadrao'
-import React, { useState, useEffect, useRef } from 'react'
 import Logo from '../../../components/Logo'
 import PasswordInput from '../../../components/PasswordInput' 
 import Loginwith from '../../../components/Loginwith'
-
-import { router } from 'expo-router'
 import { checkDataCadastro } from '../../../Util/checkData'
 import Popup from '../../../components/Popup'
-
 import ip from '../../../Util/localhost'
-import { KeyboardAvoidingView } from 'react-native-web'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 
 
 export default function Signup(){
-//**********************************************UseStates**********************************************************************//
+//**********************************************HOOKS*******************************************************************//
   const[inputName,setInputNome] = useState("")
   const[inputEmail,setInputEmail] = useState("")
   const[inputPassword,setInputPassword] = useState("")
@@ -37,15 +38,15 @@ export default function Signup(){
   const[popupOption, setPopupOption] = useState([])
   const[popupColor, setPopupColor] = useState("")
 
-//**********************************************Alteração automática de tema*****************************************************//
+  const { width, height } = Dimensions.get('window');
+
+//**********************************************Alteração automática de tema************************************************//
   useEffect(() => {
     const listener = Appearance.addChangeListener(( scheme ) => {
       setColorScheme(scheme.colorScheme)
     })
     return () => listener.remove()
   }, [])
-
-  
   
 //************************************************Funções**********************************************************************//
 async function sendData(){
@@ -143,31 +144,28 @@ function transition(){
 
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
-    keyboard:{
-      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-    },
     scroll:{
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       padding: 20,
-      flex: 1
-      
+      flex: 1,
+      height: height
     },
+
     contentContainer:{
+      flexGrow: 1,
       flexDirection:"column",
       justifyContent: "center",
       alignItems: "center",
-      gap:10,
-      left:0,
-      height: "100%",
+      gap:20,
     },
   
     form:{
-      height: "45%",
+      height: "auto",
       width: "100%",
       gap: 15,
       opacity: opacityForm,
-   
     },
+
     input:{
       height: "auto",
       padding: 10,
@@ -182,6 +180,7 @@ function transition(){
       borderRadius: 7,
       //Fim da borda
     },
+
     button:{
       text:{
         color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
@@ -201,6 +200,7 @@ function transition(){
       justifyContent:"center",
       marginBottom:10,
     },
+    
     opcoesAlternativasText:{
       fontSize:20,
       color: colorScheme == "dark" ? "white" : "black",
@@ -208,7 +208,7 @@ function transition(){
     },
 
     siginWith:{
-      height: 60,
+      height: 50,
       width: "100%",
       flexDirection:"row",
       justifyContent:"center",
@@ -220,7 +220,7 @@ function transition(){
 //***********************************************Tela****************************************************************************//
   return(
     <>
-      <KeyboardAwareScrollView style={styles.keyboard}>
+      <KeyboardAwareScrollView>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
           <Logo header={false}/>
           <Animated.View style={styles.form}>

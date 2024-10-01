@@ -1,4 +1,4 @@
-const ip = "http://192.168.40.178:8080"
+const ip = "http://192.168.1.113:8080"
 
 export default ip
 
@@ -9,5 +9,5 @@ Anotar abaixo as páginas que precisa usar esse recurso
  - Login
  - ResetPassword
  - AccountSettings
- - changePassword
+ - Util/sendTokens
 */

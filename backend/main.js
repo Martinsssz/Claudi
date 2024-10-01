@@ -111,7 +111,8 @@ app.post("/resetPasswordConfirm", async (req, res) => {
     let user = await testToken(token);
     await invalidOldTokensByToken(token);
     await alterarSenha(user.user_id, password);
-    res.status(200).send({ message: "Senha alterada com sucesso" });
+    res.status(200).send({ message: "Senha alterada com sucesso" })
+
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Erro ao alterar senha" });
@@ -255,7 +256,7 @@ async function updateUserResetPasswordToken(userId, token) {
 async function testToken(token) {
   try {
     let verificacao = await Token.findOne({
-      where: { token: token, used:true},
+      where: { token: token, used: false},
     });
 
     return verificacao;

@@ -1,6 +1,6 @@
 import ip from "./localhost";
 import { checkEmail } from "./checkData";
-import { router } from "expo-router";
+
 
 
 export async function sendToken(popup, email) {
@@ -17,17 +17,18 @@ export async function sendToken(popup, email) {
         });
         const data = await response.json();
         if (response.status == 200) {
-          popup(`Enviamos um e-mail para a conta ${email}`, null, "green");
-          setTimeout(()=>{
-            router.replace("pages/fluxoAccount/resetPassword");
-          },3000)
+          popup(`Enviamos um e-mail para a conta ${email}`, null, "green")
+          return true
         } else {
-          popup("Erro ao enviar e-mail para a conta", null, "red");
+          popup("Erro ao enviar e-mail para a conta", null, "red")
+          return false
         }
       } catch (error) {
         console.log(error)
+        return false
       }
     }else{
       popup(emailVerification.message, null, "red")
+      return false
     }
 }
