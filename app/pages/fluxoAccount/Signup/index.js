@@ -72,9 +72,9 @@ async function sendData(){
   
       const data = await response.json()
       if (response.status === 201) {
-        popup("Usuario cadastrado com sucesso", ["Ir para tela de login", "/pages/Login"], "green")
+        popup("Usuario cadastrado com sucesso", ["Ir para tela de login", "/pages/flxoAccou/tLogin"], "green")
       } else if(response.status === 500){
-        popup("Email já cadastrado", ["Fazer login", "/pages/Login"], "yellow")
+        popup("Email já cadastrado", ["Fazer login", "/pages/fluxoAccount/Login"], "yellow")
       }else {
         alert("Erro ao criar usuário.")
         popup("Erro ao criar usuário. Tente novamente mais tarde", null, "orange")

@@ -154,16 +154,15 @@ app.post("/forgotPassword", async (req, res) => {
   }
 });
 
-app.post("/returnUser", async(req, res) => {
-  const { userId } = req.body;
-  const user = await User.findByPk(userId)
-  console.log(user)
+app.post("/updateDataUser", async(req, res) => {
+  const { userId,  name, email, password  } = req.body;
 
-  if (user) {
+  resultOfUpdate = updateDataUser(userId, name, email, password);
+
+  if (resultOfUpdate) {
     try {
       res.status(200).send({
-        message: "User found",
-        user: user
+        message: "Data has been updated",
       });
     } catch (error) {
       console.error(error);
@@ -193,6 +192,23 @@ app.post("/delete-account", async (req, res) => {
 });
 
 //*********************************************************FUNÇÕES******************************************************/
+async function updateDataUser(id, name, email, password){
+  try{
+    User.update(
+      { 
+        password: password,
+        name: name,
+        email: email
+      }, 
+      { where: { id: id } });
+    
+    return true
+  }catch{
+    console.log("User not found 404")
+    return false
+  }
+}
+
 async function procurarUsuario(email) {
   try {
     let verificacao = await User.findOne({

@@ -5,8 +5,6 @@ import {
   ScrollView,
   StyleSheet,
   Pressable,
-  Image,
-  Button,
   KeyboardAvoidingView,
 } from "react-native";
 
@@ -17,11 +15,9 @@ import { useState, useEffect } from "react";
 import { Appearance } from "react-native";
 import cores from "../../../Util/coresPadrao";
 import { Link } from "expo-router";
-import InputLabel from "../../../components/InputLabel";
 import Popup from "../../../components/Popup";
 import {
   mostrarUsuario,
-  deletarUsuario,
   atualizarTabelaUsuario,
 } from "../../../sqlite/dbService";
 import EditableInputLabel from "../../../components/EditableInputLabel";
@@ -78,17 +74,19 @@ export default function HomePage() {
     }
   };
 
-  const fetchSuperUserData = async() => {
-    let userLogged = await mostrarUsuario();
-    let idUserLogged = userLogged.id
+  const fetchatualizar = async(userId,  nome, email, password) => {
+
     try {
-      const response = await fetch(`${ip}/returnUser`, {
+      const response = await fetch(`${ip}/updateDataUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: idUserLogged.id,
+          userId: userId,
+          name: nome,
+          email: email,
+          password: password
         }),
       });
 
@@ -115,9 +113,7 @@ export default function HomePage() {
       const user =  await mostrarUsuario();
       const id =  user.id;
 
-      let superUser = await fetchSuperUserData();
-
-      console.log(superUser)
+      await fetchatualizar(id,  inputNome, inputEmail, inputPassword);
 
       await atualizarTabelaUsuario(id, inputNome, inputEmail, inputPassword);
     } catch (error) {

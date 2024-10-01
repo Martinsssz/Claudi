@@ -2,15 +2,13 @@
 import {
   View,Text,
   StyleSheet,
-  TextInput,
   Pressable,
   ScrollView,
-  Animated,
   Appearance,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Dimensions,
 } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import React, { useState, useEffect, useRef } from 'react'
 
 //********************************************Import de depêndencias e componentes***********************************************//
@@ -21,8 +19,9 @@ import LabelAndHour from '../../../components/LabelAndHour'
 
 
 export default function TimelineDays(){
-//**********************************************UseStates**********************************************************************//
+//**********************************************HOOKS**********************************************************************//
   const [dataWeek, setDataWeek] = useState({})
+  const {width, height} = Dimensions.get('window')
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
   useEffect(() => {
@@ -57,6 +56,7 @@ export default function TimelineDays(){
     scroll:{
       width:"100%",
       height: "100%",
+      backgroundColor: "green"
     },
     scrollContent:{
       flexDirection:"row",
@@ -68,10 +68,24 @@ export default function TimelineDays(){
 
     labels:{
       width: "100%",
-      alignItems: "center",
+      backgroundColor: "yellow",
+      alignItems: "flex-start",
       justifyContent:  "space-around",
+    },
 
-    }
+    save: {
+      padding: 15,
+      backgroundColor: cores.azulDark,
+      borderRadius: 10,
+      zIndex: 2,
+      position: "relative",
+      alignSelf: "flex-end",
+      bottom: 0,
+    },
+    text: {
+      fontSize: 25,
+      color: cores.ghostWhite
+    },
   })
 //***********************************************Tela****************************************************************************//
   return(
@@ -79,7 +93,7 @@ export default function TimelineDays(){
       behavior={Platform.OS === "ios" ? "padding" : "height"} 
       style={{ flex: 1 }} 
     >
-      <ScrollView style={styles.principal} contentContainerStyle={styles.stylecontent}>
+      <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
         <BackArrow link={"../../pagesWithHeader/ChoiceTimeline"}></BackArrow>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           <WeekDays handleWeek={setDataWeek} orientation={"column"}/>
@@ -97,8 +111,14 @@ export default function TimelineDays(){
               />
             ))}
           </View>
+
+
         </ScrollView>
+          <Pressable style={styles.save}>
+            <Text style={styles.text}>Salvar</Text>
+          </Pressable>
       </ScrollView>
+
     </KeyboardAvoidingView>
   )
 }

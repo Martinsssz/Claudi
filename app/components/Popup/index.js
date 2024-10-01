@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable, Appearance } from "react-native";
+import { View, Text, StyleSheet, Pressable, Appearance, PixelRatio } from "react-native";
 import { Link } from "expo-router";
 import cores from '../../Util/coresPadrao'
 
 export default function Popup({message, cor, option, link, handle, specialHandle}){
+
   let colorScheme = Appearance.getColorScheme()
 
   const styles = StyleSheet.create({
@@ -46,7 +47,7 @@ export default function Popup({message, cor, option, link, handle, specialHandle
       backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
     },
     optionText:{
-      fontSize:16,
+      fontSize: 16 * PixelRatio.getFontScale(),
       color: colorScheme === "dark" ? "white" : "blakc"
     }
 

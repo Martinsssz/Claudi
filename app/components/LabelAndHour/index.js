@@ -61,28 +61,31 @@ const [valueDormir, setValueDormir] = useState("")
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
     main:{
-      flexDirection: "row",
       width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-around",
+      backgroundColor: "purple"
+
     },
     inputArea:{
+      width: "auto",
       flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: 5,
+      backgroundColor: "blue"
     },
     input:{
       borderColor: cores.black,
       borderWidth: 1,
       padding: 5,
-      paddingHorizontal: 10,
-      fontSize: 20,
+      fontSize: 17,
       backgroundColor: isActived ? cores.ghostWhite : "gray" ,
       color: cores.black,
       placeholderTextColor: cores.black
     },
     text:{
-      color:"white",
+      color: colorScheme == "dark" ? "white" : "black",
       marginRight: 10,
-      fontSize: 16
+      fontSize: 15
     }
   })
 //***********************************************Tela****************************************************************************//

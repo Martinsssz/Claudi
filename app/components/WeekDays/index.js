@@ -56,16 +56,15 @@ function clique(id) {
       flexDirection: orientation,
       backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite,
       borderColor:"black",
-      borderWidth: 2,
       width: "auto",
       alignItems: "center",
       justifyContent: "space-around",
       padding: orientation == "column" ? 10 : 5, 
-      gap: orientation == "column" ? 30 : 10, 
+      gap: orientation == "column" ? 27 : 10, 
       alignSelf: "flex-start"
     },
     weekDay:{
-      padding:5,
+      padding:3,
       aspectRatio:1,
       flex:1,
       borderRadius: 50,
@@ -77,7 +76,7 @@ function clique(id) {
 
     text:{
       color:"black",
-      fontSize: 20,
+      fontSize: 18,
     }
   })
 //***********************************************Tela****************************************************************************//
