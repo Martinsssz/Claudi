@@ -14,30 +14,31 @@ export default function Popup({message, cor, option, link, handle, specialHandle
       alignItems: 'center',
       zIndex: 999, 
       backgroundColor: 'rgba(0, 0, 0, 0.6)',
-      padding: 20
+      padding: 20,
     },
     popup:{
-      borderColor: cor ? cor : "yellow",
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       borderStyle: "solid",
-      borderWidth: 2,
       width: "100%",
-      height: "20%",
+      height: "30%",
       paddingHorizontal: 20,
+      elevation: 20,
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "space-around",
+      borderRadius: 10
     },
     mensagem:{
       fontSize:25,
-      color: colorScheme === "dark" ? "white" : "blakc"
+      color: colorScheme === "dark" ? "white" : "black",
+      textAlign: "justify",
 
     },
     options:{
       width: "100%",
+      height: "20%",
       flexDirection: "row",
-      gap: 6,   
-
+      gap: 20,   
     },
     optionsButton:{
       flex: 1,
@@ -45,10 +46,14 @@ export default function Popup({message, cor, option, link, handle, specialHandle
       justifyContent: "center",
       padding: 10,
       backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+      borderRadius: 10,
+
     },
     optionText:{
       fontSize: 16 * PixelRatio.getFontScale(),
-      color: colorScheme === "dark" ? "white" : "blakc"
+      color: colorScheme === "dark" ? "white" : "black",
+      alignSelf: "center"
+
     }
 
   })
