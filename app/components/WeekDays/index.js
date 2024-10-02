@@ -10,7 +10,7 @@ import React, { useState, useEffect } from 'react'
 import cores from '../../Util/coresPadrao'
 
 
-export default function WeekDays({handleWeek, orientation}){
+export default function WeekDays({handleWeek, orientation, dias}){
 //**********************************************Hooks**********************************************************************//
 
 const [json, setJson] = useState({})
@@ -56,11 +56,11 @@ function clique(id) {
       flexDirection: orientation,
       backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite,
       borderColor:"black",
-      width: "auto",
+      width: "15%",
       alignItems: "center",
       justifyContent: "space-around",
       padding: orientation == "column" ? 10 : 5, 
-      gap: orientation == "column" ? 27 : 10, 
+      gap: orientation == "column" ? 30 : 10, 
       alignSelf: "flex-start"
     },
     weekDay:{

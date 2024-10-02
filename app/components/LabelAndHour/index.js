@@ -2,11 +2,8 @@
 import {
   View,Text,
   StyleSheet,
-  Pressable,
-  Animated,
   Appearance,
   TextInput,
-  Dimensions
 } from 'react-native'
 
 import React, { useState, useEffect } from 'react'
@@ -17,11 +14,9 @@ import cores from '../../Util/coresPadrao'
 
 export default function LabelAndHour({label1, label2, handleData, isActived, id, data}){
 //**********************************************Hooks**********************************************************************//
-const {width,  height} = Dimensions.get('window')
 
 const [valueAcordar, setValueAcordar] = useState("")
 const [valueDormir, setValueDormir] = useState("")
-
 
 //********************************************Variáveis******************************************************************//
 
@@ -51,27 +46,47 @@ const [valueDormir, setValueDormir] = useState("")
 
     }else if( text.length == 5 && !regex.test(text) ){
       handleInput("")
-      
+
+    }else if( text.length == 5 && regex.test(text) ){
+      handleInput(text)
+      if(valueAcordar.length == 5 || valueDormir.length == 5){
+        saveInJson()
+      }
+
     }else{
       handleInput(text)
     }
   }
+
+  function  saveInJson(){
+    let newValues = {
+      "inicio": valueAcordar,
+      "fim": valueDormir
+    }
+    data[id] = newValues
+    handleData(data)
+  }
+
+  useEffect(() =>{
+    if(valueAcordar.length == 5 && valueDormir.length == 5 && isActived){
+      saveInJson()
+    }
+  }, [isActived])
 //**********************************************Animações**********************************************************************//
 
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
     main:{
-      width: "100%",
+      width: "80%",
       flexDirection: "row",
       justifyContent: "space-around",
-      backgroundColor: "purple"
 
     },
     inputArea:{
       width: "auto",
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "blue"
+
     },
     input:{
       borderColor: cores.black,

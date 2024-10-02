@@ -8,21 +8,26 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  PixelRatio
 } from 'react-native'
-import React, { useState, useEffect, useRef } from 'react'
-import { router } from 'expo-router'
+import React, { useState, useEffect } from 'react'
+import { useGlobalSearchParams  } from 'expo-router'
 
 //********************************************Import de depêndencias e componentes***********************************************//
 import BackArrow from "../../../components/BackArrow"
 import cores from '../../../Util/coresPadrao'
-import WeekDays from '../../../components/WeekDays'
-import LabelAndHour from '../../../components/LabelAndHour'
+
+import Task from '../../../components/Task'
 
 
-export default function TimelineDays(){
+export default function TaskList(){
 //**********************************************HOOKS**********************************************************************//
   const [dataWeek, setDataWeek] = useState({})
   const {width, height} = Dimensions.get('window')
+
+  let {data} = useGlobalSearchParams()
+  data = JSON.parse(data)
+
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
   useEffect(() => {
@@ -37,13 +42,6 @@ export default function TimelineDays(){
   for(i=1;i<=7;i++){
     numeroComponents.push(`${i}`)
   }
-
-  function nextStage(){
-    router.navigate({
-      pathname: '../TaskList',
-      params: {data:  JSON.stringify(dataWeek)}
-    })
-  }
 //**********************************************Animações**********************************************************************//
 
 //***********************************************Estilos************************************************************************//
@@ -57,40 +55,11 @@ export default function TimelineDays(){
     },
     
     styleContent:{
-      justifyContent:"flex-start"
+      justifyContent:"flex-start",
+      gap: PixelRatio.get() * 10
     },
 
-    scroll:{
-      width:"100%",
-      height: "100%",
-    },
-    scrollContent:{
-      flexDirection:"row",
-      justifyContent: "flex-start",
-      gap:10,
-      paddingVertical:50,
-      left:0
-    },
-
-    labels:{
-      width: "100%",
-      alignItems: "flex-start",
-      justifyContent:  "space-around",
-    },
-
-    save: {
-      padding: 15,
-      backgroundColor: cores.azulDark,
-      borderRadius: 10,
-      zIndex: 2,
-      position: "relative",
-      alignSelf: "flex-end",
-      bottom: 0,
-    },
-    text: {
-      fontSize: 25,
-      color: cores.ghostWhite
-    },
+   
   })
 //***********************************************Tela****************************************************************************//
   return(
@@ -100,27 +69,11 @@ export default function TimelineDays(){
     >
       <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
         <BackArrow link={"../../pagesWithHeader/ChoiceTimeline"}></BackArrow>
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          <WeekDays handleWeek={setDataWeek} orientation={"column"}/>
 
-          <View style={styles.labels}>
-            {numeroComponents.map((component) => (
-              <LabelAndHour 
-                label1={"Início"} 
-                label2={"Fim"} 
-                handleData={setDataWeek} 
-                data={dataWeek}
-                isActived={component in dataWeek}
-                id={component}
-              />
-            ))}
-          </View>
-
-
+        <ScrollView>
+          <Task/>
         </ScrollView>
-          <Pressable style={styles.save} onPress={nextStage}>
-            <Text style={styles.text}>Próxima</Text>
-          </Pressable>
+
       </ScrollView>
 
     </KeyboardAvoidingView>
