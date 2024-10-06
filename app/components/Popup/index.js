@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Appearance, PixelRatio } from "react
 import { Link } from "expo-router";
 import cores from '../../Util/coresPadrao'
 
-export default function Popup({message, cor, option, link, handle, specialHandle}){
+export default function Popup({title, message, cor, option, link, handle, specialHandle}){
 
   let colorScheme = Appearance.getColorScheme()
 
@@ -17,7 +17,7 @@ export default function Popup({message, cor, option, link, handle, specialHandle
       padding: 20,
     },
     popup:{
-      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuro2Light : cores.azulClaro1Light,
       borderStyle: "solid",
       width: "100%",
       height: "30%",
@@ -28,10 +28,17 @@ export default function Popup({message, cor, option, link, handle, specialHandle
       justifyContent: "space-around",
       borderRadius: 10
     },
+    titulo: {
+      fontWeight: "800",
+      fontSize: 25,
+      color: colorScheme === "dark" ? "#FFF" : cores.black,
+      marginTop: 30
+    },
     mensagem:{
-      fontSize:25,
+      fontSize: 18,
       color: colorScheme === "dark" ? "white" : "black",
       textAlign: "justify",
+      marginBottom: 10
 
     },
     options:{
@@ -45,13 +52,12 @@ export default function Popup({message, cor, option, link, handle, specialHandle
       flexDirection:"row",
       justifyContent: "center",
       padding: 10,
-      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
-      borderRadius: 10,
-
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : `${cores.azulEscuro2Light}CC`,
+      borderRadius: 15,
     },
     optionText:{
-      fontSize: 16 * PixelRatio.getFontScale(),
-      color: colorScheme === "dark" ? "white" : "black",
+      fontSize: 18 * PixelRatio.getFontScale(),
+      color: colorScheme === "dark" ? "white" : "white",
       alignSelf: "center"
 
     }
@@ -61,13 +67,16 @@ export default function Popup({message, cor, option, link, handle, specialHandle
   return(
     <View style={styles.container}>
       <View style={styles.popup}>
+        <Text style={styles.titulo}>
+          {title}
+        </Text>
         <Text style={styles.mensagem}>
           {message}
         </Text>
 
         <View style={styles.options} >
           <Pressable style={styles.optionsButton} onPress={() =>  handle(false) }>  
-            <Text style={styles.optionText}>Voltar</Text>  
+            <Text style={styles.optionText}>Cancelar</Text>  
           </Pressable>
           {option && option != "" && (
             <Link replace href={link} asChild>

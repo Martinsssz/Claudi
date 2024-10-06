@@ -21,10 +21,9 @@ import {
   atualizarTabelaUsuario,
 } from "../../../sqlite/dbService";
 import EditableInputLabel from "../../../components/EditableInputLabel";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import ip from "../../../Util/localhost";
-
 
 export default function HomePage() {
   //**********************************************UseStates**********************************************************************//
@@ -32,6 +31,8 @@ export default function HomePage() {
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
   const [popup, setPopup] = useState(false);
+  const [popup1, setPopup1] = useState(false);
+
 
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -74,8 +75,7 @@ export default function HomePage() {
     }
   };
 
-  const fetchatualizar = async(userId,  nome, email, password) => {
-
+  const fetchatualizar = async (userId, nome, email, password) => {
     try {
       const response = await fetch(`${ip}/updateDataUser`, {
         method: "POST",
@@ -86,18 +86,18 @@ export default function HomePage() {
           userId: userId,
           name: nome,
           email: email,
-          password: password
+          password: password,
         }),
       });
 
       const data = await response.json();
       if (response.data == 200) {
-        return(response.user)
+        return response.user;
       }
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const fetchUserData = async () => {
     const user = await mostrarUsuario();
@@ -110,15 +110,14 @@ export default function HomePage() {
 
   const updateUserData = async () => {
     try {
-      const user =  await mostrarUsuario();
-      const id =  user.id;
+      const user = await mostrarUsuario();
+      const id = user.id;
 
-      await fetchatualizar(id,  inputNome, inputEmail, inputPassword);
+      await fetchatualizar(id, inputNome, inputEmail, inputPassword);
 
       await atualizarTabelaUsuario(id, inputNome, inputEmail, inputPassword);
     } catch (error) {
       console.error(error);
-      
     }
   };
 
@@ -126,11 +125,13 @@ export default function HomePage() {
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
-    main:{
-      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+    main: {
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
     },
     navbar: {
-      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       height: 90,
       flexDirection: "row",
       alignItems: "center",
@@ -172,11 +173,11 @@ export default function HomePage() {
 
     text: {
       fontSize: 25,
-      color: cores.ghostWhite
+      color: cores.ghostWhite,
     },
-    titulo:{
+    titulo: {
       fontSize: 25,
-      color: colorScheme == "dark" ? cores.ghostWhite : cores.black
+      color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
     },
 
     deleteAccount: {
@@ -254,19 +255,35 @@ export default function HomePage() {
         >
           <Text style={styles.text}>Excluir conta</Text>
         </Pressable>
-        <Pressable style={styles.save} onPress={updateUserData}>
+        <Pressable
+          style={styles.save}
+          onPress={() => {
+            setPopup1(true);
+          }}
+        >
           <Text style={styles.text}>Salvar</Text>
         </Pressable>
       </ScrollView>
 
       {popup && (
         <Popup
+          title="Excluir Conta"
           message="Tem certeza que deseja excluir sua conta?"
-          cor="red"
-          option="Excluir conta"
+          option="Excluir"
           link="/pages/Signup"
           handle={setPopup}
           specialHandle={deleteAccount}
+        />
+      )}
+
+      {popup1 && (
+        <Popup
+          title="Informações salvas!"
+          message="Suas informações foram atualizadas, deseja voltar para a tela inicial?"
+          option="Voltar"
+          link="/pages/pagesWithHeader/HomePage"
+          handle={setPopup1}
+          specialHandle={updateUserData}
         />
       )}
     </KeyboardAwareScrollView>
