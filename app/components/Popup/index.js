@@ -20,19 +20,20 @@ export default function Popup({title, message, cor, option, link, handle, specia
       backgroundColor: colorScheme === "dark" ? cores.azulEscuro2Light : cores.azulClaro1Light,
       borderStyle: "solid",
       width: "100%",
-      height: "30%",
+      height: "27%",
       paddingHorizontal: 20,
       elevation: 20,
       flexDirection: "column",
       alignItems: "center",
-      justifyContent: "space-around",
+      justifyContent: "center",
+      gap: PixelRatio.get() * 5,
       borderRadius: 10
     },
+
     titulo: {
       fontWeight: "800",
       fontSize: 25,
       color: colorScheme === "dark" ? "#FFF" : cores.black,
-      marginTop: 30
     },
     mensagem:{
       fontSize: 18,
@@ -68,10 +69,11 @@ export default function Popup({title, message, cor, option, link, handle, specia
     <View style={styles.container}>
       <View style={styles.popup}>
         <Text style={styles.titulo}>
-          {title}
+          {title ? title : "Erro"}
         </Text>
         <Text style={styles.mensagem}>
           {message}
+
         </Text>
 
         <View style={styles.options} >

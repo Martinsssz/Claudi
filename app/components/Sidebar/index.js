@@ -43,12 +43,12 @@ export default function Sidebar({ rotaAtual }) {
   }, []);
 
   const handleToggleTheme = () => {
-    if (theme === "light") {
+    if (colorScheme === "light") {
       Appearance.setColorScheme("dark");
-      setTheme("dark");
+      setColorScheme("dark");
     } else {
       Appearance.setColorScheme("light");
-      setTheme("light");
+      setColorScheme("light");
     }
   };
 
