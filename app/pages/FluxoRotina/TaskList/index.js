@@ -22,11 +22,12 @@ import Task from '../../../components/Task'
 
 export default function TaskList(){
 //**********************************************HOOKS**********************************************************************//
-  const [dataWeek, setDataWeek] = useState({})
+  const [dataTasks, setDataTasks] = useState({})
   const {width, height} = Dimensions.get('window')
 
   let {data} = useGlobalSearchParams()
   data = JSON.parse(data)
+  
 
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
@@ -59,23 +60,37 @@ export default function TaskList(){
       gap: PixelRatio.get() * 10
     },
 
+    title:{
+      fontSize: PixelRatio.getFontScale()*35,
+      textAlign: "center",
+      color: colorScheme === "dark" ? "white" : "black"
+    },
+
+    tasks:{
+      gap: PixelRatio.get()*30,
+      marginBottom: PixelRatio.get()*30
+    }
+
    
   })
 //***********************************************Tela****************************************************************************//
   return(
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"} 
-      style={{ flex: 1 }} 
-    >
-      <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
-        <BackArrow link={"../../pagesWithHeader/ChoiceTimeline"}></BackArrow>
+    <>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"} 
+        style={{ flex: 1 }} 
+      >
+        <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
+          <BackArrow link={"../../pagesWithHeader/ChoiceTimeline"}></BackArrow>
+          <Text style={styles.title}>Compromissos</Text>
+          <ScrollView contentContainerStyle={styles.tasks}>
+            <Task data={data} handleData={setDataTasks} tasks={dataTasks}/>
+            <Task data={data} handleData={setDataTasks} tasks={dataTasks}/>
+          </ScrollView>
 
-        <ScrollView>
-          <Task/>
         </ScrollView>
 
-      </ScrollView>
-
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   )
 }

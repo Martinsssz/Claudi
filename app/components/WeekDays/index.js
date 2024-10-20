@@ -4,6 +4,8 @@ import {
   StyleSheet,
   Pressable,
   Appearance,
+  Dimensions,
+  PixelRatio
 } from 'react-native'
 //********************************************Import de depêndencias e componentes******************************************//
 import React, { useState, useEffect } from 'react'
@@ -13,12 +15,30 @@ import cores from '../../Util/coresPadrao'
 export default function WeekDays({handleWeek, orientation, dias}){
 //**********************************************Hooks**********************************************************************//
 
-const [json, setJson] = useState({})
+  const [json, setJson] = useState({})
+  const {width, height} = Dimensions.get('window')
 
 //********************************************Variáveis******************************************************************//
-const labelDias = ['D','S','T','Q','Q','S',"S"]
+  const days = {
+    "sunday": "D",
+    "monday": "S",
+    "tuesday": "T",
+    "wednesday": "Q",
+    "thursday": "Q",
+    "friday": "S",
+    "saturday": "S"
+  }
 
-
+  let keys = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"]
+  if(dias){
+    let  newKeys = []
+    keys.forEach(key => {
+      if(dias.includes(key)){
+        newKeys.push(key)
+      }
+    });
+    keys = newKeys
+  }
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 
@@ -42,7 +62,7 @@ function clique(id) {
   if (id in updatedJson) {
     delete updatedJson[id]
   } else {
-    updatedJson[id] = undefined 
+    updatedJson[id] = null 
   }
 
   setJson(updatedJson)
@@ -53,7 +73,7 @@ function clique(id) {
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
     principal:{
-      flexDirection: orientation,
+      flexDirection: "column",
       backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite,
       borderColor:"black",
       width: "15%",
@@ -63,10 +83,10 @@ function clique(id) {
       gap: orientation == "column" ? 30 : 10, 
       alignSelf: "flex-start"
     },
+
     weekDay:{
-      padding:3,
+      padding: PixelRatio.get()*2,
       aspectRatio:1,
-      flex:1,
       borderRadius: 50,
       justifyContent: "center",
       alignItems: "center",
@@ -82,7 +102,7 @@ function clique(id) {
 //***********************************************Tela****************************************************************************//
   return(
     <View style={styles.principal}>
-      {["1","2","3","4","5","6","7"].map( (day,index) => (
+      {keys.map( (day) => (
         <Pressable 
           key={day}
           style={[
@@ -92,7 +112,7 @@ function clique(id) {
           onPress={ () => clique(day) }
         >
           <Text style={ [styles.text, {color: day in json ? "white" : "black"} ] }> 
-            {labelDias[index]}
+            {days[day]}
           </Text>
 
         </Pressable>

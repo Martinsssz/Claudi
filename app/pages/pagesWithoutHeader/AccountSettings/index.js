@@ -201,69 +201,71 @@ export default function HomePage() {
   });
   //***********************************************Tela***************************************************************************//
   return (
-    <KeyboardAwareScrollView style={styles.main}>
-      <View style={styles.navbar}>
-        <Pressable>
-          <Link replace href={"/pages/pagesWithHeader/HomePage"}>
-            <Ionicons
-              name="arrow-back"
-              color={colorScheme === "dark" ? "#FFFFFF" : "#000000"}
-              size={30}
-            />
-          </Link>
-        </Pressable>
-        <Text style={styles.titulo}>Configurações</Text>
-      </View>
-
-      <ScrollView
-        style={styles.fundo}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <Text style={styles.titulo}> Perfil do usuário </Text>
+    <>
+      <KeyboardAwareScrollView style={styles.main}>
+        <View style={styles.navbar}>
+          <Pressable>
+            <Link replace href={"/pages/pagesWithHeader/HomePage"}>
+              <Ionicons
+                name="arrow-back"
+                color={colorScheme === "dark" ? "#FFFFFF" : "#000000"}
+                size={30}
+              />
+            </Link>
+          </Pressable>
+          <Text style={styles.titulo}>Configurações</Text>
+        </View>
 
         <ScrollView
-          style={styles.form}
-          contentContainerStyle={styles.formContent}
+          style={styles.fundo}
+          contentContainerStyle={styles.contentContainer}
         >
-          <EditableInputLabel
-            label="Nome"
-            type="text"
-            value={inputNome}
-            handleInputChange={setInputNome}
-          />
+          <Text style={styles.titulo}> Perfil do usuário </Text>
 
-          <EditableInputLabel
-            label="Email"
-            type="text"
-            value={inputEmail}
-            handleInputChange={setInputEmail}
-          />
+          <ScrollView
+            style={styles.form}
+            contentContainerStyle={styles.formContent}
+          >
+            <EditableInputLabel
+              label="Nome"
+              type="text"
+              value={inputNome}
+              handleInputChange={setInputNome}
+            />
 
-          <EditableInputLabel
-            label="Senha"
-            type="password"
-            value={inputPassword}
-            handleInputChange={setInputPassword}
-          />
+            <EditableInputLabel
+              label="Email"
+              type="text"
+              value={inputEmail}
+              handleInputChange={setInputEmail}
+            />
+
+            <EditableInputLabel
+              label="Senha"
+              type="password"
+              value={inputPassword}
+              handleInputChange={setInputPassword}
+            />
+          </ScrollView>
+
+          <Pressable
+            style={styles.deleteAccount}
+            onPress={() => {
+              setPopup(true);
+            }}
+          >
+            <Text style={styles.text}>Excluir conta</Text>
+          </Pressable>
+          <Pressable
+            style={styles.save}
+            onPress={() => {
+              setPopup1(true);
+            }}
+          >
+            <Text style={styles.text}>Salvar</Text>
+          </Pressable>
         </ScrollView>
-
-        <Pressable
-          style={styles.deleteAccount}
-          onPress={() => {
-            setPopup(true);
-          }}
-        >
-          <Text style={styles.text}>Excluir conta</Text>
-        </Pressable>
-        <Pressable
-          style={styles.save}
-          onPress={() => {
-            setPopup1(true);
-          }}
-        >
-          <Text style={styles.text}>Salvar</Text>
-        </Pressable>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {popup && (
         <Popup
@@ -286,6 +288,6 @@ export default function HomePage() {
           specialHandle={updateUserData}
         />
       )}
-    </KeyboardAwareScrollView>
+    </>
   );
 }

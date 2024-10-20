@@ -9,14 +9,20 @@ import {
 import React, { useState, useEffect } from 'react'
 //********************************************COMPONENTES******************************************************************//
 import cores from '../../Util/coresPadrao'
+import Popup from '../Popup'
 
 
 
 export default function LabelAndHour({label1, label2, handleData, isActived, id, data}){
 //**********************************************Hooks**********************************************************************//
 
-const [valueAcordar, setValueAcordar] = useState("")
-const [valueDormir, setValueDormir] = useState("")
+  const [valueAcordar, setValueAcordar] = useState("")
+  const [valueDormir, setValueDormir] = useState("")
+
+  const[popupVisibility, setPopupVisibility] = useState(false)
+  const[popupText, setPopupText] = useState("")
+  const[popupOption, setPopupOption] = useState([])
+  const[popupColor, setPopupColor] = useState("")
 
 //********************************************Variáveis******************************************************************//
 
@@ -49,19 +55,15 @@ const [valueDormir, setValueDormir] = useState("")
 
     }else if( text.length == 5 && regex.test(text) ){
       handleInput(text)
-      if(valueAcordar.length == 5 || valueDormir.length == 5){
-        saveInJson()
-      }
-
     }else{
       handleInput(text)
     }
   }
 
-  function  saveInJson(){
+  function saveInJson(){
     let newValues = {
-      "inicio": valueAcordar,
-      "fim": valueDormir
+      "start": valueAcordar,
+      "end": valueDormir
     }
     data[id] = newValues
     handleData(data)
@@ -69,9 +71,19 @@ const [valueDormir, setValueDormir] = useState("")
 
   useEffect(() =>{
     if(valueAcordar.length == 5 && valueDormir.length == 5 && isActived){
+      const hour1 = new Date(`1970-01-01T${valueAcordar}:00`)
+      const hour2 = new Date(`1970-01-01T${valueDormir}:00`)
+
+      if(hour1 > hour2){
+        setValueAcordar("")
+        setValueDormir("")
+        return
+      }
       saveInJson()
     }
-  }, [isActived])
+  }, [isActived,valueAcordar, valueDormir])
+
+
 //**********************************************Animações**********************************************************************//
 
 //***********************************************Estilos************************************************************************//
@@ -105,33 +117,32 @@ const [valueDormir, setValueDormir] = useState("")
   })
 //***********************************************Tela****************************************************************************//
   return(
-    <View style={styles.main}>
-      <View style={styles.inputArea}>
-        <Text style={styles.text}>{label1}</Text>
-        <TextInput
-          placeholder='hh:mm'
-          style={styles.input}
-          keyboardType='number-pad'
-          maxLength={5}
-          editable={isActived}
-          value={valueAcordar}
-          onChangeText={ (text) => formatar(text, setValueAcordar, valueAcordar) }
-        />
-      </View>
+      <View style={styles.main}>
+        <View style={styles.inputArea}>
+          <Text style={styles.text}>{label1}</Text>
+          <TextInput
+            placeholder='hh:mm'
+            style={styles.input}
+            keyboardType='number-pad'
+            maxLength={5}
+            editable={isActived}
+            value={valueAcordar}
+            onChangeText={ (text) => formatar(text, setValueAcordar, valueAcordar) }
+          />
+        </View>
 
-      <View style={styles.inputArea}>
-        <Text style={styles.text}>{label2}</Text>
-        <TextInput
-          placeholder='hh:mm'
-          style={styles.input}
-          keyboardType='numeric'
-          maxLength={5}
-          editable={isActived}
-          value={valueDormir}
-          onChangeText={ (text) => formatar(text, setValueDormir, valueDormir) }
-        />
-      </View>
-
-    </View>
+        <View style={styles.inputArea}>
+          <Text style={styles.text}>{label2}</Text>
+          <TextInput
+            placeholder='hh:mm'
+            style={styles.input}
+            keyboardType='numeric'
+            maxLength={5}
+            editable={isActived}
+            value={valueDormir}
+            onChangeText={ (text) => formatar(text, setValueDormir, valueDormir) }
+          />
+        </View>
+      </View>                            
   )
 }
