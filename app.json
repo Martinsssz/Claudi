@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "Claudi",
-    "slug": "Claudi",
+    "slug": "claudi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "Claudi",
+    "scheme": "claudi",
     "splash": {
       "image": "./assets/images/logo.png",
       "resizeMode": "contain",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#D7E6F4"
-      }
+      },
+      "package": "com.pietrombatistela.claudi"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8d9308b8-612d-4684-96e4-f01ca932ec59"
+      }
+    },
+    "owner": "pietrombatistela"
   }
 }
