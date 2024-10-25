@@ -4,7 +4,6 @@ const cors = require("cors");
 const { Sequelize } = require("sequelize");
 const nodemailer = require("nodemailer");
 const { User, Token } = require("./models");
-const { OAuth2Client } = require('google-auth-library');
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -325,22 +324,3 @@ async function generateToken(user) {
 }
 
 
-async function verifyToken(token) {
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: CLIENT_ID,
-  });
-  const payload = ticket.getPayload();
-  return payload; // Dados do usuário
-}
-
-// Exemplo de rota para autenticação
-app.post('/auth/google', async (req, res) => {
-  const { token } = req.body;
-  try {
-    const userData = await verifyToken(token);
-    res.status(200).json(userData);
-  } catch (error) {
-    res.status(401).send('Token inválido');
-  }
-});

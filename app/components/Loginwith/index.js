@@ -2,12 +2,13 @@ import React from "react";
 import { StyleSheet, Appearance, Pressable } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import * as AuthSession from "expo-auth-session";
-import * as Crypto from "expo-crypto";
+//import * as Google from "expo-auth-session/providers/google"
+//import * as AuthSession from "expo-auth-session";
+//import * as Crypto from "expo-crypto";
 
-const CLIENT_ID =
+/*const CLIENT_ID =
   "199020620542-0in1re6knsp1eubq82di8170to1m4vcd.apps.googleusercontent.com";
-const REDIRECT_URI = AuthSession.makeRedirectUri({ useProxy: true});
+const REDIRECT_URI = "https://auth.expo.io/@pietrombatistela/claudi"
 console.log(REDIRECT_URI)
 
 
@@ -16,6 +17,7 @@ const DISCOVERY = {
   tokenEndpoint: 'https://oauth2.googleapis.com/token',
   revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
 };
+*/
 
 export default function Loginwith({ tipo }) {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -25,6 +27,10 @@ export default function Loginwith({ tipo }) {
       fontSize: 40,
       color: colorScheme == "dark" ? "white" : "black",
     },
+  });
+
+  /*const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: "199020620542-0in1re6knsp1eubq82di8170to1m4vcd.apps.googleusercontent.com",
   });
 
   async function handleGoogleSignIn() {
@@ -44,11 +50,12 @@ export default function Loginwith({ tipo }) {
       setUserInfo(data);
     }
   }
+  */
 
   let icones = ["logo-google", "logo-facebook", "logo-microsoft"];
 
   return (
-    <Pressable onPress={handleGoogleSignIn}>
+    <Pressable>
       <Ionicons name={icones[parseInt(tipo)]} style={styles.icone}></Ionicons>
     </Pressable>
   );
