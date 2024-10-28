@@ -3,8 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { Sequelize } = require("sequelize");
 const nodemailer = require("nodemailer");
-const { User, Token } = require("./models");
-const { OAuth2Client } = require('google-auth-library');
+const { User, Token, Timeline } = require("./models");
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -86,8 +85,8 @@ app.post("/login", async (req, res) => {
       const user = await User.findOne({ where: { email } });
 
       if (user && user.dataValues.password === password) {
-        res.status(200).json({user: user.dataValues, message: "Sucesso"});
-        console.log(user)
+        res.status(200).json({ user: user.dataValues, message: "Sucesso" });
+        console.log(user);
       } else {
         res.status(401).json({ error: "Email ou senha incorretos" });
       }
@@ -112,8 +111,7 @@ app.post("/resetPasswordConfirm", async (req, res) => {
     let user = await testToken(token);
     await invalidOldTokensByToken(token);
     await alterarSenha(user.user_id, password);
-    res.status(200).send({ message: "Senha alterada com sucesso" })
-
+    res.status(200).send({ message: "Senha alterada com sucesso" });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Erro ao alterar senha" });
@@ -155,8 +153,8 @@ app.post("/forgotPassword", async (req, res) => {
   }
 });
 
-app.post("/updateDataUser", async(req, res) => {
-  const { userId,  name, email, password  } = req.body;
+app.post("/updateDataUser", async (req, res) => {
+  const { userId, name, email, password } = req.body;
 
   resultOfUpdate = updateDataUser(userId, name, email, password);
 
@@ -168,17 +166,16 @@ app.post("/updateDataUser", async(req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal Server Error" });
-    } 
+    }
   } else {
     console.error("userId is undefined");
     res.status(404).json({ error: "User not found" });
   }
-
-})
+});
 
 app.post("/delete-account", async (req, res) => {
   const { userId } = req.body;
-  const user = await User.findByPk(userId)
+  const user = await User.findByPk(userId);
   if (user) {
     try {
       await user.destroy();
@@ -186,27 +183,28 @@ app.post("/delete-account", async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal Server Error" });
-    } 
+    }
   } else {
     console.error("userId is undefined");
   }
 });
 
 //*********************************************************FUNÇÕES******************************************************/
-async function updateDataUser(id, name, email, password){
-  try{
+async function updateDataUser(id, name, email, password) {
+  try {
     User.update(
-      { 
+      {
         password: password,
         name: name,
-        email: email
-      }, 
-      { where: { id: id } });
-    
-    return true
-  }catch{
-    console.log("User not found 404")
-    return false
+        email: email,
+      },
+      { where: { id: id } }
+    );
+
+    return true;
+  } catch {
+    console.log("User not found 404");
+    return false;
   }
 }
 
@@ -273,7 +271,7 @@ async function updateUserResetPasswordToken(userId, token) {
 async function testToken(token) {
   try {
     let verificacao = await Token.findOne({
-      where: { token: token, used: false},
+      where: { token: token, used: false },
     });
 
     return verificacao;
@@ -324,23 +322,11 @@ async function generateToken(user) {
   }
 }
 
-
-async function verifyToken(token) {
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: CLIENT_ID,
-  });
-  const payload = ticket.getPayload();
-  return payload; // Dados do usuário
-}
-
-// Exemplo de rota para autenticação
-app.post('/auth/google', async (req, res) => {
-  const { token } = req.body;
+app.get("/timelines", async (req, res) => {
   try {
-    const userData = await verifyToken(token);
-    res.status(200).json(userData);
+    const timelines = await Timeline.findAll({ attributes: ["json_views"] });
+    res.json(timelines)
   } catch (error) {
-    res.status(401).send('Token inválido');
+    console.log("Erro ao buscar dados:", error)
   }
 });

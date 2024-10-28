@@ -41,39 +41,86 @@ const User = sequelize.define(
   }
 );
 
-const Token = sequelize.define('PasswordResetToken', {
+const Timeline = sequelize.define("Timeline", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    field: "id_timeline",
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    field: "timeline_name",
+  },
+  type: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    field: "timeline_type",
+  },
+  json: {
+    type: DataTypes.JSON,
+    allowNull: false,
+    field: "json_views",
   },
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'users',  // Nome da tabela de usuários
-      key: 'id',
+      model: "users",
+      key: "id",
     },
-    onDelete: 'CASCADE',
+    onDelete: "CASCADE",
   },
-  token: {
-    type: DataTypes.STRING,
+  answer_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: "anwsers",
+      key: "id",
+    },
+    onDelete: "CASCADE",
   },
-  expires_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  used: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-}, {
-  tableName: 'password_reset_tokens',
-  timestamps: false,
 });
 
-User.hasMany(Token, { foreignKey: 'user_id' });
-Token.belongsTo(User, { foreignKey: 'user_id' });
+const Token = sequelize.define(
+  "PasswordResetToken",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users", // Nome da tabela de usuários
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+    token: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    expires_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    used: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+  },
+  {
+    tableName: "password_reset_tokens",
+    timestamps: false,
+  }
+);
 
-module.exports = { User, Token }
+User.hasMany(Token, { foreignKey: "user_id" });
+Token.belongsTo(User, { foreignKey: "user_id" });
+Timeline.belongsTo(User, { foreignKey: "user_id" });
+
+module.exports = { User, Token, Timeline };
