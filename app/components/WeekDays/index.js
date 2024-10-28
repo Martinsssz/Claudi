@@ -74,8 +74,9 @@ function clique(id) {
   const styles = StyleSheet.create({ 
     principal:{
       flexDirection: "column",
-      backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite,
+      backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite2,
       borderColor:"black",
+      borderWidth:colorScheme == "dark" ? 0 : 1,
       width: "15%",
       alignItems: "center",
       justifyContent: "space-around",

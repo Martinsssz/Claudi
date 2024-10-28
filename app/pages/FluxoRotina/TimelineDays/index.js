@@ -64,7 +64,7 @@ export default function TimelineDays(){
 
   function nextStage(){
     let keysOfData = Object.keys(dataWeek)
-    const hasNullValue = keysOfData.some(key => dataWeek[key] == null);
+    const hasNullValue = keysOfData.some(key => dataWeek[key] == null)
 
     if(hasNullValue){
       popup("Preencha todos os campos", null, "yellow")

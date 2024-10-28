@@ -16,16 +16,18 @@ import cores from '../../Util/coresPadrao'
 import WeekDays from '../../components/WeekDays'
 import LabelAndHour from '../../components/LabelAndHour'
 import InputLabel from '../InputLabel'
+import { checkName } from '../../Util/checkData'
 
 
-export default function Task({data, handleData, tasks}){
+export default function Task({data, handleData, id}){
 //**********************************************HOOKS**********************************************************************//
   const[dataTask, setDataTask] = useState({})
   const[name, setName] = useState("")
+  const[verification, setVerification] = useEffect(0)
+
   const {width, height} = Dimensions.get('window')
 
   let days = Object.keys(data)
-  console.log(dataTask)
   
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
@@ -40,8 +42,9 @@ export default function Task({data, handleData, tasks}){
 
   useEffect(() =>{
     let keysOfTask = Object.keys(dataTask)
+    let updateData
     keysOfTask.forEach(day =>{
-      if(dataTask[day] && dataTask[day]['start']){
+      if(dataTask[day] && dataTask[day]['start'] && dataTask[day]['end'] ){
         let startTask = dataTask[day]['start']
         let endTask  = dataTask[day]['end']
 
@@ -54,14 +57,22 @@ export default function Task({data, handleData, tasks}){
         let hourEndtDay = new Date(`1970-01-01T${endDay}:00`)
 
         if( !(hourEndTask > hourEndtDay || hourStartTaks <  hourStartDay) && name !== "" ){
-          tasks[name][day] = {"start": startTask, "end": endTask}
+          updateData = {"start": startTask, "end": endTask}
+          handleData(id, day, updateData)
         }
       }
     })
-    handleData(tasks)
-    console.log(tasks)
-
+    
   }, [dataTask])
+
+  useEffect(()=>{
+    setVerification(verification++)
+  }, [name])
+
+  useEffect(() => {
+    let newData = {...data}
+    newData[id] = {['name']: name, ['daysAndHours']: dataTask}
+  }, [name, dataTask])
 //************************************************Variáveis**********************************************************************//
 
   let keys = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"]
@@ -79,11 +90,13 @@ export default function Task({data, handleData, tasks}){
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
     principal:{
-      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.ghostWhite,
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.ghostWhite2,
       height: "auto",
       paddingVertical:20,
       paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(15),
       borderRadius: PixelRatio.get() * 3,
+      borderColor: cores.black,
+      borderWidth: 2,
     },
     
     styleContent:{
@@ -117,7 +130,12 @@ export default function Task({data, handleData, tasks}){
       style={{ flex: 1 }} 
     >
       <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
-        <InputLabel label="Tarefa" typeInput="text" handleText={setName}/>
+        <InputLabel 
+          label="Tarefa" 
+          typeInput="text" 
+          value={name}
+          handleText={ (text) => setName(text) }
+        />
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           <WeekDays handleWeek={setDataTask}orientation={"column"} dias={days}/>
 

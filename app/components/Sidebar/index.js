@@ -74,11 +74,12 @@ export default function Sidebar({ rotaAtual }) {
       alignItems: "flex-end",
       zIndex: 2,
       backgroundColor: "rgba(0, 0, 0, 0.6)",
+
     },
     sidebar: {
       backgroundColor:
         colorScheme === "dark" ? cores.azulDark : cores.azulLight,
-      height: "86%",
+      height: "87%",
       width: "70%",
       paddingHorizontal: 10,
       paddingVertical: 30,
