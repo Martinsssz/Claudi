@@ -19,10 +19,14 @@ export default function LabelAndHour({label1, label2, handleData, isActived, id,
   const [valueAcordar, setValueAcordar] = useState("")
   const [valueDormir, setValueDormir] = useState("")
 
-  const[popupVisibility, setPopupVisibility] = useState(false)
-  const[popupText, setPopupText] = useState("")
-  const[popupOption, setPopupOption] = useState([])
-  const[popupColor, setPopupColor] = useState("")
+  useEffect(() => {
+    if(data['days'][id]){
+      setValueAcordar(data['days'][id]['start'])
+      setValueDormir(data['days'][id]['end'])
+    }
+  }, [])
+
+  
 
 //********************************************Variáveis******************************************************************//
 
@@ -65,8 +69,10 @@ export default function LabelAndHour({label1, label2, handleData, isActived, id,
       "start": valueAcordar,
       "end": valueDormir
     }
-    data[id] = newValues
-    handleData(data)
+
+    let copyOfData = { ...data}
+    copyOfData['days'][id] = newValues
+    handleData(copyOfData)
   }
 
   useEffect(() =>{
@@ -74,7 +80,7 @@ export default function LabelAndHour({label1, label2, handleData, isActived, id,
       const hour1 = new Date(`1970-01-01T${valueAcordar}:00`)
       const hour2 = new Date(`1970-01-01T${valueDormir}:00`)
 
-      if(hour1 > hour2){
+      if(hour1 >= hour2){
         setValueAcordar("")
         setValueDormir("")
         return

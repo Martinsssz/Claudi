@@ -4,7 +4,7 @@ import { useState } from 'react'
 import cores from "../../Util/coresPadrao"
 import PasswordInput from '../PasswordInput'
 
-export default function InputLabel( {label, typeInput, handleText} ){
+export default function InputLabel( {label, typeInput, handleText, value} ){
 
   let colorScheme = Appearance.getColorScheme()
   //Esti
@@ -57,6 +57,7 @@ export default function InputLabel( {label, typeInput, handleText} ){
           placeholder={label}
           onChangeText={handleText}
           style={styles.input}
+          value={value}
         />
       )}
 

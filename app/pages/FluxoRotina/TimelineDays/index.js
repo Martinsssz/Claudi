@@ -23,19 +23,25 @@ import Popup from '../../../components/Popup'
 export default function TimelineDays(){
 //**********************************************HOOKS**********************************************************************//
   const [dataWeek, setDataWeek] = useState({
-    "sunday" : {"inicio": "05:00", "fim": "23:59"},
-    "monday":  {"inicio": "05:00", "fim": "23:59"},
-    "tuesday": {"inicio": "05:00", "fim": "23:59"},
-    "wednesday": {"inicio": "05:00", "fim": "23:59"},
-    "thursday": {"inicio": "05:00", "fim": "23:59"},
-    "friday": {"inicio": "05:00", "fim": "23:59"},
-    "saturday": {"inicio": "05:00", "fim": "23:59"}
+    'days': {
+      'monday': {'start':  '07:00', 'end': '23:59'},
+      'tuesday': {'start':  '07:00', 'end': '23:59'},
+      'wednesday': {'start':  '07:00', 'end': '23:59'},
+      'thursday': {'start':  '07:00', 'end': '23:59'},
+      'friday': {'start':  '07:00', 'end': '23:59'},
+      'saturday': {'start':  '07:00', 'end': '23:59'},
+      'sunday': {'start':  '07:00', 'end': '23:59'}
+    },
+    'tasks':{
+        'fix':{},
+        'random':{}
+    }
+
   })
 
   const[popupVisibility, setPopupVisibility] = useState(false)
   const[popupText, setPopupText] = useState("")
   const[popupOption, setPopupOption] = useState([])
-  const[popupColor, setPopupColor] = useState("")
 
   const {width, height} = Dimensions.get('window')
 //**********************************************Alteração automática de tema*****************************************************//
@@ -50,30 +56,28 @@ export default function TimelineDays(){
 //************************************************Funções**********************************************************************//  
   let numeroComponents = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"]
 
-  function popup(text, options=null, color=null){
+  function popup(text, options=null){
     setPopupVisibility(true)
     setPopupText(text)
   
     if(options){
       setPopupOption([... options])
     }
-    if(color){
-      setPopupColor(color)
-    }
+    
   }
 
   function nextStage(){
-    let keysOfData = Object.keys(dataWeek)
-    const hasNullValue = keysOfData.some(key => dataWeek[key] == null)
+    let keysOfData = Object.keys(dataWeek['days'])
+    const hasNullValue = keysOfData.some(key => dataWeek['days'][key] == null)
 
     if(hasNullValue){
-      popup("Preencha todos os campos", null, "yellow")
+      popup("Preencha todos os campos", null)
       return
     }else if(keysOfData.length == 0){
-      popup("Selecione ao menos um dia", null, "yellow")
+      popup("Selecione ao menos um dia", null)
       return
     }
-    
+    console.log(dataWeek)
     router.push({
       pathname: '../TaskList',
       params: {data:  JSON.stringify(dataWeek)}
@@ -137,7 +141,7 @@ export default function TimelineDays(){
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
           <BackArrow link={"../../pagesWithHeader/ChoiceTimeline"}></BackArrow>
           <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-            <WeekDays handleWeek={setDataWeek} orientation={"column"}/>
+            <WeekDays handleWeek={setDataWeek} orientation={"column"} data={dataWeek}/>
 
             <View style={styles.labels}>
               {numeroComponents.map((component) => (
@@ -146,8 +150,9 @@ export default function TimelineDays(){
                   label2={"Fim"} 
                   handleData={setDataWeek} 
                   data={dataWeek}
-                  isActived={component in dataWeek}
+                  isActived={ dataWeek['days'].hasOwnProperty(component) }
                   id={component}
+                  key={component}
                 />
               ))}
             </View>
@@ -173,3 +178,5 @@ export default function TimelineDays(){
   )
   
 }
+
+//'monday': {'start': '18:00', 'end': '19:00'}, 'tuesday': {'start': '18:00', 'end': '19:00'}, 'wednesday': {'start': '18:00', 'end': '19:00'}

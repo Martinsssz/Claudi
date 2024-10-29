@@ -21,13 +21,21 @@ import { checkName } from '../../Util/checkData'
 
 export default function Task({data, handleData, id}){
 //**********************************************HOOKS**********************************************************************//
-  const[dataTask, setDataTask] = useState({})
   const[name, setName] = useState("")
-  const[verification, setVerification] = useEffect(0)
+  const[dataTask, setDataTask] = useState({'days': {}})
 
   const {width, height} = Dimensions.get('window')
 
-  let days = Object.keys(data)
+  useEffect(() => {
+    if(data['tasks']['fix'][id] !== null){
+      setName(data['tasks']['fix'][id]['name'])
+
+      let copyOfData = {...dataTask}
+      copyOfData['days'] = data['tasks']['fix'][id]['days']
+      setDataTask(copyOfData)
+    }
+
+  },[])
   
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
@@ -65,26 +73,28 @@ export default function Task({data, handleData, id}){
     
   }, [dataTask])
 
-  useEffect(()=>{
-    setVerification(verification++)
-  }, [name])
 
   useEffect(() => {
-    let newData = {...data}
-    newData[id] = {['name']: name, ['daysAndHours']: dataTask}
+    let nameCheck = checkName(name)
+    let keysOfData = Object.keys(dataTask['days'])
+    const hasNullValue = keysOfData.some(key => dataTask['days'][key] == null)
+
+    if(nameCheck && !hasNullValue && Object.keys(dataTask['days']).length > 0  ){
+      let copyOfData = {...data}
+      copyOfData['tasks']['fix'][id] =  {
+        "name" : name,
+        "days":  dataTask['days']
+      }
+      handleData(copyOfData)
+      //console.log('Depois de alterar:', JSON.stringify(copyOfData, null, 2));
+    }
+
   }, [name, dataTask])
 //************************************************Variáveis**********************************************************************//
-
-  let keys = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"]
-  if(days){
-    let  newKeys = []
-    keys.forEach(key => {
-      if(days.includes(key)){
-        newKeys.push(key)
-      }
-    });
-    days = newKeys
-  }
+  let orderDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  let days = Object.keys(data['days'])
+  days = orderDays.filter((day) => days.includes(day))
+  
 //**********************************************Animações**********************************************************************//
 
 //***********************************************Estilos************************************************************************//
@@ -137,16 +147,16 @@ export default function Task({data, handleData, id}){
           handleText={ (text) => setName(text) }
         />
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          <WeekDays handleWeek={setDataTask}orientation={"column"} dias={days}/>
+          <WeekDays handleWeek={setDataTask} orientation={"column"} data={dataTask} dias={days}/>
 
           <View style={styles.labels}>
             {days.map((component) => (
               <LabelAndHour 
                 label1={"Início"} 
-                label2={"Fim"} 
+                label2={"Fim"}  
                 handleData={setDataTask} 
                 data={dataTask}
-                isActived={component in dataTask}
+                isActived={ component in dataTask['days'] }
                 id={component}
               />
             ))}
