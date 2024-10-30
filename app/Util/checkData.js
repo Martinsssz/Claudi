@@ -39,9 +39,9 @@ export function checkDataLogin(email, senha){
 
 export function checkName(nome){
   if( nome === ""){
-    return {message: "Preencha todos os campos", validate:false}
+    return {message: "Preencha todos os campos de nome", validate:false}
   }else if( nome.trim().length === 0){
-    return {message: "Preencha os campos corretamente", validate:false}
+    return {message: "Preencha os campos de nome corretamente", validate:false}
   }
 
   return {message: "ok", validate:true}

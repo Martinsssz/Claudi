@@ -24,7 +24,7 @@ export default function LabelAndHour({label1, label2, handleData, isActived, id,
       setValueAcordar(data['days'][id]['start'])
       setValueDormir(data['days'][id]['end'])
     }
-  }, [])
+  }, [data])
 
   
 

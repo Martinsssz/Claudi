@@ -86,7 +86,7 @@ export default function Task({data, handleData, id}){
         "days":  dataTask['days']
       }
       handleData(copyOfData)
-      //console.log('Depois de alterar:', JSON.stringify(copyOfData, null, 2));
+      console.log('Depois de alterar:', JSON.stringify(copyOfData, null, 2));
     }
 
   }, [name, dataTask])
@@ -158,6 +158,7 @@ export default function Task({data, handleData, id}){
                 data={dataTask}
                 isActived={ component in dataTask['days'] }
                 id={component}
+                key={component}
               />
             ))}
           </View>

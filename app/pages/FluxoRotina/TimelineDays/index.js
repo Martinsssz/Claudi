@@ -9,8 +9,8 @@ import {
   Platform,
   Dimensions,
 } from 'react-native'
-import React, { useState, useEffect, useRef } from 'react'
-import { router } from 'expo-router'
+import React, { useState, useEffect,  } from 'react'
+import { router, useGlobalSearchParams } from 'expo-router'
 
 //********************************************Import de depêndencias e componentes***********************************************//
 import BackArrow from "../../../components/BackArrow"
@@ -22,22 +22,32 @@ import Popup from '../../../components/Popup'
 
 export default function TimelineDays(){
 //**********************************************HOOKS**********************************************************************//
-  const [dataWeek, setDataWeek] = useState({
-    'days': {
-      'monday': {'start':  '07:00', 'end': '23:59'},
-      'tuesday': {'start':  '07:00', 'end': '23:59'},
-      'wednesday': {'start':  '07:00', 'end': '23:59'},
-      'thursday': {'start':  '07:00', 'end': '23:59'},
-      'friday': {'start':  '07:00', 'end': '23:59'},
-      'saturday': {'start':  '07:00', 'end': '23:59'},
-      'sunday': {'start':  '07:00', 'end': '23:59'}
-    },
-    'tasks':{
-        'fix':{},
-        'random':{}
-    }
+  let { data } = useGlobalSearchParams()
 
+  console.log(data)
+
+  const [dataWeek, setDataWeek] = useState(() => {
+    try{
+      return JSON.parse(data)
+    }catch{
+      return {
+        "days": {},
+        "tasks":{
+          "fix": {},
+          "random": {}
+        }
+      }
+   }
   })
+  try{
+    data = JSON.parse(data)
+    useEffect(() => {
+      setDataWeek(data)
+    }, [])
+  } catch(error){
+    console.log("")  
+  }
+
 
   const[popupVisibility, setPopupVisibility] = useState(false)
   const[popupText, setPopupText] = useState("")
@@ -77,7 +87,6 @@ export default function TimelineDays(){
       popup("Selecione ao menos um dia", null)
       return
     }
-    console.log(dataWeek)
     router.push({
       pathname: '../TaskList',
       params: {data:  JSON.stringify(dataWeek)}
@@ -140,6 +149,7 @@ export default function TimelineDays(){
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
           <BackArrow link={"../../pagesWithHeader/ChoiceTimeline"}></BackArrow>
+          
           <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
             <WeekDays handleWeek={setDataWeek} orientation={"column"} data={dataWeek}/>
 

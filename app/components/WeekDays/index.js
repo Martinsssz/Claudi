@@ -44,7 +44,7 @@ export default function WeekDays({handleWeek, orientation, dias, data}){
     if(data){
       setJson(data['days'])
     }
-  }, [])
+  }, [data])
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 

@@ -18,48 +18,33 @@ import BackArrow from "../../../components/BackArrow"
 import cores from '../../../Util/coresPadrao'
 import Task from '../../../components/Task'
 import { Ionicons } from '@expo/vector-icons'
+import { checkName } from '../../../Util/checkData'
+import Popup from '../../../components/Popup'
 
 
 export default function TaskList() {
-  //**********************************************HOOKS**********************************************************************//
-  const [dataTask, setDataTask] = useState({
-    'days': {
-      'monday': {'start':  '07:00', 'end': '23:59'},
-      'tuesday': {'start':  '07:00', 'end': '23:59'},
-      'wednesday': {'start':  '07:00', 'end': '23:59'},
-      'thursday': {'start':  '07:00', 'end': '23:59'},
-      'friday': {'start':  '07:00', 'end': '23:59'},
-      'saturday': {'start':  '07:00', 'end': '23:59'},
-      'sunday': {'start':  '07:00', 'end': '23:59'}
-    },
-    'tasks':{
-        'fix':{
-          '12545':{
-            'name': "Escola",
-            "days":{
-              "monday": {"start": "8:20", "end": "16:40"},
-              "tuesday": {"start": "8:20", "end": "16:40"},
-              "wednesday": {"start": "8:20", "end": "16:40"},
-              "thursday": {"start": "8:20", "end": "16:40"},
-              "friday": {"start": "8:20", "end": "16:40"}
-            }
-          }
-        },
-        'random':{}
-    }
+//**********************************************HOOKS**********************************************************************//
+  let { data } = useGlobalSearchParams()
+  
+  const[popupVisibility, setPopupVisibility] = useState(false)
+  const[popupText, setPopupText] = useState("")
+  const[popupOption, setPopupOption] = useState([])
+  
+  const [dataTask, setDataTask] = useState(() => {
+    return JSON.parse(data)
   })
 
   const { width, height } = Dimensions.get('window')
 
-  /*let { data } = useGlobalSearchParams()
-  data = JSON.parse(data)
-  useEffect(() => {
-    setDataTask(data)
-  }, [])
-  */
+  useEffect(() =>{
+
+  }, [dataTask])
+
+ 
+  
 
 
-  //**********************************************Alteração automática de tema*****************************************************//
+//**********************************************Alteração automática de tema*****************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
   useEffect(() => {
     const listener = Appearance.addChangeListener((scheme) => {
@@ -69,11 +54,15 @@ export default function TaskList() {
   }, [])
 
   //************************************************Funções**********************************************************************//  
-  let numeroComponents = []
-  for (i = 1; i <= 7; i++) {
-    numeroComponents.push(`${i}`)
+  function popup(text, options=null){
+    setPopupVisibility(true)
+    setPopupText(text)
+  
+    if(options){
+      setPopupOption([... options])
+    }
+    
   }
-
 
   function createTask() {
     let id
@@ -88,7 +77,6 @@ export default function TaskList() {
     copyOfData['tasks']['fix'][newKey] = null
 
     setDataTask(copyOfData)
-    console.log(copyOfData)
   }
 
   function deleteTask(key) {
@@ -96,6 +84,32 @@ export default function TaskList() {
     delete copyOfData['tasks']['fix'][key]
 
     setDataTask(copyOfData)
+  }
+
+  function nextStage(){
+    let copyOfData = { ...dataTask}
+    let fixTasks = copyOfData['tasks']['fix']
+    let keysToVerify = Object.keys(fixTasks)
+
+    keysToVerify.forEach((key) => {
+      let name
+      try{
+        name = fixTasks[key]['name']
+      }catch(error){
+        name = ""
+      }
+      
+      let validationResult = checkName(name)
+      if( !validationResult.validate ){
+        popup(validationResult['message'], null)
+      }else{
+        router.push({
+          pathname: '../RandomTasksList',
+          params: {data:  JSON.stringify(dataTask)}
+        })
+      }
+    })
+
   }
   //**********************************************Animações**********************************************************************//
 
@@ -149,7 +163,21 @@ export default function TaskList() {
       flexDirection: "column",
       gap: PixelRatio.get() * 15
 
-    }
+    },
+
+    save: {
+      padding: 15,
+      backgroundColor: cores.azulDark,
+      borderRadius: 10,
+      zIndex: 2,
+      position: "relative",
+      alignSelf: "flex-end",
+      bottom: PixelRatio.get()*20,
+    },
+    text: {
+      fontSize: 25,
+      color: cores.ghostWhite
+    },
 
   })
   //***********************************************Tela****************************************************************************//
@@ -160,7 +188,9 @@ export default function TaskList() {
         style={{ flex: 1 }}
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
-          <BackArrow link={"../../pagesWithHeader/ChoiceTimeline"}></BackArrow>
+
+          <BackArrow link={"../TimelineDays"} data={dataTask}></BackArrow>
+
           <Text style={styles.title}>Compromissos</Text>
           <ScrollView contentContainerStyle={styles.tasks}>
 
@@ -190,10 +220,22 @@ export default function TaskList() {
 
           </ScrollView>
 
+          <Pressable style={styles.save} onPress={nextStage}>
+            <Text style={styles.text}>Próxima</Text>
+          </Pressable>
 
         </ScrollView>
 
       </KeyboardAvoidingView>
+
+      {popupVisibility && (
+        <Popup 
+          message={popupText} 
+          option= {popupOption.length !== 0 ? popupOption[0] : ""} 
+          link= {popupOption.length !== 0 ? popupOption[1] : ""} 
+          handle={setPopupVisibility}
+        />
+      )}
     </>
   )
 }
