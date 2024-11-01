@@ -111,7 +111,7 @@ export default function LabelAndHour({label1, label2, handleData, isActived, id,
       borderWidth: 1,
       padding: 5,
       fontSize: 17,
-      backgroundColor: isActived ? cores.ghostWhite : '#22222277' ,
+      backgroundColor: isActived ? cores.ghostWhite : '#444344bb' ,
       color: cores.black,
       placeholderTextColor: cores.black
     },

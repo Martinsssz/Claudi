@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react'
 import cores from '../../Util/coresPadrao'
 
 
-export default function WeekDays({handleWeek, orientation, dias, data}){
+export default function WeekDays({handleWeek, orientation, dias, data, background}){
 //**********************************************Hooks**********************************************************************//
 
   const [json, setJson] = useState({})
@@ -57,7 +57,7 @@ export default function WeekDays({handleWeek, orientation, dias, data}){
   
 //************************************************Funções**********************************************************************//  
 const getColor = (id) => {
-  const value = id in json ? cores.azulDark : null;
+  const value = id in json ? (background ? cores.azulDark : (colorScheme == "dark" ? "white" : cores.azulDark)) : null;
   return value;
 };
 
@@ -77,35 +77,44 @@ function clique(id) {
   handleWeek(copyOfData)
   console.log(data)
 }
+
+function getColorText(day){
+  if(day in json){
+    return colorScheme == "dark" ? (background ? "white" : "black" ) : "white"
+  }else{
+    return colorScheme == "dark" ? (background ? "black" : "white" ) : "black"
+  }
+}
 //**********************************************Animações**********************************************************************//
 
 //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({ 
     principal:{
-      flexDirection: "column",
-      backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite2,
-      borderColor:"black",
+      flexDirection: orientation,
+      backgroundColor: background ? (colorScheme == "dark" ? cores.ciano : cores.ghostWhite2) : "transparent",
+      borderColor: background ? "black" : "transparent",
       borderWidth:colorScheme == "dark" ? 0 : 1,
-      width: "15%",
+      width: (orientation == "column" ? "15%": "100%"),
       alignItems: "center",
       justifyContent: "space-around",
-      padding: orientation == "column" ? 10 : 5, 
-      gap: orientation == "column" ? 30 : 10, 
+      padding: background ? (PixelRatio.get() * (orientation == "column" ? 5 : 5) ) : 0, 
+      gap: (orientation == "column" ? 25 : 10), 
       alignSelf: "flex-start"
     },
 
     weekDay:{
-      padding: PixelRatio.get()*2,
+      padding: PixelRatio.get() * (orientation == "column" ? 2 : 0),
+      height: PixelRatio.get() * (orientation == "column" ? 14 : 13),
       aspectRatio:1,
       borderRadius: 50,
       justifyContent: "center",
       alignItems: "center",
-      borderColor:"black",
+      borderColor: background ? "black" : colorScheme == "dark" ? "white" : "black",
       borderWidth: 1
     },
 
     text:{
-      color:"black",
+      color: "black",
       fontSize: 18,
     }
   })
@@ -121,7 +130,7 @@ function clique(id) {
           ]} 
           onPress={ () => clique(day) }
         >
-          <Text style={ [styles.text, {color: day in json ? "white" : "black"} ] }> 
+          <Text style={ [styles.text, {color: getColorText(day)} ]}> 
             {days[day]}
           </Text>
 

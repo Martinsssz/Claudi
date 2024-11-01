@@ -4,6 +4,7 @@ import Signup from "./pages/fluxoAccount/Signup";
 import {useRouter, useFocusEffect } from "expo-router";
 import {mostrarUsuario} from "./sqlite/dbService";
 
+
 export default function App(){
   const [user,setUser] = useState(null)
   const router = useRouter()
@@ -18,7 +19,7 @@ export default function App(){
   }, []);
   useFocusEffect(() =>{
     if(user){
-      router.replace("pages/pagesWithHeader/HomePage")
+      router.replace("./pages/FluxoRotina/RandomTaskList")
       
     }
   })
