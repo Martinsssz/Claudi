@@ -75,9 +75,9 @@ export default function Signup() {
 
         const data = await response.json()
         if (response.status === 201) {
-          popup("Sucesso", "Usuario cadastrado com sucesso", ["Fazer login", "/pages/flxoAccount/Login"], "green")
+          popup("Sucesso", "Usuario cadastrado com sucesso", ["Fazer login", "../Login"], "green")
         } else if (response.status === 500) {
-          popup("Email já cadastrado", ["Fazer login", "/pages/fluxoAccount/Login"], "yellow")
+          popup("Email já cadastrado", ["Fazer login", "../Login"], "yellow")
         } else {
           alert("Erro ao criar usuário.")
           popup("Erro ao criar usuário. Tente novamente mais tarde", null, "orange")

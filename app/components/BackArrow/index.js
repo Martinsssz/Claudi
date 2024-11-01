@@ -11,7 +11,7 @@ import cores from "../../Util/coresPadrao"
 import { router } from 'expo-router'
 import { useRef, useState, useEffect } from 'react'
 
-export default function BackArrow({link}){
+export default function BackArrow({link, data}){
 
 //************************************************Hooks**********************************************************************//  
 
@@ -50,7 +50,14 @@ function clique(){
   ]).start()
 
   setTimeout(() => {
-    router.back(link)
+    if(data){
+      router.push({
+        pathname: link,
+        params: {data:  JSON.stringify(data)}
+      })
+    }else{
+      router.replace(link)
+    }
   }, 100);
 }
 //***********************************************Estilos************************************************************************//

@@ -12,6 +12,7 @@ const cores = {
   ciano: "#B2D1EA",
 
   ghostWhite: "#F5F5F5",
+  ghostWhite2: "#F4FAFF",
   red: "#AE0F00",
 }
 

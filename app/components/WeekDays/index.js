@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react'
 import cores from '../../Util/coresPadrao'
 
 
-export default function WeekDays({handleWeek, orientation, dias}){
+export default function WeekDays({handleWeek, orientation, dias, data}){
 //**********************************************Hooks**********************************************************************//
 
   const [json, setJson] = useState({})
@@ -39,6 +39,12 @@ export default function WeekDays({handleWeek, orientation, dias}){
     });
     keys = newKeys
   }
+
+  useEffect(() => {
+    if(data){
+      setJson(data['days'])
+    }
+  }, [data])
 //**********************************************Alteração automática de tema*****************************************************//
   const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 
@@ -52,9 +58,9 @@ export default function WeekDays({handleWeek, orientation, dias}){
 //************************************************Funções**********************************************************************//  
 const getColor = (id) => {
   const value = id in json ? cores.azulDark : null;
-
   return value;
 };
+
 
 function clique(id) {
   const updatedJson = { ...json }
@@ -66,7 +72,10 @@ function clique(id) {
   }
 
   setJson(updatedJson)
-  handleWeek(updatedJson)
+  let copyOfData = {...data}
+  copyOfData['days'] = updatedJson
+  handleWeek(copyOfData)
+  console.log(data)
 }
 //**********************************************Animações**********************************************************************//
 
@@ -74,8 +83,9 @@ function clique(id) {
   const styles = StyleSheet.create({ 
     principal:{
       flexDirection: "column",
-      backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite,
+      backgroundColor: colorScheme == "dark" ? cores.ciano : cores.ghostWhite2,
       borderColor:"black",
+      borderWidth:colorScheme == "dark" ? 0 : 1,
       width: "15%",
       alignItems: "center",
       justifyContent: "space-around",

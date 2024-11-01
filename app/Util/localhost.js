@@ -1,7 +1,6 @@
-const ip = "http://192.168.3.14:8080"
+const ip = "http://192.168.1.106:8080"
 
 export default ip
-
 
 /*
 Anotar abaixo as páginas que precisa usar esse recurso
