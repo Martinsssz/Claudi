@@ -1,12 +1,8 @@
-//COMPONENTES
-
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Appearance, Dimensions } from "react-native";
 
 export default function TabelaTarefas({ data, visualizacao }) {
-  //*************************************************HOOKS********************************************************************//
-
   const screenWidth = Dimensions.get("window").width;
 
   const diasSemana = [
@@ -18,7 +14,7 @@ export default function TabelaTarefas({ data, visualizacao }) {
     "friday",
     "saturday",
   ];
-  const diaAtual = diasSemana[new Date().getDay()]; // Nome do dia atual em inglês
+  const diaAtual = diasSemana[new Date().getDay()];
 
   const tarefasHoje = data[diaAtual]
     ? Object.entries(data[diaAtual]).map(([taskName, { start, end }]) => ({
@@ -28,20 +24,14 @@ export default function TabelaTarefas({ data, visualizacao }) {
       }))
     : [];
 
-  // Tarefas da semana
-  // Verifique se 'data' está definido e tem a estrutura correta
   const tarefasSemana = data
-    ? diasSemana.map((dia) => {
-        return {
-          dia,
-          tarefas: data[dia]
-            ? Object.entries(data[dia]).map(([taskName]) => taskName) // Retorna só os nomes das tarefas
-            : [], // Se não houver tarefas para o dia, retorna um array vazio
-        };
-      })
+    ? diasSemana.map((dia) => ({
+        dia,
+        tarefas: data[dia]
+          ? Object.entries(data[dia]).map(([taskName]) => taskName)
+          : [],
+      }))
     : [];
-
-  //**********************************************Alteração automática de tema*****************************************************//
 
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   useEffect(() => {
@@ -51,16 +41,10 @@ export default function TabelaTarefas({ data, visualizacao }) {
     return () => listener.remove();
   }, []);
 
-  //************************************************Funções**********************************************************************//
-
-  //**********************************************Animações**********************************************************************//
-
-  //***********************************************Estilos************************************************************************//
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: "center",
+      alignItems: "stretch",
       justifyContent: "flex-start",
       padding: 0,
       margin: 0,
@@ -68,14 +52,14 @@ export default function TabelaTarefas({ data, visualizacao }) {
     table: {
       borderWidth: 1,
       borderColor: "#002B40",
-      width: "100%",
+      width: "100%", // Remover a definição de largura da tabela
       margin: 0,
       padding: 0,
-      marginBottom: 25,
     },
     rowHeader: {
       flexDirection: "row",
       backgroundColor: "#003554",
+      height: 80
     },
     row: {
       flexDirection: "row",
@@ -83,14 +67,16 @@ export default function TabelaTarefas({ data, visualizacao }) {
       borderBottomWidth: 1,
       borderBottomColor: "#002B40",
       alignItems: "stretch",
+      height: 80
     },
     cell: {
-      padding: 29,
+      padding: 10, // Ajuste o padding para melhor visualização
       textAlign: "center",
       color: "white",
-      width: "34%",
+      width: screenWidth / 3,
       borderRightWidth: 1,
       borderColor: "#002B40",
+      fontSize: 16,
     },
     headerText: {
       fontWeight: "bold",
@@ -100,75 +86,72 @@ export default function TabelaTarefas({ data, visualizacao }) {
       borderRightWidth: 1,
       borderRightColor: "#002B40",
     },
-    horarioCol: {
+    horarioCell: {
       flex: 1,
+      width: screenWidth * 0.4,
     },
-    tarefaCol: {
+    tarefaCell: {
       flex: 2,
+      width: screenWidth * 0.6
     },
   });
 
-  //***********************************************Tela****************************************************************************//
-
   return (
     <View style={styles.container}>
-      <ScrollView style={[styles.table, { width: screenWidth }]}>
-        {visualizacao === "diaria" ? (
-          <View>
-            <View style={styles.rowHeader}>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerText,
-                  styles.horarioCol,
-                  styles.separator,
-                ]}
-              >
-                Horário
-              </Text>
-              <Text style={[styles.cell, styles.headerText, styles.tarefaCol]}>
-                Tarefas
-              </Text>
-            </View>
-
-            {tarefasHoje.length > 0 ? (
-              tarefasHoje.map((task, index) => (
-                <View key={index} style={styles.row}>
-                  <Text
-                    style={[styles.cell, styles.horarioCol, styles.separator]}
-                  >
-                    {task.start} - {task.end}
-                  </Text>
-                  <Text style={[styles.cell, styles.tarefaCol]}>
-                    {task.taskName}
-                  </Text>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.cell}>Nenhuma tarefa para hoje.</Text>
-            )}
-          </View>
-        ) : (
-          <View>
-            <View style={styles.rowHeader}>
-              {diasSemana.map((dia) => (
-                <Text key={dia} style={[styles.cell, styles.headerText]}>
-                  {dia.charAt(0).toUpperCase() + dia.slice(1)} {/* Capitaliza o primeiro caractere */}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false} 
+        contentContainerStyle={{ flexGrow: 1 }} 
+      >
+        <View style={styles.table}>
+          {visualizacao === "diaria" ? (
+            <View>
+              <View style={styles.rowHeader}>
+                <Text style={[styles.cell, styles.headerText, styles.horarioCell]}>
+                  Horário
                 </Text>
-              ))}
-            </View>
-            {Math.max(...tarefasSemana.map((day) => day.tarefas.length), 0) > 0 &&
-              [...Array(Math.max(...tarefasSemana.map((day) => day.tarefas.length)))].map((_, rowIndex) => (
-                <View key={rowIndex} style={styles.row}>
-                  {tarefasSemana.map((day) => (
-                    <Text key={day.dia} style={styles.cell}>
-                      {day.tarefas[rowIndex] || ""} {/* Mostra a tarefa se existir */}
+                <Text style={[styles.cell, styles.headerText, styles.tarefaCell]}>
+                  Tarefas
+                </Text>
+              </View>
+
+              {tarefasHoje.length > 0 ? (
+                tarefasHoje.map((task, index) => (
+                  <View key={index} style={styles.row}>
+                    <Text style={[styles.cell, styles.horarioCell]}>
+                      {task.start} - {task.end}
                     </Text>
-                  ))}
-                </View>
-              ))}
-          </View>
-        )}
+                    <Text style={[styles.cell, styles.tarefaCell]}>
+                      {task.taskName}
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={[styles.cell, styles.horarioCell]}>Nenhuma tarefa para hoje.</Text>
+              )}
+            </View>
+          ) : (
+            <View>
+              <View style={styles.rowHeader}>
+                {diasSemana.map((dia) => (
+                  <Text key={dia} style={[styles.cell, styles.headerText]}>
+                    {dia.charAt(0).toUpperCase() + dia.slice(1)}
+                  </Text>
+                ))}
+              </View>
+              {Math.max(...tarefasSemana.map((day) => day.tarefas.length), 0) > 0 &&
+                [...Array(Math.max(...tarefasSemana.map((day) => day.tarefas.length)))].map((_, rowIndex) => (
+                  <View key={rowIndex} style={styles.row}>
+                    {tarefasSemana.map((day) => (
+                      <Text key={day.dia} style={styles.cell}>
+                        {day.tarefas[rowIndex] || ""}
+                      </Text>
+                    ))}
+                  </View>
+                ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
