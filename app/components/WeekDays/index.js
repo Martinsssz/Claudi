@@ -98,13 +98,13 @@ function getColorText(day){
       alignItems: "center",
       justifyContent: "space-around",
       padding: background ? (PixelRatio.get() * (orientation == "column" ? 5 : 5) ) : 0, 
-      gap: (orientation == "column" ? 25 : 10), 
+      gap: PixelRatio.get() * (orientation == "column" ? 10 : 2), 
       alignSelf: "flex-start"
     },
 
     weekDay:{
       padding: PixelRatio.get() * (orientation == "column" ? 2 : 0),
-      height: PixelRatio.get() * (orientation == "column" ? 14 : 13),
+      height: PixelRatio.get() * (orientation == "column" ? 14 : 12),
       aspectRatio:1,
       borderRadius: 50,
       justifyContent: "center",
@@ -115,7 +115,7 @@ function getColorText(day){
 
     text:{
       color: "black",
-      fontSize: 18,
+      fontSize: PixelRatio.getFontScale() * 18
     }
   })
 //***********************************************Tela****************************************************************************//

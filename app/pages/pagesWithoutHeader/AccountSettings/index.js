@@ -154,6 +154,7 @@ export default function HomePage() {
       flexDirection: "column",
       gap: 20,
       alignItems: "center",
+      
     },
 
     form: {

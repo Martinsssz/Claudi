@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -6,53 +7,81 @@ import {
   Platform,
   ScrollView,
   PanResponder,
+  Animated,
   Dimensions,
 } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
 import TabelaTarefas from "../../../components/Table";
 import cores from "../../../Util/coresPadrao";
 import ip from "../../../Util/localhost";
 import Toolbar from "../../../components/Toolbar";
 
 const ScreenWidth = Dimensions.get("window").width;
-const NUM_DIAS_SEMANA = 7;
 
 export default function TableData() {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const [data, setData] = useState({});
   const [visualizacao, setVisualizacao] = useState("diaria");
   const scrollViewRef = useRef(null);
-  const [scrollBarPos, setScrollBarPos] = useState(10);
+  const [scrollBarPos, setScrollBarPos] = useState(0);
+  const scrollBarWidth = ScreenWidth - 30;
+  const scrollBallSize = 50;
+  const scrollBallPosition = useRef(new Animated.Value(0)).current;
+  const tableWidth = ScreenWidth * 1.5;
+  const scrollRatio = tableWidth / (scrollBarWidth - scrollBallSize);
 
   async function getData() {
-    fetch(`${ip}/timelines`)
-      .then((response) => response.json())
-      .then((timelines) => {
-        const parsedData = timelines.map((item) => JSON.parse(item.json_views));
-        setData(parsedData[0]);
-      })
-      .catch((error) => console.error("Erro ao buscar dados:", error));
+    try {
+      const response = await fetch(`${ip}/timelines`);
+      const timelines = await response.json();
+      const parsedData = timelines.map((item) => JSON.parse(item.json_views));
+      setData(parsedData[0]);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
   }
 
   useEffect(() => {
     getData();
   }, []);
 
+  const handleScroll = (event) => {
+    const scrollX = event.nativeEvent.contentOffset.x;
+    const ballPos = scrollX / scrollRatio;
+    Animated.timing(scrollBallPosition, {
+      toValue: ballPos,
+      duration: 50,
+      useNativeDriver: false,
+    }).start()
+  };
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
+        const minLimit = 0
+        const maxLimit = scrollBarWidth - scrollBallSize
+
         const newPos = Math.max(
           0,
-          Math.min(ScreenWidth - 40, scrollBarPos + gestureState.dx)
+          Math.min(
+            maxLimit,
+            gestureState.dx + scrollBallPosition._value
+          )
         );
-        setScrollBarPos(newPos);
-        scrollViewRef.current.scrollTo({
-          x: (newPos / (ScreenWidth - 40)) * (ScreenWidth * NUM_DIAS_SEMANA),
-          animated: false,
-        });
+        
+        Animated.timing(scrollBallPosition, {
+          toValue: newPos,
+          duration: 50,
+          useNativeDriver: false,
+        }).start()
+
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({
+            x: newPos * scrollRatio,
+            animated: false,
+          });
+        }
       },
-      onPanResponderRelease: () => {},
     })
   ).current;
 
@@ -66,19 +95,28 @@ export default function TableData() {
     scrollContainer: {
       backgroundColor: "#000",
       marginTop: 10,
-    },
-    scrollBarContainer: {
-      height: 9,
-      backgroundColor: "lightgray",
-      marginTop: 10,
-      marginBottom: 10,
-      backgroundColor: "#C4CACE",
+      height: 50,
     },
     scrollBar: {
-      height: "100%",
-      width: 40,
-      backgroundColor:
-        colorScheme === "dark" ? cores.azulEscuro1Light : cores.azulClaro1Light,
+      marginTop: 20,
+      width: scrollBarWidth,
+      height: 10,
+      backgroundColor: "#C4CACE", 
+      borderRadius: 5,
+      alignSelf: "center",
+    },
+    scrollBall: {
+      width: scrollBallSize,
+      height: 15, 
+      backgroundColor: "#346788", 
+      borderRadius: 5,
+      position: "absolute",
+      marginLeft: 18,
+      top: -3,
+    },
+    tabelaContainer: {
+      marginTop: 20,
+      flex: 1,
     },
   });
 
@@ -88,26 +126,40 @@ export default function TableData() {
       style={{ flex: 1 }}
     >
       <View style={styles.principal}>
-        <Toolbar visualizacao={visualizacao} setVisualizacao={setVisualizacao} />
+        <Toolbar
+          visualizacao={visualizacao}
+          setVisualizacao={setVisualizacao}
+        />
 
-        {/* Barra de rolagem horizontal acima da tabela */}
-        <View style={styles.scrollContainer}>
-          <View style={styles.scrollBarContainer}>
-            <View
-              {...panResponder.panHandlers}
-              style={[styles.scrollBar, { transform: [{ translateX: scrollBarPos }] }]}
-            />
+        {visualizacao === "semanal" && (
+          <View style={styles.scrollContainer}>
+            <View style={styles.scrollBar}>
+              <Animated.View
+                {...panResponder.panHandlers}
+                style={[
+                  styles.scrollBall,
+                  { transform: [{ translateX: scrollBallPosition }] },
+                ]}
+              />
+            </View>
           </View>
-        </View>
+        )}
 
-        {/* Tabela com rolagem horizontal */}
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
-          <TabelaTarefas data={data} visualizacao={visualizacao} />
-        </ScrollView>
+        <View style={styles.tabelaContainer}>
+          <ScrollView
+            ref={scrollViewRef}
+            horizontal={visualizacao === "semanal"}
+            scrollEnabled={
+              visualizacao === "semanal" || visualizacao === "diaria"
+            }
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={visualizacao === "diaria"}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+          >
+            <TabelaTarefas data={data} visualizacao={visualizacao} />
+          </ScrollView>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
