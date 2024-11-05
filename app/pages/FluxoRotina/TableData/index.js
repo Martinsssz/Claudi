@@ -1,3 +1,4 @@
+//COMPONENTES
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -15,6 +16,8 @@ import cores from "../../../Util/coresPadrao";
 import ip from "../../../Util/localhost";
 import Toolbar from "../../../components/Toolbar";
 
+//*************************************************HOOKS********************************************************************//
+
 const ScreenWidth = Dimensions.get("window").width;
 
 export default function TableData() {
@@ -22,12 +25,22 @@ export default function TableData() {
   const [data, setData] = useState({});
   const [visualizacao, setVisualizacao] = useState("diaria");
   const scrollViewRef = useRef(null);
-  const [scrollBarPos, setScrollBarPos] = useState(0);
   const scrollBarWidth = ScreenWidth - 30;
   const scrollBallSize = 50;
   const scrollBallPosition = useRef(new Animated.Value(0)).current;
   const tableWidth = ScreenWidth * 1.5;
   const scrollRatio = tableWidth / (scrollBarWidth - scrollBallSize);
+
+  //**********************************************Alteração automática de tema*****************************************************//
+
+  useEffect(() => {
+    const listener = Appearance.addChangeListener((scheme) => {
+      setColorScheme(scheme.colorScheme)
+    })
+    return () => listener.remove()
+  }, [])
+
+  //************************************************Funções**********************************************************************//
 
   async function getData() {
     try {
@@ -49,31 +62,27 @@ export default function TableData() {
     const ballPos = scrollX / scrollRatio;
     Animated.timing(scrollBallPosition, {
       toValue: ballPos,
-      duration: 50,
+      duration: 70,
       useNativeDriver: false,
-    }).start()
+    }).start();
   };
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        const minLimit = 0
-        const maxLimit = scrollBarWidth - scrollBallSize
+        const maxLimit = scrollBarWidth - scrollBallSize * 1.6;
 
         const newPos = Math.max(
           0,
-          Math.min(
-            maxLimit,
-            gestureState.dx + scrollBallPosition._value
-          )
+          Math.min(maxLimit, gestureState.dx + scrollBallPosition._value)
         );
-        
+
         Animated.timing(scrollBallPosition, {
           toValue: newPos,
-          duration: 50,
+          duration: 70,
           useNativeDriver: false,
-        }).start()
+        }).start();
 
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
@@ -84,6 +93,10 @@ export default function TableData() {
       },
     })
   ).current;
+
+  //**********************************************Animações**********************************************************************//
+
+  //***********************************************Estilos************************************************************************//
 
   const styles = StyleSheet.create({
     principal: {
@@ -101,14 +114,14 @@ export default function TableData() {
       marginTop: 20,
       width: scrollBarWidth,
       height: 10,
-      backgroundColor: "#C4CACE", 
+      backgroundColor: "#C4CACE",
       borderRadius: 5,
       alignSelf: "center",
     },
     scrollBall: {
       width: scrollBallSize,
-      height: 15, 
-      backgroundColor: "#346788", 
+      height: 15,
+      backgroundColor: "#346788",
       borderRadius: 5,
       position: "absolute",
       marginLeft: 18,
@@ -120,6 +133,7 @@ export default function TableData() {
     },
   });
 
+  //***********************************************Tela****************************************************************************//
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -149,13 +163,10 @@ export default function TableData() {
           <ScrollView
             ref={scrollViewRef}
             horizontal={visualizacao === "semanal"}
-            scrollEnabled={
-              visualizacao === "semanal" || visualizacao === "diaria"
-            }
+            scrollEnabled={true}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={visualizacao === "diaria"}
             onScroll={handleScroll}
-            scrollEventThrottle={16}
           >
             <TabelaTarefas data={data} visualizacao={visualizacao} />
           </ScrollView>

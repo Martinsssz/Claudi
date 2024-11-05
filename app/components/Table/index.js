@@ -1,20 +1,31 @@
+//COMPONENTES
+
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Appearance, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Appearance,
+  Dimensions,
+} from "react-native";
+
+//*************************************************HOOKS********************************************************************//
 
 export default function TabelaTarefas({ data, visualizacao }) {
+  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const screenWidth = Dimensions.get("window").width;
 
-  const diasSemana = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-  ];
-  const diaAtual = diasSemana[new Date().getDay()];
+  const diasSemana = {
+    sunday: "Domingo",
+    monday: "Segunda",
+    tuesday: "Terça",
+    wednesday: "Quarta",
+    thursday: "Quinta",
+    friday: "Sexta",
+    saturday: "Sábado",
+  };
+  const diaAtual = Object.keys(data)[new Date().getDay()];
 
   const tarefasHoje = data[diaAtual]
     ? Object.entries(data[diaAtual]).map(([taskName, { start, end }]) => ({
@@ -25,7 +36,7 @@ export default function TabelaTarefas({ data, visualizacao }) {
     : [];
 
   const tarefasSemana = data
-    ? diasSemana.map((dia) => ({
+    ? Object.keys(data).map((dia) => ({
         dia,
         tarefas: data[dia]
           ? Object.entries(data[dia]).map(([taskName]) => taskName)
@@ -33,13 +44,20 @@ export default function TabelaTarefas({ data, visualizacao }) {
       }))
     : [];
 
-  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
+  //**********************************************Alteração automática de tema*****************************************************//
+
   useEffect(() => {
     const listener = Appearance.addChangeListener((scheme) => {
       setColorScheme(scheme.colorScheme);
     });
     return () => listener.remove();
   }, []);
+
+  //************************************************Funções**********************************************************************//
+
+  //**********************************************Animações**********************************************************************//
+
+  //***********************************************Estilos************************************************************************//
 
   const styles = StyleSheet.create({
     container: {
@@ -70,7 +88,7 @@ export default function TabelaTarefas({ data, visualizacao }) {
     },
     cell: {
       flex: 1,
-      paddingVertical: 40, // Ajuste o padding se necessário
+      paddingVertical: 40,
       padding: 10,
       textAlign: "center",
       color: "white",
@@ -94,6 +112,7 @@ export default function TabelaTarefas({ data, visualizacao }) {
     },
   });
 
+  //***********************************************Tela****************************************************************************//
   return (
     <View style={styles.container}>
       {visualizacao === "diaria" ? (
@@ -132,9 +151,9 @@ export default function TabelaTarefas({ data, visualizacao }) {
         <ScrollView>
           <View style={styles.table}>
             <View style={styles.rowHeader}>
-              {diasSemana.map((dia) => (
+              {Object.keys(data).map((dia) => (
                 <Text key={dia} style={[styles.cell, styles.headerText]}>
-                  {dia.charAt(0).toUpperCase() + dia.slice(1)}
+                  {diasSemana[dia]}
                 </Text>
               ))}
             </View>

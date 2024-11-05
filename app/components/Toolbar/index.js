@@ -1,17 +1,16 @@
 //COMPONENTES
 
-import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Appearance } from "react-native";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
-import { Appearance } from "react-native";
 
 export default function Toolbar({ visualizacao, setVisualizacao }) {
   //*************************************************HOOKS********************************************************************//
 
-  //**********************************************Alteração automática de tema*****************************************************//
-
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
+
+
+  //**********************************************Alteração automática de tema*****************************************************//
 
   useEffect(() => {
     const listener = Appearance.addChangeListener((scheme) => {
@@ -33,21 +32,21 @@ export default function Toolbar({ visualizacao, setVisualizacao }) {
       justifyContent: "space-between",
     },
     iconContainer: {
-      padding: 5,
+      padding: 10,
     },
     diarioButton: {
       backgroundColor: visualizacao === "diaria" ? "#1E2F3C" : "#C4CACE", 
       paddingVertical: 8,
       paddingHorizontal: 16,
       borderRadius: 8,
-      marginHorizontal: 5,
+      marginLeft: 10
     },
     semanalButton: {
       backgroundColor: visualizacao === "semanal" ? "#1E2F3C" : "#C4CACE", 
       paddingVertical: 8,
       paddingHorizontal: 16,
       borderRadius: 8,
-      marginHorizontal: 5,
+      marginHorizontal: 10,
     },
     buttonText: {
       color: "black",
