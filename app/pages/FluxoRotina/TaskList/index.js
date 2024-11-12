@@ -30,9 +30,11 @@ export default function TaskList() {
   const [popupText, setPopupText] = useState("")
   const [popupOption, setPopupOption] = useState([])
 
-  const [dataTask, setDataTask] = useState(() => {
-    return JSON.parse(data)
-  })
+  const [dataTask, setDataTask] = useState()
+
+  useEffect(() =>{
+    setDataTask(JSON.parse(data))
+  }, [])
 
   const { width, height } = Dimensions.get('window')
 

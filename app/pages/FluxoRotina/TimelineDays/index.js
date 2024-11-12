@@ -26,71 +26,14 @@ export default function TimelineDays(){
 
   console.log(data)
 
-  const [dataWeek, setDataWeek] = useState(() => {
-    try{
+  const [dataWeek, setDataWeek] = useState(() =>{
+    if(data){
       return JSON.parse(data)
-    }catch{
-      return {
-        "days": {
-          "monday": { "start": "07:00", "end": "23:59" },
-          "tuesday": { "start": "07:00", "end": "23:59" },
-          "wednesday": { "start": "07:00", "end": "23:59" },
-          "thursday": { "start": "07:00", "end": "23:59" },
-          "friday": { "start": "07:00", "end": "23:59" },
-          "saturday": { "start": "07:00", "end": "23:59" },
-          "sunday": { "start": "07:00", "end": "23:59" }
-        },
-        "tasks": {
-          "fix": {
-            "task-1234567890-1698288000000": {
-              "name": "Reunião de equipe",
-              "days": {
-                "monday": { "start": "10:00", "end": "11:00" },
-                "tuesday": { "start": "14:00", "end": "15:00" }
-              }
-            },
-            "task-2345678901-1698288000000": {
-              "name": "Desenvolvimento de feature",
-              "days": {
-                "wednesday": { "start": "09:00", "end": "12:00" },
-                "friday": { "start": "13:00", "end": "16:00" }
-              }
-            },
-            "task-3456789012-1698288000000": {
-              "name": "Teste de usabilidade",
-              "days": {
-                "thursday": { "start": "15:00", "end": "17:00" },
-                "saturday": { "start": "10:00", "end": "12:00" }
-              }
-            },
-            "task-4567890123-1698288000000": {
-              "name": "Preparação de apresentação",
-              "days": {
-                "monday": { "start": "16:00", "end": "18:00" },
-                "sunday": { "start": "14:00", "end": "16:00" }
-              }
-            },
-            "task-5678901234-1698288000000": {
-              "name": "Revisão de código",
-              "days": {
-                "tuesday": { "start": "09:00", "end": "11:00" },
-                "thursday": { "start": "13:00", "end": "15:00" }
-              }
-            }
-          },
-          "random": {}
-        }
-      }
-      /*{
-        "days": {},
-        "tasks":{
-          "fix": {},
-          "random": {}
-        }
-      }*/
-     
-   }
+    }else{
+      return{"days": {}, "tasks": {"fix": {}, "random": {}}}
+    }
   })
+
   try{
     data = JSON.parse(data)
     useEffect(() => {

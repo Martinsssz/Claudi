@@ -25,66 +25,16 @@ import Popup from '../../../components/Popup'
 export default function RandomTasksList() {
   //**********************************************HOOKS**********************************************************************//
   let { data } = useGlobalSearchParams()
+  
 
   const [popupVisibility, setPopupVisibility] = useState(false)
   const [popupText, setPopupText] = useState("")
   const [popupOption, setPopupOption] = useState([])
-  const [dataRandom, setDataRandom] = useState(() => {
-    
-    //return JSON.parse(data)
-    return {
-      "days": {
-        "monday": { "start": "07:00", "end": "23:59" },
-        "tuesday": { "start": "07:00", "end": "23:59" },
-        "wednesday": { "start": "07:00", "end": "23:59" },
-        "thursday": { "start": "07:00", "end": "23:59" },
-        "friday": { "start": "07:00", "end": "23:59" },
-        "saturday": { "start": "07:00", "end": "23:59" },
-        "sunday": { "start": "07:00", "end": "23:59" }
-      },
-      "tasks": {
-        "fix": {
-          "task-1234567890-1698288000000": {
-            "name": "Reunião de equipe",
-            "days": {
-              "monday": { "start": "10:00", "end": "11:00" },
-              "tuesday": { "start": "14:00", "end": "15:00" }
-            }
-          },
-          "task-2345678901-1698288000000": {
-            "name": "Desenvolvimento de feature",
-            "days": {
-              "wednesday": { "start": "09:00", "end": "12:00" },
-              "friday": { "start": "13:00", "end": "16:00" }
-            }
-          },
-          "task-3456789012-1698288000000": {
-            "name": "Teste de usabilidade",
-            "days": {
-              "thursday": { "start": "15:00", "end": "17:00" },
-              "saturday": { "start": "10:00", "end": "12:00" }
-            }
-          },
-          "task-4567890123-1698288000000": {
-            "name": "Preparação de apresentação",
-            "days": {
-              "monday": { "start": "16:00", "end": "18:00" },
-              "sunday": { "start": "14:00", "end": "16:00" }
-            }
-          },
-          "task-5678901234-1698288000000": {
-            "name": "Revisão de código",
-            "days": {
-              "tuesday": { "start": "09:00", "end": "11:00" },
-              "thursday": { "start": "13:00", "end": "15:00" }
-            }
-          }
-        },
-        "random": {}
-      }
-    }
-
-  })
+  const [dataRandom, setDataRandom] = useState()
+  
+  useEffect(() =>{
+    setDataRandom( JSON.parse(data) )
+  }, [])
 
   const { width, height } = Dimensions.get('window')
 
@@ -238,7 +188,7 @@ export default function RandomTasksList() {
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
 
-          <BackArrow link={"../TimelineDays"} data={dataRandom}></BackArrow>
+          <BackArrow link={"../TaskList"} data={dataRandom}></BackArrow>
 
           <Text style={styles.title}>Tarefas</Text>
           <ScrollView contentContainerStyle={styles.tasks}>
@@ -248,7 +198,7 @@ export default function RandomTasksList() {
               Object.keys(dataRandom['tasks']['random']).map((key, index) => (
 
                 <View key={key} style={styles.taskView}>
-                  <RandomTask data={dataRandom} handleData={setDataRandom} id={key} key={key} />
+                  <RandomTask data={dataRandom} handleData={setDataRandom} id={key} key={key} popup={popup}/>
                   <View style={styles.optionsTasks}>
 
                     {index + 1 == Object.keys(dataRandom['tasks']['random']).length && (
