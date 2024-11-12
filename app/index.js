@@ -19,7 +19,7 @@ export default function App(){
   }, []);
   useFocusEffect(() =>{
     if(user){
-      router.replace("./pages/FluxoRotina/TableData")
+      router.replace("./pages/pagesWithHeader/HomePageTable")
       
     }
   })
