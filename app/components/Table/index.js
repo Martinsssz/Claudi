@@ -9,6 +9,7 @@ import {
   Appearance,
   Dimensions,
 } from "react-native";
+import cores from "../../Util/coresPadrao";
 
 //*************************************************HOOKS********************************************************************//
 
@@ -76,14 +77,12 @@ export default function TabelaTarefas({ data, visualizacao }) {
     },
     rowHeader: {
       flexDirection: "row",
-      backgroundColor: "#003554",
       alignItems: "center",
     },
     row: {
       flexDirection: "row",
-      backgroundColor: "#346788",
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulClaro1Light,
       borderBottomWidth: 1,
-      borderBottomColor: "#002B40",
       alignItems: "stretch",
     },
     cell: {
@@ -91,15 +90,15 @@ export default function TabelaTarefas({ data, visualizacao }) {
       paddingVertical: 40,
       padding: 10,
       textAlign: "center",
-      color: "white",
+      color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
       width: screenWidth / 3,
       borderRightWidth: 1,
-      borderColor: "#002B40",
       fontSize: 16,
       flexWrap: "wrap",
     },
     headerText: {
       fontWeight: "bold",
+      color: "white",
       backgroundColor: "#4F7A9A",
     },
     horarioCell: {

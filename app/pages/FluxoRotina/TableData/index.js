@@ -106,7 +106,7 @@ export default function TableData() {
       paddingVertical: 20,
     },
     scrollContainer: {
-      backgroundColor: "#000",
+      backgroundColor: colorScheme === "dark" ? cores.black : cores.azulEscuroDark,
       marginTop: 10,
       height: 50,
     },

@@ -1,14 +1,20 @@
 //COMPONENTES
 
-import { View, Text, StyleSheet, TouchableOpacity, Appearance } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Appearance,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import cores from "../../Util/coresPadrao";
 
 export default function Toolbar({ visualizacao, setVisualizacao }) {
   //*************************************************HOOKS********************************************************************//
 
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
-
 
   //**********************************************Alteração automática de tema*****************************************************//
 
@@ -35,14 +41,14 @@ export default function Toolbar({ visualizacao, setVisualizacao }) {
       padding: 10,
     },
     diarioButton: {
-      backgroundColor: visualizacao === "diaria" ? "#1E2F3C" : "#C4CACE", 
+      backgroundColor: visualizacao === "diaria" ? "#1E2F3C" : "#C4CACE",
       paddingVertical: 8,
       paddingHorizontal: 16,
       borderRadius: 8,
-      marginLeft: 10
+      marginLeft: 10,
     },
     semanalButton: {
-      backgroundColor: visualizacao === "semanal" ? "#1E2F3C" : "#C4CACE", 
+      backgroundColor: visualizacao === "semanal" ? "#1E2F3C" : "#C4CACE",
       paddingVertical: 8,
       paddingHorizontal: 16,
       borderRadius: 8,
@@ -62,19 +68,23 @@ export default function Toolbar({ visualizacao, setVisualizacao }) {
   return (
     <View style={styles.toolbar}>
       <TouchableOpacity style={styles.iconContainer}>
-        <Ionicons name="pencil" color="white" size={20} />
+        <Ionicons name="pencil" color={colorScheme === "dark" ? cores.ghostWhite : cores.black} size={20} />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconContainer}>
-        <Ionicons name="add" color="white" size={25} />
+        <Ionicons
+          name="add"
+          color={colorScheme === "dark" ? cores.ghostWhite : cores.black}
+          size={25}
+        />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconContainer}>
-        <Ionicons name="remove" color="white" size={25} />
+        <Ionicons name="remove" color={colorScheme === "dark" ? cores.ghostWhite : cores.black} size={25} />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconContainer}>
-        <Ionicons name="color-palette" color="white" size={20} />
+        <Ionicons name="color-palette" color={colorScheme === "dark" ? cores.ghostWhite : cores.black} size={20} />
       </TouchableOpacity>
 
       <TouchableOpacity
