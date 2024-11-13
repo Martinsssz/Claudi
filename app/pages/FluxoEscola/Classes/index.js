@@ -1,4 +1,3 @@
-//Import de componentes
 import {
   View, Text,
   StyleSheet,
@@ -16,23 +15,35 @@ import { useGlobalSearchParams } from 'expo-router'
 //********************************************Import de depêndencias e componentes***********************************************//
 import BackArrow from "../../../components/BackArrow"
 import cores from '../../../Util/coresPadrao'
-import RandomTask from '../../../components/RandomTask'
 import { Ionicons } from '@expo/vector-icons'
+import { checkName } from '../../../Util/checkData'
 import Popup from '../../../components/Popup'
+import Class from '../../../components/Class'
 
 
-export default function RandomTasksList() {
+export default function classes() {
   //**********************************************HOOKS**********************************************************************//
   let { data } = useGlobalSearchParams()
-  
+
 
   const [popupVisibility, setPopupVisibility] = useState(false)
   const [popupText, setPopupText] = useState("")
   const [popupOption, setPopupOption] = useState([])
-  const [dataRandom, setDataRandom] = useState()
-  
-  useEffect(() =>{
-    setDataRandom( JSON.parse(data) )
+  const [jsonData, setJsonData] = useState()
+
+  useEffect(() => {
+    setJsonData({
+      "days": ["sunday", "monday", "tuesday", "wednesday"],
+      "school_schedule_setup": {},
+
+      "teachers": {},
+
+      "classes": {},
+
+      "subjects": {},
+
+      "schoolIntervals": {}
+    })
   }, [])
 
   const { width, height } = Dimensions.get('window')
@@ -60,32 +71,32 @@ export default function RandomTasksList() {
 
   }
 
-  function createTask() {
+  function createTeacher() {
     let id
-    let keys = Object.keys(dataRandom['tasks']['random'])
+    let keys = Object.keys(jsonData['classes'])
 
     do {
       id = Math.floor(Math.random() * 1000000).toString()
     } while (keys.some(key => key.endsWith(`-${id}`)))
 
-    let newKey = `task-${id}-${Date.now()}`
-    let copyOfData = { ...dataRandom }
-    copyOfData['tasks']['random'][newKey] = null
+    let newKey = `class-${id}-${Date.now()}`
+    let copyOfData = { ...jsonData }
+    copyOfData['classes'][newKey] = null
 
-    setDataRandom(copyOfData)
+    setJsonData(copyOfData)
 
     console.log(JSON.stringify(copyOfData, null, 2))
   }
 
   function deleteTask(key) {
-    let copyOfData = { ...dataRandom }
-    delete copyOfData['tasks']['random'][key]
+    let copyOfData = { ...jsonData }
+    delete copyOfData['classes'][key]
 
-    setDataRandom(copyOfData)
+    setJsonData(copyOfData)
   }
 
   /*function nextStage(){
-    let copyOfData = { ...dataRandom}
+    let copyOfData = { ...jsonData}
     let fixTasks = copyOfData['tasks']['fix']
     let keysToVerify = Object.keys(fixTasks)
  
@@ -103,7 +114,7 @@ export default function RandomTasksList() {
       }else{
         router.push({
           pathname: '../RandomTasksList',
-          params: {data:  JSON.stringify(dataRandom)}
+          params: {data:  JSON.stringify(jsonData)}
         })
       }
     })
@@ -187,21 +198,21 @@ export default function RandomTasksList() {
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
 
-          <BackArrow link={"../TaskList"} data={dataRandom}></BackArrow>
+          <BackArrow link={"../TaskList"} data={jsonData}></BackArrow>
 
-          <Text style={styles.title}>Tarefas</Text>
+          <Text style={styles.title}>Turmas</Text>
           <ScrollView contentContainerStyle={styles.tasks}>
 
-            {dataRandom && Object.keys(dataRandom['tasks']['random']).length > 0 ? (
+            {jsonData && Object.keys(jsonData['classes']).length > 0 ? (
 
-              Object.keys(dataRandom['tasks']['random']).map((key, index) => (
+              Object.keys(jsonData['classes']).map((key, index) => (
 
                 <View key={key} style={styles.taskView}>
-                  <RandomTask data={dataRandom} handleData={setDataRandom} id={key} key={key} popup={popup}/>
+                  <Class data={jsonData} handleData={setJsonData} id={key} key={key} popup={popup} />
                   <View style={styles.optionsTasks}>
 
-                    {index + 1 == Object.keys(dataRandom['tasks']['random']).length && (
-                      <Pressable style={styles.createATask} onPress={createTask}>
+                    {index + 1 == Object.keys(jsonData['classes']).length && (
+                      <Pressable style={styles.createATask} onPress={createTeacher}>
                         <Text style={styles.createATaskText}>
                           <Ionicons name='add-outline' style={styles.createATaskText} />
                         </Text>
@@ -216,16 +227,16 @@ export default function RandomTasksList() {
                 </View>
               ))
             ) : (
-              <Pressable style={styles.createATask} onPress={createTask}>
+              <Pressable style={styles.createATask} onPress={createTeacher}>
                 <Text style={styles.createATaskText}>+</Text>
               </Pressable>
             )}
 
           </ScrollView>
 
-          {/*<Pressable style={styles.save} onPress={nextStage}>
-              <Text style={styles.text}>Próxima</Text>
-            </Pressable>*/}
+          <Pressable style={styles.save} /*onPress={nextStage}*/>
+            <Text style={styles.text}>Próxima</Text>
+          </Pressable>
 
         </ScrollView>
 
@@ -242,30 +253,3 @@ export default function RandomTasksList() {
     </>
   )
 }
-
-/*
-{dataRandom && Object.keys(dataRandom['tasks']['random']).length > 0 ? (
-                Object.keys(dataRandom['tasks']['random']).map((key, index) => (
-                  <View key={key} style={styles.taskView}>
-                    <RandomTask data={dataRandom} handleData={setDataRandom} id={key} key={key} />
-                    <View style={styles.optionsTasks}>
-                      {index + 1 == Object.keys(dataRandom['tasks']['fix']).length && (
-                        <Pressable style={styles.createATask} onPress={createTask}>
-                          <Text style={styles.createATaskText}>
-                            <Ionicons name='add-outline' style={styles.createATaskText} />
-                          </Text>
-                        </Pressable>
-                      )}
-                      <Pressable style={styles.createATask} onPress={(e) => deleteTask(key)}>
-                        <Ionicons name='trash-outline' style={styles.createATaskText} />
-                      </Pressable>
-                    </View>
-                  </View>
-                ))
-              ) : (
-                <Pressable style={styles.createATask} onPress={createTask}>
-                  <Text style={styles.createATaskText}>+</Text>
-                </Pressable>
-              )}
-*/
-

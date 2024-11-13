@@ -1,154 +1,158 @@
 //Import de componentes
 import {
-  View,Text,
+  View, Text,
   StyleSheet,
   Appearance,
   TextInput,
+  PixelRatio,
 } from 'react-native'
 
 import React, { useState, useEffect } from 'react'
 //********************************************COMPONENTES******************************************************************//
 import cores from '../../Util/coresPadrao'
-import Popup from '../Popup'
 
-
-
-export default function LabelAndHour({label1, label2, handleData, isActived, id, data}){
+export default function LabelAndHour({ label1, label2, handleData, isActived, id, data }) {
+  
 //**********************************************Hooks**********************************************************************//
 
   const [valueAcordar, setValueAcordar] = useState("")
   const [valueDormir, setValueDormir] = useState("")
 
   useEffect(() => {
-    if(data['days'][id]){
+    if (data['days'][id] && !data['schoolTime']) {
       setValueAcordar(data['days'][id]['start'])
       setValueDormir(data['days'][id]['end'])
     }
   }, [data])
 
-  
-
-//********************************************Variáveis******************************************************************//
 
 
+  //********************************************Variáveis******************************************************************//
 
-//**********************************************Alteração automática de tema*****************************************************//
-  const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
+
+
+  //**********************************************Alteração automática de tema*****************************************************//
+  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 
   useEffect(() => {
-    const listener = Appearance.addChangeListener(( scheme ) => {
+    const listener = Appearance.addChangeListener((scheme) => {
       setColorScheme(scheme.colorScheme)
     })
     return () => listener.remove()
   }, [])
-  
-//************************************************Funções**********************************************************************//  
-  function formatar(text, handleInput, value){
+
+  //************************************************Funções**********************************************************************//  
+  function formatar(text, handleInput, value) {
     const regex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
-    if(value.length > text.length &&  text.length == 2 && value.includes(":")){
+    if (value.length > text.length && text.length == 2 && value.includes(":")) {
       formatedText = text.slice(0, -1)
       handleInput(formatedText)
-      
-    }else if(text.length == 2 && !text.includes(":")){
+
+    } else if (text.length == 2 && !text.includes(":")) {
       formatedText = text + ":"
       handleInput(formatedText)
 
-    }else if( text.length == 5 && !regex.test(text) ){
+    } else if (text.length == 5 && !regex.test(text)) {
       handleInput("")
 
-    }else if( text.length == 5 && regex.test(text) ){
+    } else if (text.length == 5 && regex.test(text)) {
       handleInput(text)
-    }else{
+    } else {
       handleInput(text)
     }
   }
 
-  function saveInJson(){
+  function saveInJson() {
     let newValues = {
       "start": valueAcordar,
       "end": valueDormir
     }
 
-    let copyOfData = { ...data}
-    copyOfData['days'][id] = newValues
+    let copyOfData = { ...data }
+    if (copyOfData['subjects']) {
+      copyOfData['schoolTime'] = newValues
+    } else {
+      copyOfData['days'][id] = newValues
+    }
     handleData(copyOfData)
   }
 
-  useEffect(() =>{
-    if(valueAcordar.length == 5 && valueDormir.length == 5 && isActived){
+  useEffect(() => {
+    if (valueAcordar.length == 5 && valueDormir.length == 5 && isActived) {
       const hour1 = new Date(`1970-01-01T${valueAcordar}:00`)
       const hour2 = new Date(`1970-01-01T${valueDormir}:00`)
 
-      if(hour1 >= hour2){
+      if (hour1 >= hour2) {
         setValueAcordar("")
         setValueDormir("")
         return
       }
       saveInJson()
     }
-  }, [isActived,valueAcordar, valueDormir])
+  }, [isActived, valueAcordar, valueDormir])
 
 
-//**********************************************Animações**********************************************************************//
+  //**********************************************Animações**********************************************************************//
 
-//***********************************************Estilos************************************************************************//
-  const styles = StyleSheet.create({ 
-    main:{
-      width: "80%",
+  //***********************************************Estilos************************************************************************//
+  const styles = StyleSheet.create({
+    main: {
+      width: data['schoolTime'] ? "100%" : "80%",
       flexDirection: "row",
-      justifyContent: "space-around",
+      justifyContent: data['schoolTime'] ? "space-between" : "space-around",
 
     },
-    inputArea:{
-      width: "auto",
+    inputArea: {
+      width: data['schoolTime'] ? "50%" : "auto",
       flexDirection: "row",
       alignItems: "center",
 
     },
-    input:{
+    input: {
       borderColor: cores.black,
-      borderWidth: 1,
+      borderWidth: 2,
       padding: 5,
       fontSize: 17,
-      backgroundColor: isActived ? cores.ghostWhite : '#444344bb' ,
+      backgroundColor: isActived ? cores.ghostWhite : '#444344bb',
       color: cores.black,
-      placeholderTextColor: cores.black
+      placeholderTextColor: cores.black,
+      width: data['schoolTime'] ? "50%" : "auto"
     },
-    text:{
+    text: {
       color: colorScheme == "dark" ? "white" : "black",
       marginRight: 10,
-      fontSize: 15
+      fontSize: data['schoolTime'] ? PixelRatio.getFontScale() * 20 : 15
     }
   })
-//***********************************************Tela****************************************************************************//
-  return(
-      <View style={styles.main}>
-        <View style={styles.inputArea}>
-          <Text style={styles.text}>{label1}</Text>
-          <TextInput
-            placeholder='hh:mm'
-            style={styles.input}
-            keyboardType='number-pad'
-            maxLength={5}
-            editable={isActived}
-            value={valueAcordar}
-            onChangeText={ (text) => formatar(text, setValueAcordar, valueAcordar) }
-          />
-        </View>
+  //***********************************************Tela****************************************************************************//
+  return (
+    <View style={styles.main}>
+      <View style={styles.inputArea}>
+        <Text style={styles.text}>{label1}</Text>
+        <TextInput
+          placeholder='hh:mm'
+          style={styles.input}
+          keyboardType='number-pad'
+          maxLength={5}
+          editable={isActived}
+          value={valueAcordar}
+          onChangeText={(text) => formatar(text, setValueAcordar, valueAcordar)}
+        />
+      </View>
 
-        <View style={styles.inputArea}>
-          <Text style={styles.text}>{label2}</Text>
-          <TextInput
-            placeholder='hh:mm'
-            style={styles.input}
-            keyboardType='numeric'
-            maxLength={5}
-            editable={isActived}
-            value={valueDormir}
-            onChangeText={ (text) => formatar(text, setValueDormir, valueDormir) }
-          />
-        </View>
-      </View>                            
+      <View style={styles.inputArea}>
+        <Text style={styles.text}>{label2}</Text>
+        <TextInput
+          placeholder='hh:mm'
+          style={styles.input}
+          keyboardType='numeric'
+          maxLength={5}
+          editable={isActived}
+          value={valueDormir}
+          onChangeText={(text) => formatar(text, setValueDormir, valueDormir)}
+        />
+      </View>
+    </View>
   )
 }

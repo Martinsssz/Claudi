@@ -19,7 +19,7 @@ export default function App(){
   }, []);
   useFocusEffect(() =>{
     if(user){
-      router.replace("./pages/pagesWithHeader/HomePage")
+      router.replace("./pages/FluxoEscola/Classes")
       
     }
   })
