@@ -16,18 +16,16 @@ import React, { useState, useEffect } from 'react'
 //********************************************Import de depêndencias e componentes***********************************************//
 import cores from '../../Util/coresPadrao'
 import WeekDays from '../../components/WeekDays'
-import LabelAndHour from '../../components/LabelAndHour'
-import InputLabel from '../InputLabel'
 import { checkName } from '../../Util/checkData'
 
 
-export default function RandomTask({ data, handleData, id }) {
+export default function RandomTask({ data, handleData, id, popup }) {
   //**********************************************HOOKS**********************************************************************//
   const [name, setName] = useState("")
-  const [total, setTotal] = useState(0)
-  const [duration, setDuration] = useState(0)
-  const [min, setMin] = useState(0)
-  const [max, setMax] = useState(0)
+  const [total, setTotal] = useState("")
+  const [duration, setDuration] = useState("")
+  const [min, setMin] = useState("")
+  const [max, setMax] = useState("")
 
 
   const [dataTask, setDataTask] = useState({ 'days': {} })
@@ -38,6 +36,11 @@ export default function RandomTask({ data, handleData, id }) {
     const task = data['tasks']['random'][id];
     if (task) {
       setName(task['name'])
+      setTotal(task['total'])
+      setDuration(task['duration'])
+      setMin(task['minAndMax']['min'])
+      setMax(task['minAndMax']['max'])
+
       let copyOfData = { ...dataTask }
       copyOfData['days'] = task['days']
       setDataTask(copyOfData)
@@ -74,11 +77,56 @@ export default function RandomTask({ data, handleData, id }) {
 
 
   useEffect(() =>{
-    if(min.p){
-      setMin(0)
-      setMax(0)
+    let localMin =  parseInt(min); 
+    let localMax = parseInt(max);
+
+    if(min.trim !== ""  && max.trim !== ""){
+      if(localMin > localMax){
+        popup("O mínimo não pode ser maior que o máximo")
+        setMin(`${localMax-1}`)
+      }
     }
+
   }, [min, max])
+
+  useEffect(() => {
+    let localMax = parseInt(max)
+    let localMin = parseInt(min)
+    let localTotal = parseInt(total)
+    let dataTaskLeght = Object.keys(dataTask['days']).length
+
+    if(min.trim !== ""  && max.trim !== "" &&  total.trim !== ""){
+      if(localMin * dataTaskLeght > localTotal){
+        popup("O mínimo vezes a quantidade de dias não pode ser maior que o total")
+        setTotal(`${localMin*dataTaskLeght}`)
+      }else if(localMax * dataTaskLeght < localTotal){
+        popup("O máximo vezes a quantidade de dias não pode ser menor que o total")
+        let newTotal = localTotal % dataTaskLeght == 0 ? localTotal / dataTaskLeght : parseInt(localTotal / dataTaskLeght) + 1
+        setMax(`${newTotal}`)
+      }
+    }
+
+  }, [min, max, total, dataTask])
+
+  useEffect(() => {
+    const dados = [max,min,duration,name,total]
+    if(dados.some( dado =>  dado.trim() === "")){
+      return
+    }
+    const copyOfData = {...data}
+    const newTask = {
+      "name": name,
+      "days": dataTask['days'],
+      "total": total,
+      "minAndMax": {"min": min, "max": max},
+      "duration": duration
+    }
+
+    copyOfData['tasks']['random'][id] = newTask
+    handleData(copyOfData)
+    console.log(JSON.stringify(copyOfData, null, 2));
+  }, [max, min, duration, name, dataTask, total])
+
   //************************************************Variáveis**********************************************************************//
   let orderDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   let days = Object.keys(data['days'])
@@ -176,6 +224,7 @@ export default function RandomTask({ data, handleData, id }) {
           <TextInput
             placeholder={"Tarefa"}
             style={styles.input}
+            value={name}
             onChangeText={(text) => setName(text)}
           />
         </View>
@@ -193,6 +242,7 @@ export default function RandomTask({ data, handleData, id }) {
             <TextInput
               placeholder={"Total"}
               style={styles.input}
+              value={total}
               onChangeText={(text) => setTotal(text)}
             />
           </View>
@@ -205,6 +255,7 @@ export default function RandomTask({ data, handleData, id }) {
             <TextInput
               placeholder={"Tempo (minutos)"}
               style={styles.input}
+              value={duration}
               onChangeText={(text) => setDuration(text)}
             />
           </View>
@@ -218,6 +269,7 @@ export default function RandomTask({ data, handleData, id }) {
               <Text style={styles.titulo2}>Min:  </Text>
               <TextInput
                 placeholder={"Min"}
+                value={min}
                 style={styles.input}
                 onChangeText={(text) => setMin(text)}
               />
@@ -228,6 +280,7 @@ export default function RandomTask({ data, handleData, id }) {
               <TextInput
                 placeholder={"Max"}
                 style={styles.input}
+                value={max}
                 onChangeText={(text) => setMax(text)}
               />
             </View>

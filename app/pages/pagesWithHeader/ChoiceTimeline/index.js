@@ -54,8 +54,14 @@ function clique(id){
       useNativeDriver: false
     }),
   ]).start(() => {
-    setActiveId(null);
-    router.navigate("../../FluxoRotina/TimelineDays")
+    if(id == "a"){
+      setActiveId(null);
+      router.navigate("../../FluxoRotina/TimelineDays")
+    }
+    if(id == "b"){
+      setActiveId(null);
+      router.navigate("../../FluxoEscola/SchoolDays")
+    }
   });
 }
 //***********************************************Estilos************************************************************************//

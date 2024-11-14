@@ -189,6 +189,15 @@ app.post("/delete-account", async (req, res) => {
   }
 });
 
+app.get("/timelines", async (req, res) => {
+  try {
+    const timelines = await Timeline.findAll({ attributes: ["json_views"] });
+    res.json(timelines)
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+  }
+});
+
 //*********************************************************FUNÇÕES******************************************************/
 async function updateDataUser(id, name, email, password) {
   try {
@@ -322,11 +331,4 @@ async function generateToken(user) {
   }
 }
 
-app.get("/timelines", async (req, res) => {
-  try {
-    const timelines = await Timeline.findAll({ attributes: ["json_views"] });
-    res.json(timelines)
-  } catch (error) {
-    console.log("Erro ao buscar dados:", error)
-  }
-});
+

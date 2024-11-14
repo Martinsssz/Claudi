@@ -1,4 +1,3 @@
-//Import de componentes
 import {
   View, Text,
   StyleSheet,
@@ -11,32 +10,46 @@ import {
   PixelRatio
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { router, useGlobalSearchParams } from 'expo-router'
+import { useGlobalSearchParams } from 'expo-router'
 
 //********************************************Import de depêndencias e componentes***********************************************//
 import BackArrow from "../../../components/BackArrow"
 import cores from '../../../Util/coresPadrao'
-import Task from '../../../components/Task'
 import { Ionicons } from '@expo/vector-icons'
 import { checkName } from '../../../Util/checkData'
 import Popup from '../../../components/Popup'
+import Class from '../../../components/Class'
 
 
-export default function TaskList() {
+export default function classes() {
   //**********************************************HOOKS**********************************************************************//
   let { data } = useGlobalSearchParams()
+
 
   const [popupVisibility, setPopupVisibility] = useState(false)
   const [popupText, setPopupText] = useState("")
   const [popupOption, setPopupOption] = useState([])
+  const [jsonData, setJsonData] = useState()
 
-  const [dataTask, setDataTask] = useState()
+  useEffect(() => {
+    setJsonData({
+      "days": ["sunday", "monday", "tuesday", "wednesday"],
+      "school_schedule_setup": {},
 
-  useEffect(() =>{
-    setDataTask(JSON.parse(data))
+      "teachers": {},
+
+      "classes": {},
+
+      "subjects": {},
+
+      "schoolIntervals": {}
+    })
   }, [])
 
   const { width, height } = Dimensions.get('window')
+
+
+
 
   //**********************************************Alteração automática de tema*****************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
@@ -58,53 +71,55 @@ export default function TaskList() {
 
   }
 
-  function createTask() {
+  function createTeacher() {
     let id
-    let keys = Object.keys(dataTask['tasks']['fix'])
+    let keys = Object.keys(jsonData['classes'])
 
     do {
       id = Math.floor(Math.random() * 1000000).toString()
     } while (keys.some(key => key.endsWith(`-${id}`)))
 
-    let newKey = `task-${id}-${Date.now()}`
-    let copyOfData = { ...dataTask }
-    copyOfData['tasks']['fix'][newKey] = null
+    let newKey = `class-${id}-${Date.now()}`
+    let copyOfData = { ...jsonData }
+    copyOfData['classes'][newKey] = null
 
-    setDataTask(copyOfData)
+    setJsonData(copyOfData)
+
+    console.log(JSON.stringify(copyOfData, null, 2))
   }
 
   function deleteTask(key) {
-    let copyOfData = { ...dataTask }
-    delete copyOfData['tasks']['fix'][key]
+    let copyOfData = { ...jsonData }
+    delete copyOfData['classes'][key]
 
-    setDataTask(copyOfData)
+    setJsonData(copyOfData)
   }
 
-  function nextStage() {
-    let copyOfData = { ...dataTask }
+  /*function nextStage(){
+    let copyOfData = { ...jsonData}
     let fixTasks = copyOfData['tasks']['fix']
     let keysToVerify = Object.keys(fixTasks)
-
+ 
     keysToVerify.forEach((key) => {
       let name
-      try {
+      try{
         name = fixTasks[key]['name']
-      } catch (error) {
+      }catch(error){
         name = ""
       }
-
+      
       let validationResult = checkName(name)
-      if (!validationResult.validate) {
+      if( !validationResult.validate ){
         popup(validationResult['message'], null)
-      } else {
+      }else{
         router.push({
-          pathname: '../RandomTaskList',
-          params: { data: JSON.stringify(dataTask) }
+          pathname: '../RandomTasksList',
+          params: {data:  JSON.stringify(jsonData)}
         })
       }
     })
-
-  }
+ 
+  }*/
   //**********************************************Animações**********************************************************************//
 
   //***********************************************Estilos************************************************************************//
@@ -183,38 +198,43 @@ export default function TaskList() {
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
 
-          <BackArrow link={"../TimelineDays"} data={dataTask}></BackArrow>
+          <BackArrow link={"../TaskList"} data={jsonData}></BackArrow>
 
-          <Text style={styles.title}>Compromissos</Text>
+          <Text style={styles.title}>Turmas</Text>
           <ScrollView contentContainerStyle={styles.tasks}>
 
-            {dataTask && Object.keys(dataTask['tasks']['fix']).length > 0 ? (
-              Object.keys(dataTask['tasks']['fix']).map((key, index) => (
+            {jsonData && Object.keys(jsonData['classes']).length > 0 ? (
+
+              Object.keys(jsonData['classes']).map((key, index) => (
+
                 <View key={key} style={styles.taskView}>
-                  <Task data={dataTask} handleData={setDataTask} id={key} key={key} />
+                  <Class data={jsonData} handleData={setJsonData} id={key} key={key} popup={popup} />
                   <View style={styles.optionsTasks}>
-                    {index + 1 == Object.keys(dataTask['tasks']['fix']).length && (
-                      <Pressable style={styles.createATask} onPress={createTask}>
+
+                    {index + 1 == Object.keys(jsonData['classes']).length && (
+                      <Pressable style={styles.createATask} onPress={createTeacher}>
                         <Text style={styles.createATaskText}>
                           <Ionicons name='add-outline' style={styles.createATaskText} />
                         </Text>
                       </Pressable>
                     )}
+
                     <Pressable style={styles.createATask} onPress={(e) => deleteTask(key)}>
                       <Ionicons name='trash-outline' style={styles.createATaskText} />
                     </Pressable>
+
                   </View>
                 </View>
               ))
             ) : (
-              <Pressable style={styles.createATask} onPress={createTask}>
+              <Pressable style={styles.createATask} onPress={createTeacher}>
                 <Text style={styles.createATaskText}>+</Text>
               </Pressable>
             )}
 
           </ScrollView>
 
-          <Pressable style={styles.save} onPress={nextStage}>
+          <Pressable style={styles.save} /*onPress={nextStage}*/>
             <Text style={styles.text}>Próxima</Text>
           </Pressable>
 
@@ -233,25 +253,3 @@ export default function TaskList() {
     </>
   )
 }
-
-/* 
-Modelo:
-'days': {
-      'monday': {'start':  '07:00', 'end': '23:59'},
-      'tuesday': {'start':  '07:00', 'end': '23:59'},
-      'wednesday': {'start':  '07:00', 'end': '23:59'},
-      'thursday': {'start':  '07:00', 'end': '23:59'},
-      'friday': {'start':  '07:00', 'end': '23:59'},
-      'saturday': {'start':  '07:00', 'end': '23:59'},
-      'sunday': {'start':  '07:00', 'end': '23:59'}
-    },
-    'tasks':{
-        'fix':{
-          'name':{
-            "monday": {"start": "21:00", "end": "22:00"},
-            "tuesday": {"start": "21:00", "end": "22:00"}
-          }
-        },
-        'random':{}
-    }
-*/

@@ -18,15 +18,15 @@ export default function TabelaTarefas({ data, visualizacao }) {
   const screenWidth = Dimensions.get("window").width;
 
   const diasSemana = {
-    sunday: "Domingo",
-    monday: "Segunda",
-    tuesday: "Terça",
-    wednesday: "Quarta",
-    thursday: "Quinta",
-    friday: "Sexta",
-    saturday: "Sábado",
+    'sunday': "Domingo",
+    'monday': "Segunda",
+    'tuesday': "Terça",
+    'wednesday': "Quarta",
+    'thursday': "Quinta",
+    'friday': "Sexta",
+    'saturday': "Sábado",
   };
-  const diaAtual = Object.keys(data)[new Date().getDay()];
+  const diaAtual = Object.keys(diasSemana)[new Date().getDay()];
 
   const tarefasHoje = data[diaAtual]
     ? Object.entries(data[diaAtual]).map(([taskName, { start, end }]) => ({
