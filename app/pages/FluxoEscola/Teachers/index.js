@@ -15,11 +15,9 @@ import {
   //********************************************Import de depêndencias e componentes***********************************************//
   import BackArrow from "../../../components/BackArrow"
   import cores from '../../../Util/coresPadrao'
-  import RandomTask from '../../../components/RandomTask'
   import { Ionicons } from '@expo/vector-icons'
-  import { checkName } from '../../../Util/checkData'
   import Popup from '../../../components/Popup'
-import Teacher from '../../../components/Teacher'
+  import Subject from '../../../components/Subject'
   
   
   export default function Teachers() {
@@ -209,7 +207,7 @@ import Teacher from '../../../components/Teacher'
                 Object.keys(jsonData['teachers']).map((key, index) => (
   
                   <View key={key} style={styles.taskView}>
-                    <Teacher data={jsonData} handleData={setJsonData} id={key} key={key} popup={popup}/>
+                    <Subject data={jsonData} handleData={setJsonData} id={key} key={key} popup={popup}/>
                     <View style={styles.optionsTasks}>
   
                       {index + 1 == Object.keys(jsonData['teachers']).length && (
