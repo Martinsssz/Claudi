@@ -19,5 +19,6 @@ export default function Layout() {
         <Sidebar rotaAtual={currentScreen}/>
       )}
     </>
+    
   );
 }

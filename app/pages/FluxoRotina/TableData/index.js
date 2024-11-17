@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
   PanResponder,
+  Pressable,
   Animated,
   Dimensions,
 } from "react-native";
@@ -15,6 +16,7 @@ import TabelaTarefas from "../../../components/Table";
 import cores from "../../../Util/coresPadrao";
 import ip from "../../../Util/localhost";
 import Toolbar from "../../../components/Toolbar";
+import { Ionicons } from "@expo/vector-icons";
 
 //*************************************************HOOKS********************************************************************//
 
@@ -30,6 +32,8 @@ export default function TableData() {
   const scrollBallPosition = useRef(new Animated.Value(0)).current;
   const tableWidth = ScreenWidth * 1.5;
   const scrollRatio = tableWidth / (scrollBarWidth - scrollBallSize);
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+
 
   //**********************************************Alteração automática de tema*****************************************************//
 

@@ -12,8 +12,7 @@ import {
   Text,
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import MultiSelect from 'react-native-multiple-select';
-
+import MultiSelect from 'react-native-multiple-select'
 //********************************************Import de depêndencias e componentes***********************************************//
 import cores from '../../Util/coresPadrao'
 import { checkName } from '../../Util/checkData'

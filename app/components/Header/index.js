@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
 //***********************************************Tela****************************************************************************//
 return(
   <View style={styles.fundo}>
+    
 
     <View style={styles.userInfo}>
       <View style={styles.foto}>

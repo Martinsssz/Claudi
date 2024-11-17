@@ -8,6 +8,7 @@ import {
   Pressable,
   Modal,
   PanResponder,
+  TextInput,
   Animated,
 } from "react-native";
 
@@ -22,8 +23,18 @@ import { Link, router } from "expo-router";
 export default function HomePage() {
   //**********************************************UseStates**********************************************************************//
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const panY = useRef(new Animated.Value(0)).current;
+  const [modalVisible, setModalVisible] = useState(false)
+  const panY = useRef(new Animated.Value(0)).current
+  const [isEditing, setIsEditing] = useState(false)
+  const [horarioEditando, setHorarioEditando] = useState(null)
+  const [fixedHorarios, setFixedHorarios] = useState([])
+
+  const [horarios, setHorarios] = useState([
+    { id: 1, nome: "Horário 1" },
+    { id: 2, nome: "Horário 2" },
+    { id: 3, nome: "Horário 3" }
+
+  ])
 
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -37,6 +48,14 @@ export default function HomePage() {
   //**********************************************Animações**********************************************************************//
 
   //************************************************Funções**********************************************************************//
+
+  const handleNomeChange = (id, novoNome) => {
+    setHorarios((prevHorarios) =>
+      prevHorarios.map((horario) =>
+        horario.id === id ? { ...horario, nome: novoNome } : horario
+      )
+    );
+  };
 
   const panResponder = useRef(
     PanResponder.create({
@@ -60,12 +79,41 @@ export default function HomePage() {
         }
       },
     })
-  ).current;
+  ).current
 
-  const openModal = () => {
+  const openModal = (id) => {
+    setHorarioEditando(id)
     panY.setValue(0);
     setModalVisible(true);
-  };
+  }
+
+  const handleEditClick = () => {
+    setIsEditing(true)
+    setModalVisible(false)
+
+  }
+
+  const closeModal = () => {
+    setIsEditing(false)
+    setModalVisible(false)
+  }
+
+  const handleFixarHorario = (id) => {
+    setFixedHorarios((prevFixed) => {
+      if (prevFixed.includes(id)) {
+        return prevFixed.filter((horarioId) => horarioId !== id)
+      } else {
+        return [id, ...prevFixed]
+      }
+    })
+
+    setHorarios((prevHorarios) => {
+      const horarioToFix = prevHorarios.find((horario) => horario.id === id)
+      const otherHorarios = prevHorarios.filter((horario) => horario.id !== id)
+      return [horarioToFix, ...otherHorarios]
+    })
+    setModalVisible(false)
+  }
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
@@ -77,20 +125,11 @@ export default function HomePage() {
     },
     contentContainer: {
       flexDirection: "column",
-      gap: 20,
       alignItems: "flex-start",
       paddingVertical: 30,
+      flexGrow: 1
     },
 
-    h1: {
-      color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
-      fontSize: 40,
-      fontWeight: "bold",
-    },
-    texto: {
-      color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
-      fontSize: 25,
-    },
     dashboard: {
       height: 50,
       backgroundColor:
@@ -112,10 +151,9 @@ export default function HomePage() {
         colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       padding: 15,
       borderRadius: 8,
-      marginVertical: 30,
       elevation: 5,
+      marginVertical: 30,
       width: "70%",
-      height: "70%",
       justifyContent: "center",
     },
     tituloHorario: {
@@ -168,6 +206,13 @@ export default function HomePage() {
       alignSelf: "center",
       marginVertical: 20,
     },
+    iconFixed: {
+      position: "absolute",
+      top: 5,
+      right: 5,
+      zIndex: 1,
+      transform: [{ rotate: "45deg" }],
+    }
   });
   //***********************************************Tela***************************************************************************//
   return (
@@ -176,26 +221,49 @@ export default function HomePage() {
         style={styles.fundo}
         contentContainerStyle={styles.contentContainer}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity
-            onPress={() => router.push("/pages/FluxoRotina/TableData")}
-            style={styles.containerHorario}
-          >
-            <Text style={styles.tituloHorario}>Horário XXX</Text>
-            <Text style={styles.subtituloHorario}>Horário Pessoal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={openModal} style={styles.dotsButton}>
-            <Ionicons
-              name="ellipsis-horizontal"
-              size={35}
-              color={
-                colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuroDark
-              }
-            />
-          </TouchableOpacity>
+        <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+          {horarios.map((horario) => (
+            <View key={horario.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+              <TouchableOpacity
+                onPress={() => router.push("/pages/FluxoRotina/TableData")}
+                style={styles.containerHorario}
+              >
+                {fixedHorarios.includes(horario.id) && (
+                  <Ionicons
+                    name="pin"
+                    size={20}
+                    color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuro}
+                    style={styles.iconFixed} />
+
+                )}
+                {horarioEditando === horario.id && isEditing ? (
+                  <TextInput
+                    value={horario.nome}
+                    onChangeText={(text) => handleNomeChange(horario.id, text)}
+                    autoFocus={true}
+                    style={styles.tituloHorario}
+                    onBlur={() => {
+                      setIsEditing(false)
+                      closeModal()
+                    }}
+                  />
+                ) : (
+                  <Text style={styles.tituloHorario}>{horario.nome}</Text>
+                )}
+                <Text style={styles.subtituloHorario}>Horário Pessoal</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => openModal(horario.id)} style={styles.dotsButton}>
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={35}
+                  color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuroDark}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
       </ScrollView>
-
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -208,7 +276,7 @@ export default function HomePage() {
             {...panResponder.panHandlers}
           >
             <View style={styles.dragIndicator} />
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleEditClick}>
               <Ionicons name="pencil" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Editar nome</Text>
             </TouchableOpacity>
@@ -216,9 +284,9 @@ export default function HomePage() {
               <Ionicons name="cloud-upload" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Exportar horário</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={() => handleFixarHorario(horarioEditando)}>
               <Ionicons name="pin" size={20} style={styles.icon} />
-              <Text style={styles.menuItemText}>Fixar horário</Text>
+              <Text style={styles.menuItemText}>{fixedHorarios.includes(horarioEditando) ? "Desfixar horário" : "Fixar horário"}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem}>
               <Ionicons name="trash" size={20} style={styles.icon} />
