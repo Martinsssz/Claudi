@@ -41,47 +41,135 @@ const User = sequelize.define(
   }
 );
 
-const Timeline = sequelize.define("Timeline", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    field: "id_timeline",
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    field: "timeline_name",
-  },
-  type: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: "timeline_type",
-  },
-  json: {
-    type: DataTypes.JSON,
-    allowNull: false,
-    field: "json_views",
-  },
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "users",
-      key: "id",
+const Timeline = sequelize.define(
+  "Timeline",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: "id_timeline",
     },
-    onDelete: "CASCADE",
-  },
-  answer_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "anwsers",
-      key: "id",
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "timeline_name",
     },
-    onDelete: "CASCADE",
+    type: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "timeline_type",
+    },
+    json: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      field: "json_views",
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "fk_user_id",
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+    answer_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "fk_id_answer",
+      references: {
+        model: "answers",
+        key: "id_answer",
+      },
+      onDelete: "CASCADE",
+    },
   },
-});
+  {
+    tableName: "timelines", // Nome da tabela
+    timestamps: false,
+  }
+);
+
+const Answers = sequelize.define(
+  "answers",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: "id_answer",
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "timeline_name",
+    },
+    type: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "timeline_type",
+    },
+    json: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      field: "json_answers",
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+    answer_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "time_description",
+    },
+  },
+  {
+    tableName: "answers", // Nome da tabela
+    timestamps: false,
+  }
+);
+
+const Access = sequelize.define(
+  "Access_timeline",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: "id_access_timeline",
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+    timeline_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "timeliene",
+        key: "id_timeline",
+      },
+      onDelete: "CASCADE",
+    },
+  },
+  {
+    tableName: "access_timelines", // Nome da tabela
+    timestamps: false,
+  }
+);
 
 const Token = sequelize.define(
   "PasswordResetToken",
@@ -119,8 +207,19 @@ const Token = sequelize.define(
   }
 );
 
+//Cardinalidades
 User.hasMany(Token, { foreignKey: "user_id" });
-Token.belongsTo(User, { foreignKey: "user_id" });
-Timeline.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(Timeline, { foreignKey: "user_id" });
+User.hasMany(Answers, { foreignKey: "user_id" });
+User.hasMany(Access, { foreignKey: "user_id" });
 
-module.exports = { User, Token, Timeline };
+//Pertencimentos
+Token.belongsTo(User, { foreignKey: "user_id" });
+
+Timeline.belongsTo(User, { foreignKey: "user_id" });
+Timeline.belongsTo(Answers, { foreignKey: "id_answer" });
+
+Access.belongsTo(User, { foreignKey: "user_id" });
+Access.belongsTo(Timeline, { foreignKey: "id_timeline" });
+
+module.exports = { User, Token, Timeline, Answers, Access };

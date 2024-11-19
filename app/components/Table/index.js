@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from "react-native";
 import cores from "../../Util/coresPadrao";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 //*************************************************HOOKS********************************************************************//
 
@@ -65,30 +66,28 @@ export default function TabelaTarefas({ data, visualizacao }) {
       flex: 1,
       alignItems: "stretch",
       justifyContent: "flex-start",
-      padding: 0,
-      margin: 0,
+      paddingHorizontal: screenWidth * 0
     },
     table: {
       borderWidth: 1,
       borderColor: "#002B40",
       width: "100%",
-      margin: 0,
-      padding: 0,
     },
     rowHeader: {
       flexDirection: "row",
+      flexWrap: "wrap",
       alignItems: "center",
     },
     row: {
       flexDirection: "row",
-      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulClaro1Light,
+      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       borderBottomWidth: 1,
       alignItems: "stretch",
     },
     cell: {
       flex: 1,
-      paddingVertical: 40,
-      padding: 10,
+      paddingVertical: screenWidth * 0.10,
+      paddingHorizontal: screenWidth * 0.03,
       textAlign: "center",
       color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
       width: screenWidth / 3,

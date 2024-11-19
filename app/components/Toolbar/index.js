@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Appearance,
+  Dimensions
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +16,9 @@ export default function Toolbar({ visualizacao, setVisualizacao }) {
   //*************************************************HOOKS********************************************************************//
 
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
+
+  const ScreenHeight = Dimensions.get("window").height;
+
 
   //**********************************************Alteração automática de tema*****************************************************//
 
@@ -36,6 +40,8 @@ export default function Toolbar({ visualizacao, setVisualizacao }) {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      height: ScreenHeight * 0.08,
+      marginTop: ScreenHeight * -0.02
     },
     iconContainer: {
       padding: 10,

@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { Sequelize } = require("sequelize");
 const nodemailer = require("nodemailer");
-const { User, Token, Timeline } = require("./models");
+const { User, Token, Timeline, Answers, Access } = require("./models");
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -189,12 +189,13 @@ app.post("/delete-account", async (req, res) => {
   }
 });
 
-app.get("/timelines", async (req, res) => {
+app.post("/timelines", async (req, res) => {
+  const { id_timeline } = req.body;
   try {
-    const timelines = await Timeline.findAll({ attributes: ["json_views"] });
-    res.json(timelines)
+    const timelines = await Timeline.findByPk(id_timeline);
+    res.json(JSON.stringify(timelines['dataValues']['json']));
   } catch (error) {
-    console.log("Erro ao buscar dados:", error)
+    console.log("Erro ao buscar dados:", error);
   }
 });
 
@@ -330,5 +331,3 @@ async function generateToken(user) {
     generateToken();
   }
 }
-
-
