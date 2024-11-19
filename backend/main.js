@@ -1,9 +1,9 @@
 //**********************************************************Imports*****************************************************/
 const express = require("express");
 const cors = require("cors");
-const { Sequelize } = require("sequelize");
+const { Sequelize, where } = require("sequelize");
 const nodemailer = require("nodemailer");
-const { User, Token, Timeline, Answers, Access } = require("./models");
+const { User, Token, Timeline, Answers, Access, ShareToken } = require("./models");
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -228,9 +228,9 @@ app.post("/getTimelines", async (req, res) => {
       console.log(timeline)
       timelines.push(timeline)
     }
-    console.log({timelines})
+    console.log({ timelines })
 
-    res.json({timelines} )
+    res.json({ timelines })
   } catch (error) {
     console.log("Erro ao buscar dados:", error);
   }
@@ -248,6 +248,88 @@ app.post("/renameTimeline", async (req, res) => {
   } catch (error) {
     console.log("Erro ao buscar dados:", error);
   }
+});
+
+app.post("/addShareTimeline", async (req, res) => {
+  const { code, userId } = req.body;
+  let codeVerification = await ShareToken.findOne({ where: { token: code } })
+  if (codeVerification) {
+    console.log(codeVerification)
+
+    try {
+      let timelineId = codeVerification['dataValues']['id']
+      let userHasAcess = await Access.findOne({ where: { user_id: userId, timeline_id: timelineId } })
+      if (!userHasAcess) {
+        Access.create({
+          user_id: userId,
+          timeline_id: timelineId,
+        })
+        res.status(200).json({ error: "OK" });
+      } else {
+        res.status(400).json({ error: "User already has access" });
+      }
+    } catch (error) {
+      console.log("Erro ao buscar dados:", error);
+      res.status(500).json({ error: "Server error" });
+    }
+
+  } else {
+    res.status(404).json({ error: "Token not found" });
+  }
+
+});
+
+app.post("/timelineShareData", async (req, res) => {
+  //Verificações
+  const { timelineId, userId } = req.body;
+  let alreadyHasAToken = await ShareToken.findOne({ where: {timeline_id: timelineId} })
+  const token = alreadyHasAToken ? alreadyHasAToken['dataValues']['token'] : await generateLargeToken()
+  console.log(token)
+
+  try {
+    //Criando Token em necessidade
+    if (!alreadyHasAToken) {
+      if( await Timeline.findOne({ where: {id: timelineId, user_id: userId} }) ){
+        await ShareToken.create({
+          token: token,
+          timeline_id: timelineId
+        })
+
+      }
+    }
+    
+    //Resgantando os usuários que tem acesso
+    let usersInTheTimeline = await Access.findAll({
+      where: {
+        timeline_id: timelineId
+      }
+    })
+
+    // Resgatando os IDs dos usuários com acesso
+    let usersId = []
+    usersInTheTimeline.forEach(item => {
+      usersId.push(item['dataValues']['user_id'])
+    })
+    usersId = usersId.filter(id => id != userId)
+
+    //Finalizando
+    const dataUsers = [] 
+    for (const id of usersId) {
+      const foundUser = await User.findOne({
+        attributes: ['username'],
+        where: { id: id }
+      });
+      let user = await foundUser['dataValues']
+      user['id'] = id
+      dataUsers.push(user)
+    }
+
+    res.status(200).json( {usersData: dataUsers, token: token} )
+
+  } catch (error) {
+    res.status(500)
+  }
+
 });
 
 //*********************************************************FUNÇÕES******************************************************/
@@ -381,4 +463,25 @@ async function generateToken(user) {
   } else {
     generateToken();
   }
+}
+
+async function generateLargeToken() {
+  let result = "";
+  const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+  const caracteresLength = caracteres.length;
+  let counter = 0;
+
+  while (counter < 6) {
+    result += caracteres.charAt(Math.floor(Math.random() * caracteresLength));
+    counter += 1
+  }
+
+  let tokenVerification = await ShareToken.findOne({ where: { token: result } })
+
+  if (!tokenVerification) {
+    return result
+  } else {
+    generateLargeToken()
+  }
+
 }

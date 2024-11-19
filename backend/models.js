@@ -176,6 +176,37 @@ const Access = sequelize.define(
 
 );
 
+const ShareToken = sequelize.define(
+  "share_token",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: "id",
+    },
+    timeline_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "fk_id_timeline",
+      references: {
+        model: "timeline",
+        key: "id_timeline",
+      },
+    },
+    token: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+  },
+  {
+    tableName: "share_token",
+    timestamps: false,
+  }
+
+);
+
 const Token = sequelize.define(
   "PasswordResetToken",
   {
@@ -220,6 +251,9 @@ User.hasMany(Access, { foreignKey: "user_id" });
 
 //Pertencimentos
 Answers.belongsTo(User, { foreignKey: "fk_user_id" })
+
+ShareToken.belongsTo(Timeline, { foreignKey: "fk_id_timeline" });
+
 Token.belongsTo(User, { foreignKey: "user_id" });
 
 Timeline.belongsTo(User, { foreignKey: "fk_user_id" });
@@ -230,4 +264,4 @@ Access.belongsTo(Timeline, { foreignKey: "fk_id_timeline" });
 
 
 
-module.exports = { User, Token, Timeline, Answers, Access };
+module.exports = { User, Token, Timeline, Answers, Access, ShareToken };

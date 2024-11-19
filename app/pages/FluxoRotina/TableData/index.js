@@ -18,6 +18,7 @@ import ip from "../../../Util/localhost";
 import Toolbar from "../../../components/Toolbar";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useGlobalSearchParams } from "expo-router";
 
 //*************************************************HOOKS********************************************************************//
 
@@ -26,6 +27,8 @@ const ScreenHeight = Dimensions.get("window").height;
 
 
 export default function TableData() {
+  let { idTable } = useGlobalSearchParams()
+
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const [data, setData] = useState({});
   const [visualizacao, setVisualizacao] = useState("diaria");
@@ -57,7 +60,7 @@ export default function TableData() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id_timeline: 1
+          id_timeline: idTable
         }),
       });
       const timelines = await response.json();

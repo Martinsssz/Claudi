@@ -171,6 +171,13 @@ export default function HomePage() {
     setModalVisible(false)
   }
 
+  const shareTimeline = (id) => {
+    router.push({
+      pathname: "../../SharePage",
+      params: {idTable: id}
+    })
+  }
+
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
     fundo: {
@@ -281,7 +288,12 @@ export default function HomePage() {
           {horarios.map((horario) => (
             <View key={horario.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
               <TouchableOpacity
-                onPress={() => router.push("/pages/FluxoRotina/TableData")}
+
+                onPress={() => router.push({
+                  pathname: '/pages/FluxoRotina/TableData',
+                  params: { idTable: JSON.stringify(horario.id) }
+                })}
+
                 style={styles.containerHorario}
               >
                 {fixedHorarios.includes(horario.id) && (
@@ -348,7 +360,7 @@ export default function HomePage() {
               <Ionicons name="trash" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Excluir horário</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={() => shareTimeline(horarioEditando)}>
               <Ionicons name="arrow-redo" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Compartilhar</Text>
             </TouchableOpacity>

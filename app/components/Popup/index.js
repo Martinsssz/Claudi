@@ -60,7 +60,6 @@ export default function Popup({title, message, cor, option, link, handle, specia
       fontSize: 18 * PixelRatio.getFontScale(),
       color: colorScheme === "dark" ? "white" : "white",
       alignSelf: "center"
-
     }
 
   })
