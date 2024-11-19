@@ -19,7 +19,7 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
   const [valueDormir, setValueDormir] = useState("")
 
   useEffect(() => {
-    if (data['days'][id] && !data['schoolTime']) {
+    if (data['days'][id] && !data['teachers']) {
       setValueAcordar(data['days'][id]['start'])
       setValueDormir(data['days'][id]['end'])
     }
@@ -49,7 +49,11 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
       formatedText = text.slice(0, -1)
       handleInput(formatedText)
 
-    } else if (text.length == 2 && !text.includes(":")) {
+    } else if(text.length < 2 && parseInt(text) > 2){
+      formatedText =  "0" + text + ":"
+      handleInput(formatedText)
+
+    }else if (text.length == 2 && !text.includes(":")) {
       formatedText = text + ":"
       handleInput(formatedText)
 
@@ -101,7 +105,6 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
       width: data['schoolTime'] ? "100%" : "80%",
       flexDirection: "row",
       justifyContent: data['schoolTime'] ? "space-between" : "space-around",
-
     },
     inputArea: {
       width: data['schoolTime'] ? "50%" : "auto",

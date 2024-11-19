@@ -80,20 +80,21 @@ const Timeline = sequelize.define(
       allowNull: false,
       field: "fk_id_answer",
       references: {
-        model: "answers",
+        model: "anwsers",
         key: "id_answer",
       },
       onDelete: "CASCADE",
     },
   },
   {
-    tableName: "timelines", // Nome da tabela
+    tableName: "timelines",
     timestamps: false,
   }
+
 );
 
 const Answers = sequelize.define(
-  "answers",
+  "Answers",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -119,6 +120,7 @@ const Answers = sequelize.define(
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: "fk_user_id",
       references: {
         model: "users",
         key: "id",
@@ -132,44 +134,39 @@ const Answers = sequelize.define(
     },
   },
   {
-    tableName: "answers", // Nome da tabela
+    tableName: "answers",
     timestamps: false,
   }
+
 );
 
-const Access = sequelize.define(
-  "Access_timeline",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      field: "id_access_timeline",
+const Access = sequelize.define("Access_timeline", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    field: "id_access_timeline",
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    field: "fk_user_id",
+    references: {
+      model: "users",
+      key: "id",
     },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "users",
-        key: "id",
-      },
-      onDelete: "CASCADE",
-    },
-    timeline_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "timeliene",
-        key: "id_timeline",
-      },
-      onDelete: "CASCADE",
+    onDelete: "CASCADE",
+  },
+  timeline_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    field: "fk_id_timeline",
+    references: {
+      model: "timeline",
+      key: "id_timeline",
     },
   },
-  {
-    tableName: "access_timelines", // Nome da tabela
-    timestamps: false,
-  }
-);
+},);
 
 const Token = sequelize.define(
   "PasswordResetToken",
@@ -214,12 +211,15 @@ User.hasMany(Answers, { foreignKey: "user_id" });
 User.hasMany(Access, { foreignKey: "user_id" });
 
 //Pertencimentos
+Answers.belongsTo(User, {foreignKey: "fk_user_id"})
 Token.belongsTo(User, { foreignKey: "user_id" });
 
-Timeline.belongsTo(User, { foreignKey: "user_id" });
-Timeline.belongsTo(Answers, { foreignKey: "id_answer" });
+Timeline.belongsTo(User, { foreignKey: "fk_user_id" });
+Timeline.belongsTo(Answers, { foreignKey: "fk_id_answer" });
 
-Access.belongsTo(User, { foreignKey: "user_id" });
-Access.belongsTo(Timeline, { foreignKey: "id_timeline" });
+Access.belongsTo(User, { foreignKey: "fk_user_id" });
+Access.belongsTo(Timeline, { foreignKey: "fk_id_timeline" });
+
+
 
 module.exports = { User, Token, Timeline, Answers, Access };

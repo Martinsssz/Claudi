@@ -27,17 +27,16 @@ export default function Teacher({ data, handleData, id, popup }) {
 
   const { width, height } = Dimensions.get('window')
 
-  /*useEffect(() => {
-    const teacher = data['teachers'][id];
-    if (teacher) {
-      setName(teacher['name'])
- 
-      let copyOfData = { ...onDays }
-      copyOfData['days'] = teacher['days']
+  useEffect(() => {
+    if(data['teachers'][id] !== null){
+      setName(data['teachers'][id]['name'])
+
+      let copyOfData = {...onDays}
+      copyOfData['days'] = data['teachers'][id]['days']
       setOnDays(copyOfData)
     }
- 
-  }, [])*/
+
+  },[])
 
   //**********************************************Alteração automática de tema*****************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
@@ -50,7 +49,7 @@ export default function Teacher({ data, handleData, id, popup }) {
 
   //************************************************FUNÇÕES**********************************************************************//
   useEffect(() => {
-    let nameCheck = checkName(name)
+    let nameCheck = name.trim() != ""
     let keysOfData = Object.keys(onDays['days'])
     const hasNullValue = keysOfData.some(key => onDays['days'][key] == null)
 

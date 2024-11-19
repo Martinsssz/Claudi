@@ -17,6 +17,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function TabelaTarefas({ data, visualizacao }) {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const screenWidth = Dimensions.get("window").width;
+  console.log(`Aqui é outro lugar: ${data} `)
+
+  useEffect(() => {
+    return
+  }, [data])
 
   const diasSemana = {
     'sunday': "Domingo",
@@ -29,7 +34,7 @@ export default function TabelaTarefas({ data, visualizacao }) {
   };
   const diaAtual = Object.keys(diasSemana)[new Date().getDay()];
 
-  const tarefasHoje = data[diaAtual]
+  const tarefasHoje = data[diaAtual] && data != {}
     ? Object.entries(data[diaAtual]).map(([taskName, { start, end }]) => ({
         taskName,
         start,
@@ -37,7 +42,7 @@ export default function TabelaTarefas({ data, visualizacao }) {
       }))
     : [];
 
-  const tarefasSemana = data
+  const tarefasSemana = data && data != {}
     ? Object.keys(data).map((dia) => ({
         dia,
         tarefas: data[dia]

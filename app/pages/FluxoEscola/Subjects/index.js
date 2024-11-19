@@ -6,17 +6,15 @@ import {
   Appearance,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
   PixelRatio
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { useGlobalSearchParams } from 'expo-router'
+import { router, useGlobalSearchParams } from 'expo-router'
 
 //********************************************Import de depêndencias e componentes***********************************************//
 import BackArrow from "../../../components/BackArrow"
 import cores from '../../../Util/coresPadrao'
 import { Ionicons } from '@expo/vector-icons'
-import { checkName } from '../../../Util/checkData'
 import Popup from '../../../components/Popup'
 import Subject from '../../../components/Subject'
 
@@ -31,70 +29,14 @@ export default function Subjects() {
   const [popupOption, setPopupOption] = useState([])
   const [jsonData, setJsonData] = useState()
 
-  useEffect(() => {
-    setJsonData({
-      "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
-      "schoolTime": { "start": "07:30", "end": "16:40" },
-      "timePerClass": 50,
-
-      "teachers": {
-        "id1": {
-          "name": "Luis",
-          "days": {
-            "tuesday": { "start": "08:00", "end": "14:00" },
-            "wednesday": { "start": "10:00", "end": "14:00" }
-          }
-        },
-
-        "id2": {
-          "name": "Fabio",
-          "days": {
-            "tuesday": { "start": "08:00", "end": "14:00" },
-            "wednesday": { "start": "10:00", "end": "14:00" }
-          }
-        },
-
-        "id3": {
-          "name": "Paulo",
-          "days": {
-            "tuesday": { "start": "08:00", "end": "14:00" },
-            "wednesday": { "start": "10:00", "end": "14:00" }
-          }
-        },
-
-        "id4": {
-          "name": "Pacheco",
-          "days": {
-            "tuesday": { "start": "08:00", "end": "14:00" },
-            "wednesday": { "start": "10:00", "end": "14:00" }
-          }
-        }
-      },
-
-      "classes": {
-        "id1": {
-          "name": "1adm",
-          "classHour": { "start": "07:30", "end": "16:40" }
-        },
-        "id2": {
-          "name": "1ds",
-          "classHour": { "start": "08:20", "end": "16:40" }
-        },
-        "id3": {
-          "name": "1nutri",
-          "classHour": { "start": "08:20", "end": "16:40" }
-        }
-      },
-
-      "subjects": {},
-
-      "schoolIntervals": {}
-    })
-  }, [])
-
-  const { width, height } = Dimensions.get('window')
-
-
+  try {
+    data = JSON.parse(data)
+    useEffect(() => {
+      setJsonData(data)
+    }, [])
+  } catch (error) {
+    console.log("")
+  }
 
 
   //**********************************************Alteração automática de tema*****************************************************//
@@ -141,31 +83,20 @@ export default function Subjects() {
     setJsonData(copyOfData)
   }
 
-  /*function nextStage(){
-    let copyOfData = { ...jsonData}
-    let fixTasks = copyOfData['tasks']['fix']
-    let keysToVerify = Object.keys(fixTasks)
- 
-    keysToVerify.forEach((key) => {
-      let name
-      try{
-        name = fixTasks[key]['name']
-      }catch(error){
-        name = ""
-      }
-      
-      let validationResult = checkName(name)
-      if( !validationResult.validate ){
-        popup(validationResult['message'], null)
-      }else{
-        router.push({
-          pathname: '../RandomTasksList',
-          params: {data:  JSON.stringify(jsonData)}
-        })
-      }
-    })
- 
-  }*/
+  function nextStage() {
+    let copyOfData = { ...jsonData }
+    let subjects = copyOfData['subjects']
+    let keysToVerify = Object.keys(subjects)
+
+    if (keysToVerify.some(key => subjects[key] == null)) {
+      popup("Preencha corretamente os dados requisitados", null)
+    } else {
+      router.push({
+        pathname: '../Intervals',
+        params: { data: JSON.stringify(jsonData) }
+      })
+    }
+  }
   //**********************************************Animações**********************************************************************//
 
   //***********************************************Estilos************************************************************************//
@@ -244,7 +175,7 @@ export default function Subjects() {
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
 
-          <BackArrow link={"../TaskList"} data={jsonData}></BackArrow>
+          <BackArrow link={"../Classes"} data={jsonData}></BackArrow>
 
           <Text style={styles.title}>Matérias</Text>
           <ScrollView contentContainerStyle={styles.tasks}>
@@ -280,7 +211,7 @@ export default function Subjects() {
 
           </ScrollView>
 
-          <Pressable style={styles.save} /*onPress={nextStage}*/>
+          <Pressable style={styles.save} onPress={nextStage}>
             <Text style={styles.text}>Próxima</Text>
           </Pressable>
 

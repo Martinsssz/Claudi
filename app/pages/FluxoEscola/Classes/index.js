@@ -6,22 +6,20 @@ import {
   Appearance,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
   PixelRatio
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { useGlobalSearchParams } from 'expo-router'
+import { router, useGlobalSearchParams } from 'expo-router'
 
 //********************************************Import de depêndencias e componentes***********************************************//
 import BackArrow from "../../../components/BackArrow"
 import cores from '../../../Util/coresPadrao'
 import { Ionicons } from '@expo/vector-icons'
-import { checkName } from '../../../Util/checkData'
 import Popup from '../../../components/Popup'
 import Class from '../../../components/Class'
 
 
-export default function classes() {
+export default function Classes() {
   //**********************************************HOOKS**********************************************************************//
   let { data } = useGlobalSearchParams()
 
@@ -31,25 +29,14 @@ export default function classes() {
   const [popupOption, setPopupOption] = useState([])
   const [jsonData, setJsonData] = useState()
 
-  useEffect(() => {
-    setJsonData({
-      "days": ["sunday", "monday", "tuesday", "wednesday"],
-      "school_schedule_setup": {},
-
-      "teachers": {},
-
-      "classes": {},
-
-      "subjects": {},
-
-      "schoolIntervals": {}
-    })
-  }, [])
-
-  const { width, height } = Dimensions.get('window')
-
-
-
+  try {
+    data = JSON.parse(data)
+    useEffect(() => {
+      setJsonData(data)
+    }, [])
+  } catch (error) {
+    console.log("")
+  }
 
   //**********************************************Alteração automática de tema*****************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
@@ -95,31 +82,20 @@ export default function classes() {
     setJsonData(copyOfData)
   }
 
-  /*function nextStage(){
-    let copyOfData = { ...jsonData}
-    let fixTasks = copyOfData['tasks']['fix']
-    let keysToVerify = Object.keys(fixTasks)
- 
-    keysToVerify.forEach((key) => {
-      let name
-      try{
-        name = fixTasks[key]['name']
-      }catch(error){
-        name = ""
-      }
-      
-      let validationResult = checkName(name)
-      if( !validationResult.validate ){
-        popup(validationResult['message'], null)
-      }else{
-        router.push({
-          pathname: '../RandomTasksList',
-          params: {data:  JSON.stringify(jsonData)}
-        })
-      }
-    })
- 
-  }*/
+  function nextStage() {
+    let copyOfData = { ...jsonData }
+    let classes = copyOfData['classes']
+    let keysToVerify = Object.keys(classes)
+
+    if (keysToVerify.some(key => classes[key] == null)) {
+      popup("Preencha corretamente os dados requisitados", null)
+    } else {
+      router.push({
+        pathname: '../Subjects',
+        params: { data: JSON.stringify(jsonData) }
+      })
+    }
+  }
   //**********************************************Animações**********************************************************************//
 
   //***********************************************Estilos************************************************************************//
@@ -198,7 +174,7 @@ export default function classes() {
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
 
-          <BackArrow link={"../TaskList"} data={jsonData}></BackArrow>
+          <BackArrow link={"../Teachers"} data={jsonData}></BackArrow>
 
           <Text style={styles.title}>Turmas</Text>
           <ScrollView contentContainerStyle={styles.tasks}>
@@ -234,7 +210,7 @@ export default function classes() {
 
           </ScrollView>
 
-          <Pressable style={styles.save} /*onPress={nextStage}*/>
+          <Pressable style={styles.save} onPress={nextStage}>
             <Text style={styles.text}>Próxima</Text>
           </Pressable>
 

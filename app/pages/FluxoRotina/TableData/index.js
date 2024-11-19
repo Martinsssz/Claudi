@@ -51,10 +51,19 @@ export default function TableData() {
 
   async function getData() {
     try {
-      const response = await fetch(`${ip}/timelines`);
+      const response = await fetch(`${ip}/timelines`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_timeline: 1
+        }),
+      });
       const timelines = await response.json();
-      const parsedData = timelines.map((item) => JSON.parse(item.json_views));
-      setData(parsedData[0]);
+      const parsedData = JSON.parse(timelines)
+
+      setData(parsedData);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
@@ -62,6 +71,7 @@ export default function TableData() {
 
   useEffect(() => {
     getData();
+    console.log(data)
   }, []);
 
   const handleScroll = (event) => {

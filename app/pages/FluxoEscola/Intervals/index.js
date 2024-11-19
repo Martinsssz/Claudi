@@ -10,18 +10,17 @@ import {
   PixelRatio
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { router, useGlobalSearchParams } from 'expo-router'
+import { useGlobalSearchParams } from 'expo-router'
 
 //********************************************Import de depêndencias e componentes***********************************************//
 import BackArrow from "../../../components/BackArrow"
 import cores from '../../../Util/coresPadrao'
 import { Ionicons } from '@expo/vector-icons'
 import Popup from '../../../components/Popup'
-import Teacher from '../../../components/Teacher'
-import { checkName } from '../../../Util/checkData'
+import Interval from '../../../components/Interval'
 
 
-export default function Teachers() {
+export default function Intervals() {
   //**********************************************HOOKS**********************************************************************//
   let { data } = useGlobalSearchParams()
 
@@ -39,6 +38,7 @@ export default function Teachers() {
   } catch (error) {
     console.log("")
   }
+
 
   //**********************************************Alteração automática de tema*****************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
@@ -60,44 +60,55 @@ export default function Teachers() {
 
   }
 
-  function createTeacher() {
+  function createInterval() {
     let id
-    let keys = Object.keys(jsonData['teachers'])
+    let keys = Object.keys(jsonData['schoolIntervals'])
 
     do {
       id = Math.floor(Math.random() * 1000000).toString()
     } while (keys.some(key => key.endsWith(`-${id}`)))
 
-    let newKey = `teacher-${id}-${Date.now()}`
+    let newKey = `interval-${id}-${Date.now()}`
     let copyOfData = { ...jsonData }
-    copyOfData['teachers'][newKey] = null
+    copyOfData['schoolIntervals'][newKey] = null
 
     setJsonData(copyOfData)
 
     console.log(JSON.stringify(copyOfData, null, 2))
   }
 
-  function deleteTask(key) {
+  function deleteInterval(key) {
     let copyOfData = { ...jsonData }
-    delete copyOfData['teachers'][key]
+    delete copyOfData['schoolIntervals'][key]
 
     setJsonData(copyOfData)
   }
 
-  function nextStage() {
-    let copyOfData = { ...jsonData }
-    let teachers = copyOfData['teachers']
-    let keysToVerify = Object.keys(teachers)
-
-    if (keysToVerify.some(key => teachers[key] == null)) {
-      popup("Preencha corretamente os dados requisitados", null)
-    } else {
-      router.push({
-        pathname: '../Classes',
-        params: { data: JSON.stringify(jsonData) }
-      })
-    }
-  }
+  /*function nextStage(){
+    let copyOfData = { ...jsonData}
+    let fixTasks = copyOfData['tasks']['fix']
+    let keysToVerify = Object.keys(fixTasks)
+ 
+    keysToVerify.forEach((key) => {
+      let name
+      try{
+        name = fixTasks[key]['name']
+      }catch(error){
+        name = ""
+      }
+      
+      let validationResult = checkName(name)
+      if( !validationResult.validate ){
+        popup(validationResult['message'], null)
+      }else{
+        router.push({
+          pathname: '../RandomTasksList',
+          params: {data:  JSON.stringify(jsonData)}
+        })
+      }
+    })
+ 
+  }*/
   //**********************************************Animações**********************************************************************//
 
   //***********************************************Estilos************************************************************************//
@@ -176,28 +187,28 @@ export default function Teachers() {
       >
         <ScrollView style={styles.principal} contentContainerStyle={styles.styleContent}>
 
-          <BackArrow link={"../SchoolDays"} data={jsonData}></BackArrow>
+          <BackArrow link={"../Subjects"} data={jsonData}></BackArrow>
 
-          <Text style={styles.title}>Professores</Text>
+          <Text style={styles.title}>Intervalos</Text>
           <ScrollView contentContainerStyle={styles.tasks}>
 
-            {jsonData && Object.keys(jsonData['teachers']).length > 0 ? (
+            {jsonData && Object.keys(jsonData['schoolIntervals']).length > 0 ? (
 
-              Object.keys(jsonData['teachers']).map((key, index) => (
+              Object.keys(jsonData['schoolIntervals']).map((key, index) => (
 
                 <View key={key} style={styles.taskView}>
-                  <Teacher data={jsonData} handleData={setJsonData} id={key} key={key} popup={popup} />
+                  <Interval data={jsonData} handleData={setJsonData} id={key} key={key} popup={popup} />
                   <View style={styles.optionsTasks}>
 
-                    {index + 1 == Object.keys(jsonData['teachers']).length && (
-                      <Pressable style={styles.createATask} onPress={createTeacher}>
+                    {index + 1 == Object.keys(jsonData['schoolIntervals']).length && (
+                      <Pressable style={styles.createATask} onPress={createInterval}>
                         <Text style={styles.createATaskText}>
                           <Ionicons name='add-outline' style={styles.createATaskText} />
                         </Text>
                       </Pressable>
                     )}
 
-                    <Pressable style={styles.createATask} onPress={(e) => deleteTask(key)}>
+                    <Pressable style={styles.createATask} onPress={(e) => deleteInterval(key)}>
                       <Ionicons name='trash-outline' style={styles.createATaskText} />
                     </Pressable>
 
@@ -205,14 +216,14 @@ export default function Teachers() {
                 </View>
               ))
             ) : (
-              <Pressable style={styles.createATask} onPress={createTeacher}>
+              <Pressable style={styles.createATask} onPress={createInterval}>
                 <Text style={styles.createATaskText}>+</Text>
               </Pressable>
             )}
 
           </ScrollView>
 
-          <Pressable style={styles.save} onPress={nextStage}>
+          <Pressable style={styles.save} /*onPress={nextStage}*/>
             <Text style={styles.text}>Próxima</Text>
           </Pressable>
 

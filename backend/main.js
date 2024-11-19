@@ -135,11 +135,11 @@ app.post("/forgotPassword", async (req, res) => {
       email,
       "Redefinição de Senha",
       `Olá, ${user.name}. \n\n` +
-        "Recebemos uma solicitação para redefinir a sua senha. Para prosseguir com a redefinição, por favor, utilize o código abaixo: \n\n" +
-        `Código de Redefinição: ${token} \n\n` +
-        "Insira este código na página de redefinição de senha para criar uma nova senha. Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Se precisar de ajuda, entre em contato com o suporte. \n\n" +
-        "Atenciosamente, \n" +
-        "MENPP"
+      "Recebemos uma solicitação para redefinir a sua senha. Para prosseguir com a redefinição, por favor, utilize o código abaixo: \n\n" +
+      `Código de Redefinição: ${token} \n\n` +
+      "Insira este código na página de redefinição de senha para criar uma nova senha. Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Se precisar de ajuda, entre em contato com o suporte. \n\n" +
+      "Atenciosamente, \n" +
+      "MENPP"
     );
 
     res.status(200).send({
@@ -193,7 +193,8 @@ app.post("/timelines", async (req, res) => {
   const { id_timeline } = req.body;
   try {
     const timelines = await Timeline.findByPk(id_timeline);
-    res.json(JSON.stringify(timelines['dataValues']['json']));
+    console.log(timelines['dataValues']['json'])
+    res.json(timelines['dataValues']['json'])
   } catch (error) {
     console.log("Erro ao buscar dados:", error);
   }
