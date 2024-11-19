@@ -140,33 +140,41 @@ const Answers = sequelize.define(
 
 );
 
-const Access = sequelize.define("Access_timeline", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    field: "id_access_timeline",
-  },
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: "fk_user_id",
-    references: {
-      model: "users",
-      key: "id",
+const Access = sequelize.define(
+  "Access_timeline",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: "id_access_timeline",
     },
-    onDelete: "CASCADE",
-  },
-  timeline_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: "fk_id_timeline",
-    references: {
-      model: "timeline",
-      key: "id_timeline",
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "fk_user_id",
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+    timeline_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "fk_id_timeline",
+      references: {
+        model: "timeline",
+        key: "id_timeline",
+      },
     },
   },
-},);
+  {
+    tableName: "access_timelines",
+    timestamps: false,
+  }
+
+);
 
 const Token = sequelize.define(
   "PasswordResetToken",
@@ -211,7 +219,7 @@ User.hasMany(Answers, { foreignKey: "user_id" });
 User.hasMany(Access, { foreignKey: "user_id" });
 
 //Pertencimentos
-Answers.belongsTo(User, {foreignKey: "fk_user_id"})
+Answers.belongsTo(User, { foreignKey: "fk_user_id" })
 Token.belongsTo(User, { foreignKey: "user_id" });
 
 Timeline.belongsTo(User, { foreignKey: "fk_user_id" });

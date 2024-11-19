@@ -19,9 +19,11 @@ import { useState, useEffect, useRef } from "react";
 import { Appearance } from "react-native";
 import cores from "../../../Util/coresPadrao";
 import { Link, router } from "expo-router";
+import { mostrarUsuario } from "../../../sqlite/dbService";
+import ip from "../../../Util/localhost";
 
 export default function HomePage() {
-  //**********************************************UseStates**********************************************************************//
+  //**********************************************HOOKS**********************************************************************//
 
   const [modalVisible, setModalVisible] = useState(false)
   const panY = useRef(new Animated.Value(0)).current
@@ -29,12 +31,35 @@ export default function HomePage() {
   const [horarioEditando, setHorarioEditando] = useState(null)
   const [fixedHorarios, setFixedHorarios] = useState([])
 
-  const [horarios, setHorarios] = useState([
-    { id: 1, nome: "Horário 1" },
-    { id: 2, nome: "Horário 2" },
-    { id: 3, nome: "Horário 3" }
+  const [horarios, setHorarios] = useState([])
 
-  ])
+  async function getData() {
+    let user = await mostrarUsuario();
+    try {
+      const response = await fetch(`${ip}/getTimelines`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id
+        }),
+      });
+
+      const timelines = await response.json();
+      console.log(timelines)
+
+      setHorarios(timelines['timelines']);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
+
+  useEffect(()=>{
+    getData()
+  },[])
+
+  
 
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -49,13 +74,44 @@ export default function HomePage() {
 
   //************************************************Funções**********************************************************************//
 
+  async function changeNameOnDataBase(id, newName) {
+    try {
+      const response = await fetch(`${ip}/renameTimeline`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timelineId: id,
+          newName: newName
+        }),
+      });
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
+
+  useEffect(()=>{
+    getData()
+  },[])
+
+
   const handleNomeChange = (id, novoNome) => {
     setHorarios((prevHorarios) =>
       prevHorarios.map((horario) =>
-        horario.id === id ? { ...horario, nome: novoNome } : horario
+        horario.id === id ? { ...horario, name: novoNome } : horario
       )
     );
+
   };
+
+  useEffect(() => {
+    if(!isEditing && horarioEditando != null){
+      let horario = horarios.filter((item) => item.id == horarioEditando) // Achando o elemento para editar
+      //Id, Name
+      changeNameOnDataBase(horarioEditando, horario[0]['name'])
+    }
+  }, [isEditing, horarioEditando])
 
   const panResponder = useRef(
     PanResponder.create({
@@ -238,7 +294,7 @@ export default function HomePage() {
                 )}
                 {horarioEditando === horario.id && isEditing ? (
                   <TextInput
-                    value={horario.nome}
+                    value={horario.name}
                     onChangeText={(text) => handleNomeChange(horario.id, text)}
                     autoFocus={true}
                     style={styles.tituloHorario}
@@ -248,9 +304,9 @@ export default function HomePage() {
                     }}
                   />
                 ) : (
-                  <Text style={styles.tituloHorario}>{horario.nome}</Text>
+                  <Text style={styles.tituloHorario}>{horario.name}</Text>
                 )}
-                <Text style={styles.subtituloHorario}>Horário Pessoal</Text>
+                <Text style={styles.subtituloHorario}> {horario.timeline_type == 0 ? "Horário pessoal" : "Horário escolar"}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => openModal(horario.id)} style={styles.dotsButton}>

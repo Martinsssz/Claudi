@@ -200,6 +200,56 @@ app.post("/timelines", async (req, res) => {
   }
 });
 
+app.post("/getTimelines", async (req, res) => {
+  const { userId } = req.body;
+  console.log("------")
+  try {
+    //Procurar as timelines que o usuário tem acesso
+    const timelinesAccess = await Access.findAll({
+      attributes: ['timeline_id'],
+      where: { user_id: userId }
+    });
+
+    //Colocar os IDs dentro de um array
+    let timelinesId = []
+    timelinesAccess.forEach((item) => {
+      timelinesId.push(item['dataValues']['timeline_id'])
+    })
+
+    //Procurando os dados das timelines que o usuáriuo tem acesso
+    let timelines = []
+    for (const id of timelinesId) {
+      const foundTimeline = await Timeline.findOne({
+        attributes: ['name', 'type'],
+        where: { id: id }
+      });
+      let timeline = await foundTimeline['dataValues']
+      timeline['id'] = id
+      console.log(timeline)
+      timelines.push(timeline)
+    }
+    console.log({timelines})
+
+    res.json({timelines} )
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error);
+  }
+});
+
+app.post("/renameTimeline", async (req, res) => {
+  const { timelineId, newName } = req.body;
+  try {
+    Timeline.update(
+      {
+        name: newName,
+      },
+      { where: { id: timelineId } }
+    );
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error);
+  }
+});
+
 //*********************************************************FUNÇÕES******************************************************/
 async function updateDataUser(id, name, email, password) {
   try {
