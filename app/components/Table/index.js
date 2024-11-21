@@ -10,46 +10,49 @@ import {
   Dimensions,
 } from "react-native";
 import cores from "../../Util/coresPadrao";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 //*************************************************HOOKS********************************************************************//
 
 export default function TabelaTarefas({ data, visualizacao }) {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const screenWidth = Dimensions.get("window").width;
-  console.log(`Aqui é outro lugar: ${data} `)
+  const screenHeight = Dimensions.get("window").height;
 
   useEffect(() => {
-    return
-  }, [data])
+    return;
+  }, [data]);
 
   const diasSemana = {
-    'sunday': "Domingo",
-    'monday': "Segunda",
-    'tuesday': "Terça",
-    'wednesday': "Quarta",
-    'thursday': "Quinta",
-    'friday': "Sexta",
-    'saturday': "Sábado",
+    sunday: "Domingo",
+    monday: "Segunda",
+    tuesday: "Terça",
+    wednesday: "Quarta",
+    thursday: "Quinta",
+    friday: "Sexta",
+    saturday: "Sábado",
   };
   const diaAtual = Object.keys(diasSemana)[new Date().getDay()];
 
-  const tarefasHoje = data[diaAtual] && data != {}
-    ? Object.entries(data[diaAtual]).map(([taskName, { start, end }]) => ({
-        taskName,
-        start,
-        end,
-      }))
-    : [];
+  const tarefasHoje =
+    data[diaAtual] && data != {}
+      ? Object.entries(data[diaAtual]).map(([taskName, { start, end }]) => ({
+          taskName,
+          start,
+          end,
+        }))
+      : [];
 
-  const tarefasSemana = data && data != {}
-    ? Object.keys(data).map((dia) => ({
-        dia,
-        tarefas: data[dia]
-          ? Object.entries(data[dia]).map(([taskName]) => taskName)
-          : [],
-      }))
-    : [];
+  const tarefasSemana =
+    data && data != {}
+      ? Object.keys(data).map((dia) => [
+          data[dia] ? Object.keys(data[dia]) : [],
+          data[dia]
+            ? Object.values(data[dia]).map((task) => task["duration"])
+            : [],
+        ])
+      : [];
+
+  console.log(JSON.stringify(tarefasSemana, null, 2));
 
   //**********************************************Alteração automática de tema*****************************************************//
 
@@ -71,12 +74,13 @@ export default function TabelaTarefas({ data, visualizacao }) {
       flex: 1,
       alignItems: "stretch",
       justifyContent: "flex-start",
-      paddingHorizontal: screenWidth * 0
+      paddingHorizontal: screenWidth * 0,
     },
     table: {
       borderWidth: 1,
       borderColor: "#002B40",
       width: "100%",
+      height: "100%",
     },
     rowHeader: {
       flexDirection: "row",
@@ -85,20 +89,18 @@ export default function TabelaTarefas({ data, visualizacao }) {
     },
     row: {
       flexDirection: "row",
-      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       borderBottomWidth: 1,
-      alignItems: "stretch",
     },
     cell: {
-      flex: 1,
-      paddingVertical: screenWidth * 0.10,
+      paddingVertical: screenWidth * 0.1,
       paddingHorizontal: screenWidth * 0.03,
       textAlign: "center",
       color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
       width: screenWidth / 3,
       borderRightWidth: 1,
       fontSize: 16,
-      flexWrap: "wrap",
     },
     headerText: {
       fontWeight: "bold",
@@ -112,6 +114,27 @@ export default function TabelaTarefas({ data, visualizacao }) {
     tarefaCell: {
       flex: 2,
       width: screenWidth * 0.6,
+    },
+    dataTable: {
+      flex: 1,
+      flexDirection: "row",
+    },
+    column: {
+      flexDirection: "column",
+    },
+    cell2: {
+      paddingHorizontal: screenWidth * 0.03,
+      width: screenWidth / 3,
+      borderRightWidth: 1,
+      fontSize: 16,
+      borderBottomWidth: 1,
+      justifyContent: "center",
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+    },
+    cell2Text: {
+      color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
+      textAlign: "center",
     },
   });
 
@@ -160,21 +183,42 @@ export default function TabelaTarefas({ data, visualizacao }) {
                 </Text>
               ))}
             </View>
-            {Math.max(...tarefasSemana.map((day) => day.tarefas.length), 0) >
-              0 &&
-              [
-                ...Array(
-                  Math.max(...tarefasSemana.map((day) => day.tarefas.length))
-                ),
-              ].map((_, rowIndex) => (
-                <View key={rowIndex} style={styles.row}>
-                  {tarefasSemana.map((day) => (
-                    <Text key={day.dia} style={styles.cell}>
-                      {day.tarefas[rowIndex] || ""}
-                    </Text>
-                  ))}
+            <View style={styles.dataTable}>
+              {tarefasSemana.map((dia, columnIndex) => (
+                <View key={columnIndex} style={styles.column}>
+                  {dia[0].map((tarefa, index) => {
+                    const isEmpty = !tarefa;
+                    const tamanhoMaximo = Math.max(
+                      ...tarefasSemana.map((dia) =>
+                        dia[1].reduce((acumulador, valorAtual) => 
+                          acumulador + valorAtual
+                        , 0)
+                      )
+                    );
+                    const duracaoDia = dia[1].reduce((acumulador, valorAtual) => acumulador + valorAtual, 0)
+                    const constanteAltura = tamanhoMaximo / duracaoDia
+                    const taskDuration = tarefasSemana[columnIndex][1][index];
+                    const isLast = dia[0][dia[0].length - 1] == tarefa;
+
+                    return !isEmpty ? (
+                      <View
+                        key={tarefa}
+                        style={[
+                          styles.cell2,
+                          { height: constanteAltura * taskDuration},
+                        ]}
+                      >
+                        <Text style={styles.cell2Text}>
+                          {isEmpty ? null : tarefa}
+                        </Text>
+                      </View>
+                    ) : (
+                      console.log()
+                    );
+                  })}
                 </View>
               ))}
+            </View>
           </View>
         </ScrollView>
       )}

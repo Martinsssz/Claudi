@@ -149,6 +149,7 @@ export default function TableData() {
     },
     tabelaContainer: {
       flex: 1,
+  
     },
   });
 
