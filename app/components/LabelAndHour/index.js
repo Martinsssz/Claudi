@@ -114,18 +114,18 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
     },
     input: {
       borderColor: cores.black,
-      borderWidth: 2,
+      borderWidth: 1,
       padding: 5,
       fontSize: 17,
-      backgroundColor: isActived ? cores.ghostWhite : '#444344bb',
+      backgroundColor: isActived ? cores.ghostWhite : '#44434477',
       color: cores.black,
       placeholderTextColor: cores.black,
       width: data['schoolTime'] ? "50%" : "auto"
     },
     text: {
       color: colorScheme == "dark" ? "white" : "black",
-      marginRight: 10,
-      fontSize: data['schoolTime'] ? PixelRatio.getFontScale() * 20 : 15
+      marginRight: PixelRatio.get()* 2,
+      fontSize: data['schoolTime'] ? PixelRatio.getFontScale() * 17 : 15
     }
   })
   //***********************************************Tela****************************************************************************//

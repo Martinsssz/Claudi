@@ -151,7 +151,7 @@ export default function Subject({ data, handleData, id, popup }) {
       paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(8),
       borderRadius: PixelRatio.get() * 3,
       borderColor: cores.black,
-      borderWidth: 2,
+      borderWidth: 1,
     },
 
     styleContent: {
@@ -182,14 +182,12 @@ export default function Subject({ data, handleData, id, popup }) {
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: 10,
-      borderRadius: 7,
+      padding: PixelRatio.get() * 1.8,
       paddingLeft: 7,
       //borda
       borderWidth: 1,
       borderStyle: "solid",
       borderBlockColor: "black",
-      borderRadius: 7,
       paddingRight: 7
       //Fim da borda
     },
@@ -280,7 +278,7 @@ export default function Subject({ data, handleData, id, popup }) {
           />
         </View>
 
-        <Text style={styles.titulo}>Aulas por turma</Text>
+        <Text style={styles.titulo}>Aulas por turma:</Text>
 
         {classes && Object.keys(classes).length > 0 ? (
 
@@ -311,7 +309,7 @@ export default function Subject({ data, handleData, id, popup }) {
         )}
 
         <View style={styles.vertical}>
-          <Text style={styles.titulo2}>Repetições diárias por turma.</Text>
+          <Text style={styles.titulo2}>Repetições diárias por turma: </Text>
           <View style={styles.horizontal}>
 
             <View style={styles.inputLabel}>

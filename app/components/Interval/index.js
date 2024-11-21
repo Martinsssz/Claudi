@@ -105,12 +105,12 @@ export default function Interval({ data, handleData, id, popup }) {
       paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(8),
       borderRadius: PixelRatio.get() * 3,
       borderColor: cores.black,
-      borderWidth: 2,
+      borderWidth: 1,
     },
 
     styleContent: {
       justifyContent: "flex-start",
-      gap: PixelRatio.get() * 7
+      gap: PixelRatio.get() * 10
     },
 
     titulo: {
@@ -127,7 +127,8 @@ export default function Interval({ data, handleData, id, popup }) {
       flexDirection: "row",
       gap: PixelRatio.get() * 2,
       width: "100%",
-      alignItems: "center"
+      alignItems: "center",
+      marginBottom: PixelRatio.get()
 
     },
 
@@ -136,14 +137,12 @@ export default function Interval({ data, handleData, id, popup }) {
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: 10,
-      borderRadius: 7,
+      padding: PixelRatio.get()*1.8,
       paddingLeft: 7,
       //borda
       borderWidth: 1,
       borderStyle: "solid",
       borderBlockColor: "black",
-      borderRadius: 7,
       paddingRight: 7
       //Fim da borda
     },
@@ -188,7 +187,6 @@ export default function Interval({ data, handleData, id, popup }) {
         </View>
 
         <View style={{ gap: PixelRatio.get() * 3, width: "115%" }}>
-          <Text style={styles.titulo}>Horário:</Text>
           <LabelAndHour
             label1={"Começo"}
             label2={"Fim"}

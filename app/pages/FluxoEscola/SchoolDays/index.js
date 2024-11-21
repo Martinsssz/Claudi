@@ -163,12 +163,16 @@ export default function SchoolDays() {
     scrollContent: {
       flexDirection: "collumn",
       justifyContent: "flex-start",
-      gap: PixelRatio.get() * 10,
-      paddingVertical: 50,
+      gap: PixelRatio.get() * 11,
+      paddingVertical: PixelRatio.get()*10,
       left: 0
     },
     title: {
       fontSize: PixelRatio.getFontScale() * 35,
+      color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
+    },
+    title2: {
+      fontSize: PixelRatio.getFontScale() * 25,
       color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
     },
 
@@ -191,14 +195,15 @@ export default function SchoolDays() {
       paddingVertical: PixelRatio.get() * 5,
       height: height / 6,
       borderColor: "black",
-      borderWidth: 2,
-      gap: PixelRatio.get() * 8
+      borderWidth: 1,
+      gap: PixelRatio.get() * 8,
+      borderRadius: PixelRatio.get()*4
     },
 
     input: {
       width: "100%",
       borderColor: "black",
-      borderWidth: 2,
+      borderWidth: 1,
       backgroundColor: colorScheme == "dark" ? cores.azulClaroDark : cores.ghostWhite,
       paddingHorizontal: PixelRatio.get() * 3,
       paddingVertical: PixelRatio.get() * 2,
@@ -222,12 +227,12 @@ export default function SchoolDays() {
             <WeekDays handleWeek={setSchoolDays} orientation={"row"} data={schoolDays} background={false} />
 
             <View style={styles.setUpBox}>
-              <Text style={styles.title}>Horário Escolar</Text>
-              <LabelAndHour label1="Início" label2="Fim" handleData={setOnDays} isActived={true} data={onDays} id="startAndEnd" />
+              <Text style={styles.title2}>Horário Escolar:</Text>
+              <LabelAndHour label1="Início:" label2="Fim:" handleData={setOnDays} isActived={true} data={onDays} id="startAndEnd" />
             </View>
 
             <View style={styles.setUpBox}>
-              <Text style={styles.title}>Tempo por aula</Text>
+              <Text style={styles.title2}>Tempo por aula:</Text>
               <TextInput
                 style={styles.input}
                 value={duration}

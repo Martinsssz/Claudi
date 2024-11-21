@@ -78,7 +78,7 @@ export default function Teacher({ data, handleData, id, popup }) {
       paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(8),
       borderRadius: PixelRatio.get() * 3,
       borderColor: cores.black,
-      borderWidth: 2,
+      borderWidth: 1,
     },
 
     styleContent: {
@@ -116,14 +116,12 @@ export default function Teacher({ data, handleData, id, popup }) {
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: 10,
-      borderRadius: 7,
+      padding: PixelRatio.get()*1.5,
       paddingLeft: 7,
       //borda
       borderWidth: 1,
       borderStyle: "solid",
       borderBlockColor: "black",
-      borderRadius: 7,
       paddingRight: 7
       //Fim da borda
     },
@@ -148,8 +146,8 @@ export default function Teacher({ data, handleData, id, popup }) {
 
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           <LabelAndHour
-            label1={"Entrada"}
-            label2={"Saída"}
+            label1={"Entrada:"}
+            label2={"Saída:"}
             handleData={setOnDays}
             data={onDays}
             isActived={true}
