@@ -10,6 +10,7 @@ import {
   PanResponder,
   TextInput,
   Animated,
+  PixelRatio,
 } from "react-native";
 
 //********************************************Import de depêndencias e componentes**********************************************//
@@ -30,6 +31,8 @@ export default function HomePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [horarioEditando, setHorarioEditando] = useState(null)
   const [fixedHorarios, setFixedHorarios] = useState([])
+
+  const [refresh, setRefresh] = useState(0)
 
   const [horarios, setHorarios] = useState([])
 
@@ -55,11 +58,11 @@ export default function HomePage() {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getData()
-  },[])
+  }, [refresh])
 
-  
+
 
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -76,7 +79,7 @@ export default function HomePage() {
 
   async function changeNameOnDataBase(id, newName) {
     try {
-      const response = await fetch(`${ip}/renameTimeline`, {
+      await fetch(`${ip}/renameTimeline`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,10 +94,28 @@ export default function HomePage() {
     }
   }
 
-  useEffect(()=>{
-    getData()
-  },[])
+  async function deleteTimeline(id) {
+    let user = await mostrarUsuario()
+    try {
+      const response = await fetch(`${ip}/deleteTimeline`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timelineId: id,
+          user: user.id
+        }),
+      });
 
+      if (response.status == 200) {
+        setRefresh((prev) => prev + 1)
+        closeModal()
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
 
   const handleNomeChange = (id, novoNome) => {
     setHorarios((prevHorarios) =>
@@ -105,11 +126,16 @@ export default function HomePage() {
 
   };
 
+  const findTimeline = (timeline_id) => {
+    // Achando o elemento para editar
+    let result = horarios.filter((item) => item.id == timeline_id)
+    return result[0]
+  }
+
   useEffect(() => {
-    if(!isEditing && horarioEditando != null){
-      let horario = horarios.filter((item) => item.id == horarioEditando) // Achando o elemento para editar
-      //Id, Name
-      changeNameOnDataBase(horarioEditando, horario[0]['name'])
+    if (!isEditing && horarioEditando != null) {
+      let horario = findTimeline(horarioEditando)
+      changeNameOnDataBase(horarioEditando, horario['name'])
     }
   }, [isEditing, horarioEditando])
 
@@ -174,7 +200,7 @@ export default function HomePage() {
   const shareTimeline = (id) => {
     router.push({
       pathname: "../../SharePage",
-      params: {idTable: id}
+      params: { idTable: id }
     })
   }
 
@@ -284,54 +310,72 @@ export default function HomePage() {
         style={styles.fundo}
         contentContainerStyle={styles.contentContainer}
       >
-        <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-          {horarios.map((horario) => (
-            <View key={horario.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-              <TouchableOpacity
+        {horarios && horarios[0] ? (
 
-                onPress={() => router.push({
-                  pathname: '/pages/FluxoRotina/TableData',
-                  params: { idTable: JSON.stringify(horario.id) }
-                })}
+          <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+            {horarios.map((horario) => (
+              <View key={horario.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                <TouchableOpacity
 
-                style={styles.containerHorario}
-              >
-                {fixedHorarios.includes(horario.id) && (
+                  onPress={() => router.push({
+                    pathname: '/pages/FluxoRotina/TableData',
+                    params: { idTable: JSON.stringify(horario.id) }
+                  })}
+
+                  style={styles.containerHorario}
+                >
+                  {fixedHorarios.includes(horario.id) && (
+                    <Ionicons
+                      name="pin"
+                      size={20}
+                      color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuro}
+                      style={styles.iconFixed} />
+
+                  )}
+                  {horarioEditando === horario.id && isEditing ? (
+                    <TextInput
+                      value={horario.name}
+                      onChangeText={(text) => handleNomeChange(horario.id, text)}
+                      autoFocus={true}
+                      style={styles.tituloHorario}
+                      onBlur={() => {
+                        setIsEditing(false)
+                        closeModal()
+                      }}
+                    />
+                  ) : (
+                    <Text style={styles.tituloHorario}>{horario.name}</Text>
+                  )}
+                  <Text style={styles.subtituloHorario}> {horario.timeline_type == 0 ? "Horário pessoal" : "Horário escolar"}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => openModal(horario.id)} style={styles.dotsButton}>
                   <Ionicons
-                    name="pin"
-                    size={20}
-                    color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuro}
-                    style={styles.iconFixed} />
-
-                )}
-                {horarioEditando === horario.id && isEditing ? (
-                  <TextInput
-                    value={horario.name}
-                    onChangeText={(text) => handleNomeChange(horario.id, text)}
-                    autoFocus={true}
-                    style={styles.tituloHorario}
-                    onBlur={() => {
-                      setIsEditing(false)
-                      closeModal()
-                    }}
+                    name="ellipsis-horizontal"
+                    size={35}
+                    color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuroDark}
                   />
-                ) : (
-                  <Text style={styles.tituloHorario}>{horario.name}</Text>
-                )}
-                <Text style={styles.subtituloHorario}> {horario.timeline_type == 0 ? "Horário pessoal" : "Horário escolar"}</Text>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
 
-              <TouchableOpacity onPress={() => openModal(horario.id)} style={styles.dotsButton}>
-                <Ionicons
-                  name="ellipsis-horizontal"
-                  size={35}
-                  color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuroDark}
-                />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
+        ) : (
+          <>
+            <Text style={{
+              color: colorScheme == "dark" ? cores.ghostWhite: cores.black,
+              fontSize: PixelRatio.getFontScale() * 40,
+              marginBottom: PixelRatio.get()*5
+            }}>Bem-Vindo</Text>
+
+            <Text style={{
+              color: colorScheme == "dark" ? cores.ghostWhite: cores.black,
+              fontSize: PixelRatio.getFontScale() * 23
+            }}>Aperte o botão abaixo para criar um horário</Text>
+          </>
+        )}
       </ScrollView>
+
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -344,10 +388,14 @@ export default function HomePage() {
             {...panResponder.panHandlers}
           >
             <View style={styles.dragIndicator} />
-            <TouchableOpacity style={styles.menuItem} onPress={handleEditClick}>
-              <Ionicons name="pencil" size={20} style={styles.icon} />
-              <Text style={styles.menuItemText}>Editar nome</Text>
-            </TouchableOpacity>
+
+            {findTimeline(horarioEditando) && findTimeline(horarioEditando)['owner'] && (
+              <TouchableOpacity style={styles.menuItem} onPress={handleEditClick}>
+                <Ionicons name="pencil" size={20} style={styles.icon} />
+                <Text style={styles.menuItemText}>Editar nome</Text>
+              </TouchableOpacity>
+            )}
+
             <TouchableOpacity style={styles.menuItem}>
               <Ionicons name="cloud-upload" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Exportar horário</Text>
@@ -356,14 +404,19 @@ export default function HomePage() {
               <Ionicons name="pin" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>{fixedHorarios.includes(horarioEditando) ? "Desfixar horário" : "Fixar horário"}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+
+            <TouchableOpacity style={styles.menuItem} onPress={() => deleteTimeline(horarioEditando)}>
               <Ionicons name="trash" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Excluir horário</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem} onPress={() => shareTimeline(horarioEditando)}>
-              <Ionicons name="arrow-redo" size={20} style={styles.icon} />
-              <Text style={styles.menuItemText}>Compartilhar</Text>
-            </TouchableOpacity>
+
+            {findTimeline(horarioEditando) && findTimeline(horarioEditando)['owner'] && (
+              <TouchableOpacity style={styles.menuItem} onPress={() => shareTimeline(horarioEditando)}>
+                <Ionicons name="arrow-redo" size={20} style={styles.icon} />
+                <Text style={styles.menuItemText}>Compartilhar</Text>
+              </TouchableOpacity>
+            )}
+
           </Animated.View>
         </View>
       </Modal>

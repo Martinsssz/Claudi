@@ -77,7 +77,7 @@ export default function Popup({title, message, cor, option, link, handle, specia
 
         <View style={styles.options} >
           <Pressable style={styles.optionsButton} onPress={() =>  handle(false) }>  
-            <Text style={styles.optionText}>Cancelar</Text>  
+            <Text style={styles.optionText}>Voltar</Text>  
           </Pressable>
           {option && option != "" && (
             <Link replace href={link} asChild>

@@ -13,7 +13,9 @@ import {
   Pressable
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import MultiSelect from 'react-native-multiple-select'
+import MultiSelect from 'react-native-multiple-select';
+import { Ionicons } from '@expo/vector-icons';
+
 //********************************************Import de depêndencias e componentes***********************************************//
 import cores from '../../Util/coresPadrao'
 import { checkName } from '../../Util/checkData'

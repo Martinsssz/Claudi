@@ -225,6 +225,7 @@ app.post("/getTimelines", async (req, res) => {
       });
       let timeline = await foundTimeline['dataValues']
       timeline['id'] = id
+      timeline['owner'] = await Timeline.findOne({ where: { user_id: userId, id: id } }) ? true : false
       console.log(timeline)
       timelines.push(timeline)
     }
@@ -282,22 +283,21 @@ app.post("/addShareTimeline", async (req, res) => {
 app.post("/timelineShareData", async (req, res) => {
   //Verificações
   const { timelineId, userId } = req.body;
-  let alreadyHasAToken = await ShareToken.findOne({ where: {timeline_id: timelineId} })
+  let alreadyHasAToken = await ShareToken.findOne({ where: { timeline_id: timelineId } })
   const token = alreadyHasAToken ? alreadyHasAToken['dataValues']['token'] : await generateLargeToken()
   console.log(token)
 
   try {
     //Criando Token em necessidade
     if (!alreadyHasAToken) {
-      if( await Timeline.findOne({ where: {id: timelineId, user_id: userId} }) ){
+      if (await Timeline.findOne({ where: { id: timelineId, user_id: userId } })) {
         await ShareToken.create({
           token: token,
           timeline_id: timelineId
         })
-
       }
     }
-    
+
     //Resgantando os usuários que tem acesso
     let usersInTheTimeline = await Access.findAll({
       where: {
@@ -313,7 +313,7 @@ app.post("/timelineShareData", async (req, res) => {
     usersId = usersId.filter(id => id != userId)
 
     //Finalizando
-    const dataUsers = [] 
+    const dataUsers = []
     for (const id of usersId) {
       const foundUser = await User.findOne({
         attributes: ['username'],
@@ -324,12 +324,41 @@ app.post("/timelineShareData", async (req, res) => {
       dataUsers.push(user)
     }
 
-    res.status(200).json( {usersData: dataUsers, token: token} )
+    res.status(200).json({ usersData: dataUsers, token: token })
 
   } catch (error) {
     res.status(500)
   }
 
+});
+
+app.post("/deleteTimeline", async (req, res) => {
+  const { timelineId, user } = req.body;
+  const isOwner = await Timeline.findOne({ where: { user_id: user, id: timelineId } })
+
+  try {
+    await Access.destroy({ where: { timeline_id: timelineId, user_id: user } })
+
+    if (isOwner) {
+      await Timeline.destroy({ where: { id: timelineId } })
+    }
+    res.status(200).json({message: "ok"})
+
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
+  }
+});
+
+app.post("/removeAccessOf", async (req, res) => {
+  const { timelineId, user } = req.body;
+  try {
+    await Access.destroy({ where: { timeline_id: timelineId, user_id: user } })
+    res.status(200).json({message: "ok"})
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
+  }
 });
 
 //*********************************************************FUNÇÕES******************************************************/

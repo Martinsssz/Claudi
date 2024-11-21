@@ -77,16 +77,16 @@ export default function Signup() {
         if (response.status === 201) {
           popup("Sucesso", "Usuario cadastrado com sucesso", ["Fazer login", "../Login"], "green")
         } else if (response.status === 500) {
-          popup("Email já cadastrado", ["Fazer login", "../Login"], "yellow")
+          popup("Email já cadastrado", "Deseja fazer login?", ["Sim", "../Login"], "yellow")
         } else {
           alert("Erro ao criar usuário.")
           popup("Erro ao criar usuário. Tente novamente mais tarde", null, "orange")
         }
-      }catch (error) {
+      } catch (error) {
         console.error("Erro na requisição:", error);
         alert("Erro de rede ou no servidor.");
       }
-    }else {
+    } else {
       popup(dadosFiltrados.message, null, "red");
     }
 
@@ -106,191 +106,191 @@ export default function Signup() {
     if (title) {
       setPopupTitle(title)
     }
-}
+  }
 
-//**********************************************Animações**********************************************************************//
+  //**********************************************Animações**********************************************************************//
 
-//Inicio
-const opacityForm = useRef(new Animated.Value(0)).current;
-Animated.timing(opacityForm, {
-  toValue: 1,
-  duration: 150,
-  useNativeDriver: true,
-}).start();
-
-//Clique no pressable
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const opacityAni = useRef(new Animated.Value(1)).current;
-function clique() {
-  Animated.sequence([
-    Animated.timing(opacityAni, {
-      toValue: 0.3,
-      duration: 100,
-      useNativeDriver: false,
-    }),
-    Animated.timing(opacityAni, {
-      toValue: 1,
-      duration: 100,
-      useNativeDriver: false,
-    }),
-  ]).start();
-}
-
-//Transicionar para tela de login
-function transition() {
+  //Inicio
+  const opacityForm = useRef(new Animated.Value(0)).current;
   Animated.timing(opacityForm, {
-    toValue: 0,
+    toValue: 1,
     duration: 150,
     useNativeDriver: true,
   }).start();
 
-  setTimeout(() => {
-    router.replace("pages/fluxoAccount/Login");
-  }, 150);
-}
+  //Clique no pressable
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+  const opacityAni = useRef(new Animated.Value(1)).current;
+  function clique() {
+    Animated.sequence([
+      Animated.timing(opacityAni, {
+        toValue: 0.3,
+        duration: 100,
+        useNativeDriver: false,
+      }),
+      Animated.timing(opacityAni, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }
 
-//***********************************************Estilos************************************************************************//
-const styles = StyleSheet.create({
-  scroll: {
-    backgroundColor:
-      colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-    padding: 20,
-    flex: 1,
-    height: height,
-  },
+  //Transicionar para tela de login
+  function transition() {
+    Animated.timing(opacityForm, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start();
 
-  contentContainer: {
-    flexGrow: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 20,
-  },
+    setTimeout(() => {
+      router.replace("pages/fluxoAccount/Login");
+    }, 150);
+  }
 
-  form: {
-    height: "auto",
-    width: "100%",
-    gap: 15,
-    opacity: opacityForm,
-  },
-
-  input: {
-    height: "auto",
-    padding: 10,
-    backgroundColor:
-      colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
-    color: "black",
-    paddingLeft: 7,
-    fontSize: 19,
-    //borda
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "black",
-    borderRadius: 7,
-    //Fim da borda
-  },
-
-  button: {
-    text: {
-      color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
-      textAlign: "center",
-      fontSize: 19,
+  //***********************************************Estilos************************************************************************//
+  const styles = StyleSheet.create({
+    scroll: {
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+      padding: 20,
+      flex: 1,
+      height: height,
     },
-    backgroundColor:
-      colorScheme === "dark" ? cores.azulDark : cores.azulLight,
-    padding: 13,
-    borderRadius: 7,
-    opacity: opacityAni,
-  },
 
-  opcoesAlternativas: {
-    width: "100%",
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
+    contentContainer: {
+      flexGrow: 1,
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 20,
+    },
 
-  opcoesAlternativasText: {
-    fontSize: 20,
-    color: colorScheme == "dark" ? "white" : "black",
-    textDecorationLine: "underline",
-  },
+    form: {
+      height: "auto",
+      width: "100%",
+      gap: 15,
+      opacity: opacityForm,
+    },
 
-  siginWith: {
-    height: 50,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 50,
-    opacity: opacityForm,
-  },
-});
+    input: {
+      height: "auto",
+      padding: 10,
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
+      color: "black",
+      paddingLeft: 7,
+      fontSize: 19,
+      //borda
+      borderWidth: 1,
+      borderStyle: "solid",
+      borderColor: "black",
+      borderRadius: 7,
+      //Fim da borda
+    },
 
-//***********************************************Tela****************************************************************************//
-return (
-  <>
-    <KeyboardAwareScrollView>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <Logo header={false} />
-        <Animated.View style={styles.form}>
-          <TextInput
-            placeholder="Nome"
-            style={styles.input}
-            maxLength={256}
-            onChangeText={(texto) => setInputNome(texto)}
-          ></TextInput>
+    button: {
+      text: {
+        color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
+        textAlign: "center",
+        fontSize: 19,
+      },
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+      padding: 13,
+      borderRadius: 7,
+      opacity: opacityAni,
+    },
 
-          <TextInput
-            placeholder="Email"
-            maxLength={256}
-            style={styles.input}
-            onChangeText={(texto) => setInputEmail(texto)}
-          ></TextInput>
+    opcoesAlternativas: {
+      width: "100%",
+      paddingHorizontal: 10,
+      flexDirection: "row",
+      justifyContent: "center",
+      marginBottom: 10,
+    },
 
-          <PasswordInput
-            placeHolder={"Senha"}
-            handleText={setInputPassword}
-            style={styles.input}
-          />
+    opcoesAlternativasText: {
+      fontSize: 20,
+      color: colorScheme == "dark" ? "white" : "black",
+      textDecorationLine: "underline",
+    },
 
-          <PasswordInput
-            placeHolder={"Confirmar senha"}
-            handleText={setInputConfirmPass}
-            style={styles.input}
-          />
+    siginWith: {
+      height: 50,
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 50,
+      opacity: opacityForm,
+    },
+  });
 
-          <AnimatedPressable style={styles.button} onPress={sendData}>
-            <Text style={styles.button.text}>Cadastrar-se</Text>
-          </AnimatedPressable>
-        </Animated.View>
+  //***********************************************Tela****************************************************************************//
+  return (
+    <>
+      <KeyboardAwareScrollView>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.contentContainer}
+        >
+          <Logo header={false} />
+          <Animated.View style={styles.form}>
+            <TextInput
+              placeholder="Nome"
+              style={styles.input}
+              maxLength={256}
+              onChangeText={(texto) => setInputNome(texto)}
+            ></TextInput>
 
-        <Pressable style={styles.opcoesAlternativas} onPress={transition}>
-          <Text style={styles.opcoesAlternativasText}>
-            Já tenho uma conta
-          </Text>
-        </Pressable>
+            <TextInput
+              placeholder="Email"
+              maxLength={256}
+              style={styles.input}
+              onChangeText={(texto) => setInputEmail(texto)}
+            ></TextInput>
 
-        <Animated.View style={styles.siginWith}>
-          <Loginwith tipo="0"></Loginwith>
-          <Loginwith tipo="1"></Loginwith>
-          <Loginwith tipo="2"></Loginwith>
-        </Animated.View>
-      </ScrollView>
-    </KeyboardAwareScrollView>
-    {popupVisibility && (
-      <Popup
-        title={popupTitle != "" ? popupTitle : ""}
-        message={popupText}
-        cor={popupColor}
-        option={popupOption.length !== 0 ? popupOption[0] : ""}
-        link={popupOption.length !== 0 ? popupOption[1] : ""}
-        handle={setPopupVisibility}
-      />
-    )}
-  </>
-);
+            <PasswordInput
+              placeHolder={"Senha"}
+              handleText={setInputPassword}
+              style={styles.input}
+            />
+
+            <PasswordInput
+              placeHolder={"Confirmar senha"}
+              handleText={setInputConfirmPass}
+              style={styles.input}
+            />
+
+            <AnimatedPressable style={styles.button} onPress={sendData}>
+              <Text style={styles.button.text}>Cadastrar-se</Text>
+            </AnimatedPressable>
+          </Animated.View>
+
+          <Pressable style={styles.opcoesAlternativas} onPress={transition}>
+            <Text style={styles.opcoesAlternativasText}>
+              Já tenho uma conta
+            </Text>
+          </Pressable>
+
+          <Animated.View style={styles.siginWith}>
+            <Loginwith tipo="0"></Loginwith>
+            <Loginwith tipo="1"></Loginwith>
+            <Loginwith tipo="2"></Loginwith>
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAwareScrollView>
+      {popupVisibility && (
+        <Popup
+          title={popupTitle != "" ? popupTitle : ""}
+          message={popupText}
+          cor={popupColor}
+          option={popupOption.length !== 0 ? popupOption[0] : ""}
+          link={popupOption.length !== 0 ? popupOption[1] : ""}
+          handle={setPopupVisibility}
+        />
+      )}
+    </>
+  );
 }

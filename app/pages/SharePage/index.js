@@ -22,6 +22,7 @@ import { Appearance } from "react-native";
 import cores from "../../Util/coresPadrao";
 import { Link, router, useGlobalSearchParams } from "expo-router";
 import ip from "../../Util/localhost";
+import Popup from "../../components/Popup"
 
 import BackArrow from "../../components/BackArrow"
 import { mostrarUsuario } from "../../sqlite/dbService";
@@ -30,6 +31,11 @@ import { mostrarUsuario } from "../../sqlite/dbService";
 export default function SharePage() {
   //**********************************************HOOKS**********************************************************************//
   let { idTable } = useGlobalSearchParams()
+  const [refresh, setRefresh] = useState(0)
+
+  const [popup, setPopup] = useState(false)
+  const [popupText, setPopupText] = useState("")
+
   const {width, height} = Dimensions.get('window')
   if(!idTable){
     router.navigate("pages/pagesWithHeader/HomePage")
@@ -62,7 +68,7 @@ export default function SharePage() {
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [refresh])
 
 
 
@@ -79,7 +85,25 @@ export default function SharePage() {
   //**********************************************Animações**********************************************************************//
 
   //************************************************Funções**********************************************************************//
-
+  async function deleteUser(id){
+      try {
+        const response = await fetch(`${ip}/removeAccessOf`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            timelineId: idTable,
+            user: id
+          }),
+        });
+        if (response.status == 200) {
+          setRefresh((prev) => prev + 1)
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+  }
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
@@ -98,13 +122,14 @@ export default function SharePage() {
     },
 
     code: {
-      backgroundColor: colorScheme == "dark" ? cores.azulClaro1Light : cores.ghostWhite,
+      backgroundColor: colorScheme == "dark" ? cores.azulEscuro2Light : cores.azulDark,
       width: "100%",
       padding: PixelRatio.get() * 8,
-      alignItems: "center"
+      alignItems: "center",
+      borderRadius: PixelRatio.get()*3
     },
     codeText: {
-      color: cores.black,
+      color: "white",
       fontSize: PixelRatio.getFontScale() * 20
     },
     title: {
@@ -116,8 +141,8 @@ export default function SharePage() {
       width: "100%",
       flexDirection: "row",
       justifyContent: "space-between",
-      borderColor: "white",
-      borderWidth: 1,
+      borderBottomColor:"white",
+      borderBottomWidth: 1,
       padding: PixelRatio.get()*5
     },
     user:{
@@ -180,6 +205,16 @@ export default function SharePage() {
           <Text style={styles.textUser}>Não há ninguém aqui =(</Text>
         )}
       </ScrollView>
+
+      {popup && (
+        <Popup
+          title = "Atenção"
+          message="Tem certeza que deseja excluir sua conta?"
+          option="Confirmar"
+          handle={setPopup}
+          specialHandle={deleteUser}
+        />
+      )}
     </>
   );
 }
