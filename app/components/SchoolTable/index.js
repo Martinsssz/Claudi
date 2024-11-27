@@ -29,9 +29,7 @@ export default function TabelaAulas({ data, visualizacao }) {
     friday: "Sexta",
   };
 
-  let aulaSemana = {};
 
-  console.log(JSON.stringify(aulaSemana, null, 1));
 
   /*const aulasSemana =
     data && Object.keys(data).length > 0
@@ -61,6 +59,7 @@ export default function TabelaAulas({ data, visualizacao }) {
 
   //************************************************Funções**********************************************************************//
 
+  let aulaSemana = {};
   Object.keys(data).forEach((key) => (aulaSemana[key] = {}));
   Object.keys(aulaSemana).forEach((day) => {
     Object.keys(data[day]).forEach((turma) => {
@@ -73,15 +72,37 @@ export default function TabelaAulas({ data, visualizacao }) {
       });
     });
   });
+  //console.log(JSON.stringify(aulaSemana, null, 2));
 
-  console.log(JSON.stringify(aulaSemana, null, 2));
+
+  let aulasTurmas = {}
+  Object.keys(data).forEach(dia => {
+    Object.keys(data[dia]).forEach(turma => {
+      aulasTurmas[turma] ? null : aulasTurmas[turma] = {}
+      aulasTurmas[turma][dia] = [[], []]
+    })
+  })
+
+  Object.keys(data).forEach(dia => {
+    Object.keys(data[dia]).forEach(turma => {
+      Object.values(data[dia][turma]).forEach(atividade => {
+
+        aulasTurmas[turma][dia][0].push(atividade == null ? null : atividade['subject'])
+        aulasTurmas[turma][dia][1].push(atividade == null ? null : atividade["end"])
+
+      })
+    })
+  })
+  console.log(JSON.stringify(aulasTurmas, null, 2))
+
+
 
   let daysMax = [];
 
   Object.values(aulaSemana).forEach((day) => {
     const tamanhoMaximo = Math.max(
       ...Object.values(day).map(
-        (turma) => turma[0].filter((element) => element != null).length
+        (turma) => turma[0].length
       )
     );
     daysMax.push(tamanhoMaximo);
@@ -93,11 +114,8 @@ export default function TabelaAulas({ data, visualizacao }) {
   //***********************************************Estilos************************************************************************//
 
   const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
     table: {
-      flexDirection: "row",
+      flexDirection: "row"
     },
     column: {
       flexDirection: "column",
@@ -108,8 +126,6 @@ export default function TabelaAulas({ data, visualizacao }) {
       aspectRatio: 0.75,
     },
     diaDaSemana: {
-      backgroundColor:
-        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       width: PixelRatio.get() * 30,
       justifyContent: "center",
       alignItems: "center",
@@ -118,18 +134,21 @@ export default function TabelaAulas({ data, visualizacao }) {
     text: {
       color: "#ffff",
       transform: [{ rotate: "-90deg" }],
-      fontSize: PixelRatio.getFontScale() * 20,
+      fontSize: PixelRatio.getFontScale() * 30,
+      width: PixelRatio.get() * 30 * 2,
+      textAlign: "center",
+
     },
     textContent: {
       color: "#ffff",
-      fontSize: PixelRatio.getFontScale() * 15,
+      fontSize: PixelRatio.getFontScale() * 18,
     },
   });
 
   //***********************************************Tela****************************************************************************//
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView>
       <View style={styles.table}>
         {/* Primeira */}
         <View style={styles.column}>
@@ -140,7 +159,12 @@ export default function TabelaAulas({ data, visualizacao }) {
                 key={index}
                 style={[
                   styles.diaDaSemana,
-                  { height: PixelRatio.get() * 17.5 * daysMax[index] },
+                  {
+                    height: PixelRatio.get() * daysMax[index] * 17.5 ,
+                    backgroundColor: colorScheme === "dark"
+                      ? index % 2 == 0 ? cores.azulDark : cores.azulClaro
+                      : index % 2 == 0 ? cores.azulLight : cores.azulEscuro2Light,
+                  },
                 ]}
               >
                 <Text style={styles.text}>{diasSemana[day]}</Text>
@@ -148,99 +172,103 @@ export default function TabelaAulas({ data, visualizacao }) {
             ))}
           </View>
         </View>
-        {Object.values(aulaSemana).map((day, index) =>
-          Object.keys(day).map((turma, index) => (
-            /* Aqui é o conteúdo */
-            <View style={[styles.column, { width: PixelRatio.get() * 70 }]}>
-              
-              <View style={[styles.column, { height: PixelRatio.get() * 40 }]}>
+
+        {Object.keys(aulasTurmas).map((turma, index) => (
+          <View key={`${turma}-${index}`}style={[styles.column, { width: PixelRatio.get() * 70 }]}>
+            <View style={[styles.column, { height: PixelRatio.get() * 40 }]}>
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor:
+                    colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+                  borderWidth: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.textContent}>{turma}</Text>
+              </View>
+
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor:
+                    colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+                  flexDirection: "row",
+                  borderWidth: 1,
+                }}
+              >
                 <View
                   style={{
                     flex: 1,
-                    backgroundColor:
-                      colorScheme === "dark" ? cores.azulDark : cores.azulLight,
-                    borderWidth: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRightWidth: 1,
+                  }}
+                >
+                  <Text style={styles.textContent}>Horário</Text>
+                </View>
+
+                <View
+                  style={{
+                    flex: 1,
                     justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
-                  <Text style={styles.textContent}>{turma}</Text>
-                </View>
-
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor:
-                      colorScheme === "dark" ? cores.azulDark : cores.azulLight,
-                    flexDirection: "row",
-                    borderWidth: 1,
-                  }}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRightWidth: 1,
-                    }}
-                  >
-                    <Text style={styles.textContent}>Horário</Text>
-                  </View>
-
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text style={styles.textContent}>Atividade</Text>
-                  </View>
+                  <Text style={styles.textContent}>Atividade</Text>
                 </View>
               </View>
-              <View style={styles.column}>
-                {Object.values(day).map((materias) =>
-                  materias[0].map((atividade, index) => (
+            </View>
+
+            <View style={styles.column}>
+              {Object.keys(aulasTurmas[turma]).map((dia, indexDay) => (
+                aulasTurmas[turma][dia][0].map((atividade, index) => (
+                  console.log(`${turma}-${dia}-${atividade}-${index}`),
+                  <View
+                    key={`${turma}-${dia}-${atividade}-${index}`}
+                    style={{
+                      backgroundColor:
+                        colorScheme === "dark"
+                          ? indexDay % 2 == 0 ? cores.azulDark : cores.azulClaro
+                          : indexDay % 2 == 0 ? cores.azulLight : cores.azulEscuro2Light,
+                      flexDirection: "row",
+                      borderWidth: 1,
+                      height: PixelRatio.get() * 17.5
+
+                    }}
+                  >
                     <View
                       style={{
                         flex: 1,
-                        backgroundColor:
-                          colorScheme === "dark"
-                            ? cores.azulDark
-                            : cores.azulLight,
-                        flexDirection: "row",
-                        borderWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRightWidth: 1,
                       }}
                     >
-                      <View
-                        style={{
-                          flex: 1,
-                          justifyContent: "center",
-                          alignItems: "center",
-                          borderRightWidth: 1,
-                        }}
-                      >
-                        <Text style={styles.textContent}>
-                          {materias[1][index]}
-                        </Text>
-                      </View>
-
-                      <View
-                        style={{
-                          flex: 1,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.textContent}>{atividade}</Text>
-                      </View>
+                      <Text style={styles.textContent}>
+                        {aulasTurmas[turma][dia][1][index] || 'X'}
+                      </Text>
                     </View>
-                  ))
-                )}
-              </View>
+
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={styles.textContent}>{atividade || 'X'}</Text>
+                    </View>
+                    
+                  </View>
+                ))
+              ))}
             </View>
-          ))
-        )}
+
+          </View>
+
+        ))}
       </View>
     </ScrollView>
   );

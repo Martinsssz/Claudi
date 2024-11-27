@@ -351,7 +351,6 @@ export default function HomePage() {
         contentContainerStyle={styles.contentContainer}
       >
         {horarios && horarios[0] ? (
-
           <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
             {horarios.map((horario) => (
               <View key={horario.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>

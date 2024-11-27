@@ -147,10 +147,6 @@ export default function TableData() {
       marginLeft: 18,
       top: -3,
     },
-    tabelaContainer: {
-      flex: 1,
-  
-    },
   });
 
   //***********************************************Tela****************************************************************************//
@@ -182,11 +178,12 @@ export default function TableData() {
         <View style={styles.tabelaContainer}>
           <ScrollView
             ref={scrollViewRef}
-            horizontal={visualizacao === "semanal"}
+            horizontal={true}
             scrollEnabled={true}
-            showsHorizontalScrollIndicator={false}
+            showsHorizontalScrollIndicator={true}
             showsVerticalScrollIndicator={visualizacao === "diaria"}
             onScroll={handleScroll}
+            
           >
             <TabelaAulas data={data} visualizacao={visualizacao} />
           </ScrollView>
