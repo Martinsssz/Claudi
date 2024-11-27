@@ -191,6 +191,7 @@ app.post("/delete-account", async (req, res) => {
 
 app.post("/timelines", async (req, res) => {
   const { id_timeline } = req.body;
+  
   try {
     const timelines = await Timeline.findByPk(id_timeline);
     console.log(timelines['dataValues']['json'])

@@ -318,7 +318,7 @@ export default function HomePage() {
                 <TouchableOpacity
 
                   onPress={() => router.push({
-                    pathname: '/pages/FluxoRotina/TableData',
+                    pathname: horario.type == 0 ? '/pages/FluxoRotina/PersonalSchedule' : '/pages/FluxoRotina/SchoolSchedule',
                     params: { idTable: JSON.stringify(horario.id) }
                   })}
 
@@ -346,7 +346,7 @@ export default function HomePage() {
                   ) : (
                     <Text style={styles.tituloHorario}>{horario.name}</Text>
                   )}
-                  <Text style={styles.subtituloHorario}> {horario.timeline_type == 0 ? "Horário pessoal" : "Horário escolar"}</Text>
+                  <Text style={styles.subtituloHorario}> {horario.type == 0 ? "Horário pessoal" : "Horário escolar"}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => openModal(horario.id)} style={styles.dotsButton}>
