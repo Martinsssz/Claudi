@@ -338,12 +338,13 @@ app.post("/deleteTimeline", async (req, res) => {
   const isOwner = await Timeline.findOne({ where: { user_id: user, id: timelineId } })
 
   try {
-    await Access.destroy({ where: { timeline_id: timelineId, user_id: user } })
+    //await Access.destroy({ where: { timeline_id: timelineId, user_id: user } })
 
     if (isOwner) {
-      await Timeline.destroy({ where: { id: timelineId } })
+      let idAnswer = await Timeline.findOne({ attributes: ['answer_id'], where: { id: timelineId } })
+      await Answers.destroy({ where: { id: idAnswer['dataValues']['answer_id'] } })
     }
-    res.status(200).json({message: "ok"})
+    res.status(200).json({ message: "ok" })
 
   } catch (error) {
     console.log("Erro ao buscar dados:", error)
@@ -355,12 +356,111 @@ app.post("/removeAccessOf", async (req, res) => {
   const { timelineId, user } = req.body;
   try {
     await Access.destroy({ where: { timeline_id: timelineId, user_id: user } })
-    res.status(200).json({message: "ok"})
+    res.status(200).json({ message: "ok" })
   } catch (error) {
     console.log("Erro ao buscar dados:", error)
     res.status(200)
   }
 });
+
+app.post("/removeAllAccesses", async (req, res) => {
+  const { timelineId, userId } = req.body;
+  try {
+    let accesses = await Access.findAll({ where: { timeline_id: timelineId } })
+
+    let usersId = []
+    accesses.forEach(item => {
+      usersId.push(item['dataValues']['user_id'])
+    })
+    usersId = usersId.filter(id => id != userId)
+
+    for (const id of usersId) {
+      await Access.destroy({ where: { timeline_id: timelineId, user_id: id } })
+    }
+
+    await ShareToken.destroy({ where: { timeline_id: timelineId } })
+    res.status(200).json({ message: "ok" })
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
+  }
+});
+
+app.post("/randomCodeAgain", async (req, res) => {
+  const { timelineId } = req.body;
+  try {
+    const newCode = await generateLargeToken()
+    await ShareToken.update({ token: newCode }, { where: { timeline_id: timelineId } })
+    res.status(200).json({ message: "ok" })
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
+  }
+});
+
+app.post("/getDataAnswer", async (req, res) => {
+  const { id_timeline } = req.body;
+  try {
+    const idAnswer = await Timeline.findOne({ where: { id: id_timeline } }).then(data => {
+      return data['dataValues']['fk_id_answer']
+    });
+    const answers = await Answers.findOne({ where: { id: idAnswer } }).then(data => {
+      return data['dataValues']['json']
+    })
+    console.log(idAnswer)
+    console.log(answers)
+    res.status(200).json({ id: idAnswer, json: JSON.parse(answers) })
+
+
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
+  }
+});
+
+app.post("/copyTimeline", async (req, res) => {
+  const { timelineId, userId } = req.body;
+
+  try {
+    const timeline = await Timeline.findOne({ where: { id: timelineId } }).then(data => {
+      return data['dataValues']
+    })
+
+    const answers = await Answers.findOne({ where: { id: timeline['fk_id_answer'] } }).then(data => {
+      return data['dataValues']
+    })
+
+    let newAnswers = await Answers.create({
+      name: `copy-${answers['name']}`,
+      type: answers['type'],
+      json: JSON.parse(answers['json']),
+      user_id: userId
+    });
+
+    let newIdAnswer = newAnswers['dataValues']['id']
+    let newTimeline = await Timeline.create({
+      name: `copy-${timeline['name']}`,
+      type: timeline['type'],
+      json: JSON.parse(timeline['json']),
+      user_id: userId,
+      answer_id: newIdAnswer
+    });
+
+    let newIdTimeline = newTimeline['dataValues']['id']
+    await Access.create({
+      user_id: userId,
+      timeline_id: newIdTimeline
+    })
+    res.status(200).json({"message": "ok"})
+
+
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
+  }
+});
+
+
 
 //*********************************************************FUNÇÕES******************************************************/
 async function updateDataUser(id, name, email, password) {

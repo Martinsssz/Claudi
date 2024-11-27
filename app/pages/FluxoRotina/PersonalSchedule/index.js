@@ -163,6 +163,7 @@ export default function TableData() {
         <Toolbar
           visualizacao={visualizacao}
           setVisualizacao={setVisualizacao}
+          table={idTable}
         />
 
         {visualizacao === "semanal" && (

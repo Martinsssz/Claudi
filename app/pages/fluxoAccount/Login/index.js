@@ -1,18 +1,19 @@
 //Import de componentes
 import {
-  View,Text,
+  View, Text,
   StyleSheet,
   TextInput,
   Pressable,
   ScrollView,
   Animated,
-  Appearance
+  Appearance,
+  PixelRatio
 } from 'react-native'
 //********************************************Import de depêndencias e componentes***********************************************//
 import cores from '../../../Util/coresPadrao'
 import React, { useState, useEffect, useRef } from 'react'
 import Logo from '../../../components/Logo'
-import PasswordInput from '../../../components/PasswordInput' 
+import PasswordInput from '../../../components/PasswordInput'
 import Loginwith from '../../../components/Loginwith'
 import { Link, router } from 'expo-router'
 
@@ -25,152 +26,151 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 
 
-export default function Login(){
-//**********************************************UseStates**********************************************************************//
-  const[inputEmail,setInputEmail] = useState("")
-  const[inputPassword,setInputPassword] = useState("")
+export default function Login() {
+  //**********************************************UseStates**********************************************************************//
+  const [inputEmail, setInputEmail] = useState("")
+  const [inputPassword, setInputPassword] = useState("")
 
-  const[colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
+  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
 
-  const[popupVisibility, setPopupVisibility] = useState(false)
-  const[popupText, setPopupText] = useState("")
-  const[popupOption, setPopupOption] = useState([])
-  const[popupColor, setPopupColor] = useState("")
+  const [popupVisibility, setPopupVisibility] = useState(false)
+  const [popupText, setPopupText] = useState("")
+  const [popupOption, setPopupOption] = useState([])
+  const [popupColor, setPopupColor] = useState("")
 
-//**********************************************Alteração automática de tema*****************************************************//
+  //**********************************************Alteração automática de tema*****************************************************//
   useEffect(() => {
-    const listener = Appearance.addChangeListener(( scheme ) => {
+    const listener = Appearance.addChangeListener((scheme) => {
       setColorScheme(scheme.colorScheme)
     })
     return () => listener.remove()
   }, [])
 
-  
-  
+
+
   //************************************************Funções**********************************************************************//
-  async function  sendData(){
+  async function sendData() {
 
-  let dadosFiltrados = checkDataLogin(inputEmail, inputPassword)
-  if(dadosFiltrados.validate){
-    try {
-      const response = await fetch(`${ip}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: inputEmail, 
-          password: inputPassword, 
-        }),
-      });
+    let dadosFiltrados = checkDataLogin(inputEmail, inputPassword)
+    if (dadosFiltrados.validate) {
+      try {
+        const response = await fetch(`${ip}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: inputEmail,
+            password: inputPassword,
+          }),
+        });
 
-      const data = await response.json()
+        const data = await response.json()
 
-      if (response.status === 200) {
-        popup("Efetivado", null, "green")
-        router.replace("/pages/pagesWithHeader/HomePage")
-        criarUsuario(data.user)
-        mostrarUsuario()
+        if (response.status === 200) {
+          popup("Efetivado", null, "green")
+          router.replace("/pages/pagesWithHeader/HomePage")
+          criarUsuario(data.user)
+          mostrarUsuario()
 
-      } else if(response.status === 401){
-        popup("Email ou senha incorretos", null, "red")
-      }else if(response.status === 404){
-        popup("Usuário não encontrado", null, "red")
-      }else{
-        popup("O login falhou. Tente novamente mais tarde", null, "orange")
+        } else if (response.status === 401) {
+          popup("Email ou senha incorretos", null, "red")
+        } else if (response.status === 404) {
+          popup("Usuário não encontrado", null, "red")
+        } else {
+          popup("O login falhou. Tente novamente mais tarde", null, "orange")
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error)
+        alert("Erro de rede ou no servidor.")
       }
-    } catch (error) {
-      console.error('Erro na requisição:', error)
-      alert("Erro de rede ou no servidor.")
+    } else {
+      popup(dadosFiltrados.message, null, "red")
     }
-  }else{
-    popup(dadosFiltrados.message, null, "red")
   }
-}
 
-function popup(text, options=null, color=null){
-  setPopupVisibility(true)
-  setPopupText(text)
+  function popup(text, options = null, color = null) {
+    setPopupVisibility(true)
+    setPopupText(text)
 
-  if(options){
-    setPopupOption([... options])
+    if (options) {
+      setPopupOption([...options])
+    }
+
+    if (color) {
+      setPopupColor(color)
+    }
   }
-  
-  if(color){
-    setPopupColor(color)
-  }
-}
 
-//**********************************************Animações**********************************************************************//
+  //**********************************************Animações**********************************************************************//
 
-//inicio
-const opacityForm = useRef(new Animated.Value(0)).current
-Animated.timing(opacityForm, {
-  toValue:1,
-  duration: 350,
-  useNativeDriver: true
-}).start()
-
-//Transicionar para tela de cadastro
-function transition(){
+  //inicio
+  const opacityForm = useRef(new Animated.Value(0)).current
   Animated.timing(opacityForm, {
-    toValue:0,
-    duration: 150,
+    toValue: 1,
+    duration: 350,
     useNativeDriver: true
   }).start()
 
-  setTimeout(() =>{
-    router.navigate("../Signup")
-  }, 150)
-}
+  //Transicionar para tela de cadastro
+  function transition() {
+    Animated.timing(opacityForm, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true
+    }).start()
 
-//Clique no pressable
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
-const opacityAni = useRef(new Animated.Value(1)).current;  
-function clique(){
-  Animated.sequence([
-    Animated.timing(opacityAni, {
-      toValue:0.3,
-      duration: 100,
-      useNativeDriver: false
-    }),
-    Animated.timing(opacityAni, {
-      toValue:1,
-      duration: 100,
-      useNativeDriver: false
-    }),
-  ]).start()
-}
+    setTimeout(() => {
+      router.navigate("../Signup")
+    }, 150)
+  }
+
+  //Clique no pressable
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+  const opacityAni = useRef(new Animated.Value(1)).current;
+  function clique() {
+    Animated.sequence([
+      Animated.timing(opacityAni, {
+        toValue: 0.3,
+        duration: 100,
+        useNativeDriver: false
+      }),
+      Animated.timing(opacityAni, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: false
+      }),
+    ]).start()
+  }
 
 
-//***********************************************Estilos************************************************************************//
-const styles = StyleSheet.create({ 
-    keyboard:{
+  //***********************************************Estilos************************************************************************//
+  const styles = StyleSheet.create({
+    keyboard: {
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       height: "100%"
     },
-    scroll:{
+    scroll: {
       backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-      padding: 20,
+      paddingHorizontal: 20,
       height: "100%",
     },
-    contentContainer:{
-      flexDirection:"column",
+    contentContainer: {
+      flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      gap:20,
-      paddingVertical:60,
-      height: "100%"
+      height: "100%",
+      gap: PixelRatio.get() * 20
     },
-  
-    form:{
+
+    form: {
       width: "100%",
       height: "30%",
       gap: 20,
-      justifyContent:"center",
+      justifyContent: "center",
       opacity: opacityForm
     },
-    input:{
+    input: {
       height: "auto",
       padding: 10,
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
@@ -183,9 +183,9 @@ const styles = StyleSheet.create({
       borderColor: "black",
       borderRadius: 7,
       //Fim da borda
-    },    
-    button:{
-      text:{
+    },
+    button: {
+      text: {
         color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
         textAlign: "center",
         fontSize: 19
@@ -195,83 +195,81 @@ const styles = StyleSheet.create({
       borderRadius: 7
     },
 
-    opcoesAlternativas:{
+    opcoesAlternativas: {
       width: "100%",
-      paddingHorizontal:10,
-      flexDirection:"row",
-      justifyContent:"space-between",
-      marginBottom:20,
+      paddingHorizontal: 10,
+      flexDirection: "row",
+      justifyContent: "space-between",
     },
-    opcoesAlternativasText:{
-      fontSize:20,
+    opcoesAlternativasText: {
+      fontSize: 20,
       color: colorScheme == "dark" ? "white" : "black",
       textDecorationLine: "underline"
     },
 
-    siginWith:{
-      height: 60,
+    siginWith: {
+      height: 50,
       width: "100%",
-      flexDirection:"row",
-      justifyContent:"center",
-      gap:50,
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 50,
       opacity: opacityForm
     },
   })
 
-//***********************************************Tela****************************************************************************//
-  return(
+  //***********************************************Tela****************************************************************************//
+  return (
     <>
       <KeyboardAwareScrollView style={styles.keyboard}>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer}>
-          <Logo/>
+          <Logo />
           <Animated.View style={styles.form}>
             <TextInput
               placeholder='Email'
               maxLength={256}
-              style = {styles.input}
-              onChangeText = {setInputEmail} >
+              style={styles.input}
+              onChangeText={setInputEmail} >
             </TextInput>
 
             <PasswordInput
-              placeHolder = {"Senha"}
-              handleText = {setInputPassword}
+              placeHolder={"Senha"}
+              handleText={setInputPassword}
               style={styles.input}
-            /> 
+            />
 
             <AnimatedPressable style={styles.button} onPress={sendData}>
               <Text style={styles.button.text}>Entrar</Text>
             </AnimatedPressable>
+
+            <View style={styles.opcoesAlternativas}>
+
+              <Pressable>
+                <Link replace href={"../changePassword"}>
+                  <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
+                </Link>
+              </Pressable>
+
+              <Pressable onPress={transition} >
+                <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
+              </Pressable>
+
+            </View>
           </Animated.View>
 
-          <View style={styles.opcoesAlternativas}>
-
-            <Pressable>
-              <Link replace href={"../changePassword"}>
-                <Text style={styles.opcoesAlternativasText}>Mudar senha</Text>
-              </Link>
-            </Pressable>
-
-            <Pressable onPress={transition} >
-                <Text style={styles.opcoesAlternativasText}>Criar conta</Text>
-            </Pressable>
-            
-          </View>
-          
-
           <Animated.View style={styles.siginWith}>
-            <Loginwith tipo = "0"></Loginwith>
-            <Loginwith tipo = "1"></Loginwith>
-            <Loginwith tipo = "2"></Loginwith>
+            <Loginwith tipo="0"></Loginwith>
+            <Loginwith tipo="1"></Loginwith>
+            <Loginwith tipo="2"></Loginwith>
           </Animated.View>
         </ScrollView>
       </KeyboardAwareScrollView>
 
       {popupVisibility && (
-        <Popup 
-          message={popupText} 
-          cor={popupColor} 
-          option= {popupOption.length !== 0 ? popupOption[0] : ""} 
-          link= {popupOption.length !== 0 ? popupOption[1] : ""} 
+        <Popup
+          message={popupText}
+          cor={popupColor}
+          option={popupOption.length !== 0 ? popupOption[0] : ""}
+          link={popupOption.length !== 0 ? popupOption[1] : ""}
           handle={setPopupVisibility}
         />
       )}

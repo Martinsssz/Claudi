@@ -3,7 +3,8 @@
 import { 
   View , 
   Text, 
-  StyleSheet} from "react-native";
+  StyleSheet,
+  PixelRatio} from "react-native";
 
 
 //********************************************Import de depêndencias e componentes**********************************************//
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal:6,
+    paddingHorizontal:PixelRatio.get()*5,
     zIndex:3,
     borderBottomColor:"black",
     borderBottomWidth: 1
@@ -53,9 +54,11 @@ const styles = StyleSheet.create({
   },
   foto:{
     width: "40%",
+    height: "100%",
     aspectRatio: 1,
     justifyContent:"center",
-    alignItems: "center"
+    alignItems: "center",
+    backgroundColor: "black"
   },
   nome:{
     fontSize: 40,
@@ -68,9 +71,7 @@ return(
     
 
     <View style={styles.userInfo}>
-      <View style={styles.foto}>
-        <Logo header={true}/>
-      </View>
+      <Logo header={true}/>
       <Text style={styles.nome}>Claudi</Text>
     </View>
     {showMenu && (

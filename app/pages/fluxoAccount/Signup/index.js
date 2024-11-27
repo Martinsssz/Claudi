@@ -9,10 +9,11 @@ import {
   Appearance,
   Dimensions,
   PixelRatio,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import { router } from "expo-router";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import React, { useState, useEffect, useRef } from "react";
 
 //********************************************componentes*****************************************************************//
@@ -151,24 +152,27 @@ export default function Signup() {
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
-    scroll: {
-      backgroundColor:
-        colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-      padding: 20,
-      flex: 1,
+    keyboard: {
+      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
       height: height,
     },
 
+    scroll: {
+      height: height,
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+      paddingHorizontal: 20,
+    },
+
     contentContainer: {
-      flexGrow: 1,
+      height: height,
       flexDirection: "column",
-      justifyContent: "center",
       alignItems: "center",
-      gap: 20,
+      justifyContent: "center",
+      gap: PixelRatio.get() * 10,
     },
 
     form: {
-      height: "auto",
       width: "100%",
       gap: 15,
       opacity: opacityForm,
@@ -208,7 +212,6 @@ export default function Signup() {
       paddingHorizontal: 10,
       flexDirection: "row",
       justifyContent: "center",
-      marginBottom: 10,
     },
 
     opcoesAlternativasText: {
@@ -224,13 +227,17 @@ export default function Signup() {
       justifyContent: "center",
       gap: 50,
       opacity: opacityForm,
+      
     },
   });
 
   //***********************************************Tela****************************************************************************//
   return (
     <>
-      <KeyboardAwareScrollView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboard}
+      >
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.contentContainer}
@@ -280,7 +287,7 @@ export default function Signup() {
             <Loginwith tipo="2"></Loginwith>
           </Animated.View>
         </ScrollView>
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
       {popupVisibility && (
         <Popup
           title={popupTitle != "" ? popupTitle : ""}

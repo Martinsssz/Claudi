@@ -28,69 +28,12 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       field: "user_password",
-    },
-    picture: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "picture",
-    },
+    }
   },
   {
     tableName: "users", // Nome da tabela
     timestamps: false,
   }
-);
-
-const Timeline = sequelize.define(
-  "Timeline",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      field: "id_timeline",
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "timeline_name",
-    },
-    type: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: "timeline_type",
-    },
-    json: {
-      type: DataTypes.JSON,
-      allowNull: false,
-      field: "json_views",
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: "fk_user_id",
-      references: {
-        model: "users",
-        key: "id",
-      },
-      onDelete: "CASCADE",
-    },
-    answer_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: "fk_id_answer",
-      references: {
-        model: "anwsers",
-        key: "id_answer",
-      },
-      onDelete: "CASCADE",
-    },
-  },
-  {
-    tableName: "timelines",
-    timestamps: false,
-  }
-
 );
 
 const Answers = sequelize.define(
@@ -125,16 +68,60 @@ const Answers = sequelize.define(
         model: "users",
         key: "id",
       },
-      onDelete: "CASCADE",
-    },
-    answer_id: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "time_description",
     },
   },
   {
     tableName: "answers",
+    timestamps: false,
+  }
+
+);
+
+const Timeline = sequelize.define(
+  "Timeline",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: "id_timeline",
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "timeline_name",
+    },
+    type: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "timeline_type",
+    },
+    json: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      field: "json_views",
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "fk_user_id",
+      references: {
+        model: "users",
+        key: "id",
+      },
+    },
+    answer_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "fk_id_answer",
+      references: {
+        model: "anwsers",
+        key: "id",
+      },
+    },
+  },
+  {
+    tableName: "timelines",
     timestamps: false,
   }
 
@@ -157,14 +144,13 @@ const Access = sequelize.define(
         model: "users",
         key: "id",
       },
-      onDelete: "CASCADE",
     },
     timeline_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       field: "fk_id_timeline",
       references: {
-        model: "timeline",
+        model: "Timeline",
         key: "id_timeline",
       },
     },
@@ -190,12 +176,13 @@ const ShareToken = sequelize.define(
       allowNull: false,
       field: "fk_id_timeline",
       references: {
-        model: "timeline",
+        model: "Timeline",
         key: "id_timeline",
       },
     },
     token: {
       type: DataTypes.STRING,
+      field: "token",
       allowNull: false,
     },
 
@@ -213,27 +200,31 @@ const Token = sequelize.define(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      field: 'id',
       autoIncrement: true,
     },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: "user_id",
       references: {
         model: "users", // Nome da tabela de usuários
         key: "id",
       },
-      onDelete: "CASCADE",
     },
     token: {
       type: DataTypes.STRING,
+      field: "token",
       allowNull: false,
     },
     expires_at: {
       type: DataTypes.DATE,
+      field: "expires_at",
       allowNull: false,
     },
     used: {
       type: DataTypes.BOOLEAN,
+      field: "used",
       defaultValue: false,
     },
   },
@@ -244,23 +235,29 @@ const Token = sequelize.define(
 );
 
 //Cardinalidades
-User.hasMany(Token, { foreignKey: "user_id" });
-User.hasMany(Timeline, { foreignKey: "user_id" });
-User.hasMany(Answers, { foreignKey: "user_id" });
-User.hasMany(Access, { foreignKey: "user_id" });
+User.hasMany(Token, { foreignKey: "user_id", onDelete: "CASCADE"});
+User.hasMany(Timeline, { foreignKey: "user_id", onDelete: "CASCADE"});
+User.hasMany(Answers, { foreignKey: "user_id", onDelete: "CASCADE" });
+User.hasMany(Access, { foreignKey: "user_id", onDelete: "CASCADE" });
+
+Answers.hasOne(Timeline, {foreignKey: "answer_id", onDelete: "CASCADE"})
+Timeline.hasOne(ShareToken, {foreignKey: 'timeline_id', onDelete: "CASCADE"})
+Timeline.hasMany(Access, {foreignKey: 'timeline_id', onDelete: "CASCADE"})
+
 
 //Pertencimentos
-Answers.belongsTo(User, { foreignKey: "fk_user_id" })
+Answers.belongsTo(User, { foreignKey: "fk_user_id", onDelete: "CASCADE"})
 
-ShareToken.belongsTo(Timeline, { foreignKey: "fk_id_timeline" });
+ShareToken.belongsTo(Timeline, { foreignKey: "timeline_id", onDelete: "CASCADE" });
 
-Token.belongsTo(User, { foreignKey: "user_id" });
+Token.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE" });
 
-Timeline.belongsTo(User, { foreignKey: "fk_user_id" });
-Timeline.belongsTo(Answers, { foreignKey: "fk_id_answer" });
+Timeline.belongsTo(User, { foreignKey: "fk_user_id", onDelete: "CASCADE" });
+Timeline.belongsTo(Answers, { foreignKey: "fk_id_answer", onDelete: "CASCADE" });
 
-Access.belongsTo(User, { foreignKey: "fk_user_id" });
-Access.belongsTo(Timeline, { foreignKey: "fk_id_timeline" });
+Access.belongsTo(User, { foreignKey: "fk_user_id", onDelete: "CASCADE"});
+Access.belongsTo(Timeline, { foreignKey: "fk_id_timeline", onDelete: "CASCADE" });
+
 
 
 

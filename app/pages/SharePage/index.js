@@ -33,14 +33,16 @@ export default function SharePage() {
   let { idTable } = useGlobalSearchParams()
   const [refresh, setRefresh] = useState(0)
 
-  const [popup, setPopup] = useState(false)
+  const [popup1, setPopup1] = useState(false)
+  const [popup2, setPopup2] = useState(false)
   const [popupText, setPopupText] = useState("")
+  const [idClickUser, setIdClickUser] = useState("")
 
-  const {width, height} = Dimensions.get('window')
-  if(!idTable){
+  const { width, height } = Dimensions.get('window')
+  if (!idTable) {
     router.navigate("pages/pagesWithHeader/HomePage")
   }
-  
+
   const [data, setData] = useState({})
 
   async function getData() {
@@ -70,9 +72,6 @@ export default function SharePage() {
     getData()
   }, [refresh])
 
-
-
-
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
 
@@ -85,24 +84,72 @@ export default function SharePage() {
   //**********************************************Animações**********************************************************************//
 
   //************************************************Funções**********************************************************************//
-  async function deleteUser(id){
-      try {
-        const response = await fetch(`${ip}/removeAccessOf`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            timelineId: idTable,
-            user: id
-          }),
-        });
-        if (response.status == 200) {
-          setRefresh((prev) => prev + 1)
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+  function confirmDeleteUser(id) {
+    let username = data['usersData'].filter((item) => item.id == id)[0]['username']
+    console.log(username)
+    setPopup1(true)
+    setPopupText(username)
+    setIdClickUser(id)
+  }
+
+  async function deleteUser(id) {
+    try {
+      const response = await fetch(`${ip}/removeAccessOf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timelineId: idTable,
+          user: id
+        }),
+      });
+      if (response.status == 200) {
+        setRefresh((prev) => prev + 1)
       }
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
+
+  async function deleteAllUsersFromShare() {
+    let user = await mostrarUsuario();
+    try {
+      const response = await fetch(`${ip}/removeAllAccesses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          timelineId: idTable
+        }),
+      });
+      if (response.status == 200) {
+        setRefresh((prev) => prev + 1)
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
+
+  async function randomCodeAgain() {
+    try {
+      const response = await fetch(`${ip}/randomCodeAgain`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timelineId: idTable
+        }),
+      });
+      if (response.status == 200) {
+        setRefresh((prev) => prev + 1)
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
   }
 
   //***********************************************Estilos************************************************************************//
@@ -120,40 +167,28 @@ export default function SharePage() {
       flexGrow: 1,
       gap: PixelRatio.get() * 10
     },
-
-    code: {
-      backgroundColor: colorScheme == "dark" ? cores.azulEscuro2Light : cores.azulDark,
-      width: "100%",
-      padding: PixelRatio.get() * 8,
-      alignItems: "center",
-      borderRadius: PixelRatio.get()*3
-    },
-    codeText: {
-      color: "white",
-      fontSize: PixelRatio.getFontScale() * 20
-    },
     title: {
       color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
-      fontSize: PixelRatio.getFontScale() * 25,
+      fontSize: PixelRatio.getFontScale() * 27,
     },
 
-    userField:{
+    userField: {
       width: "100%",
       flexDirection: "row",
       justifyContent: "space-between",
-      borderBottomColor:"white",
+      borderBottomColor: "white",
       borderBottomWidth: 1,
-      padding: PixelRatio.get()*5
+      padding: PixelRatio.get() * 5
     },
-    user:{
+    user: {
       flexDirection: "row",
       alignItems: "center",
       gap: PixelRatio.get() * 5
-    }, 
-    textUser:{
-      fontSize: PixelRatio.getFontScale()*20,
+    },
+    textUser: {
+      fontSize: PixelRatio.getFontScale() * 20,
       color: colorScheme == "dark" ? cores.ghostWhite : cores.black
-    }, 
+    },
 
     trashUser: {
       alignSelf: "center",
@@ -171,7 +206,50 @@ export default function SharePage() {
     picture: {
       color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
       fontSize: PixelRatio.getFontScale() * 40
-    }
+    },
+
+    button: {
+      backgroundColor: colorScheme == "dark" ? cores.azulEscuro2Light : cores.azulDark,
+      flex: 1,
+      padding: PixelRatio.get() * 3,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: PixelRatio.get() * 3,
+    },
+
+    codeAndButton: {
+      width: "100%",
+      gap: PixelRatio.get() * 2,
+      flexDirection: "row",
+      justifyContent: "center",
+      right: PixelRatio.get() * 0,
+    },
+
+    deleteButton:{
+      backgroundColor: colorScheme == "dark" ? cores.azulEscuro2Light : cores.azulDark,
+      padding: PixelRatio.get() * 4,
+      alignItems: "center",
+      alignSelf: "flex-end",
+      borderRadius: PixelRatio.get() * 3,
+      bottom: PixelRatio.get()*2
+      
+    },
+    code: {
+      backgroundColor: colorScheme == "dark" ? cores.azulClaro1Light : cores.ghostWhite,
+      padding: PixelRatio.get() * 4,
+      alignItems: "center",
+      borderRadius: PixelRatio.get() * 3,
+      flex: 1.5
+    },
+    codeText: {
+      color: "white",
+      fontSize: PixelRatio.getFontScale() * 20,
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      alignContent: "center"
+    },
   });
   //***********************************************Tela***************************************************************************//
   return (
@@ -181,38 +259,63 @@ export default function SharePage() {
         contentContainerStyle={styles.contentContainer}
       >
         <BackArrow link={"pages/pagesWithHeader/HomePage"} />
-        <View style={styles.code}>
-          <Text style={styles.codeText}>Código: {data['token']}</Text>
+        <View style={styles.codeAndButton}>
+          <View style={styles.code}>
+            <Text style={[styles.codeText, {color: "black"}]}>Código: {data['token']}</Text>
+          </View>
+
+          <Pressable style={styles.button} onPress={randomCodeAgain}>
+            <Text style={styles.codeText}>Novo código</Text>
+          </Pressable>
         </View>
 
-        <Text style={styles.title}>Pessoas com acesso</Text>
+
+        <Text style={styles.title}>Pessoas com acesso: </Text>
         {data && data['usersData'] && data['usersData'][0] ? (
           data['usersData'].map(user => (
             <View style={styles.userField} key={user['id']}>
 
               <View style={styles.user}>
-                <Ionicons name="person-circle-outline" style={styles.picture}/>
+                <Ionicons name="person-circle-outline" style={styles.picture} />
                 <Text style={styles.textUser}>{user['username']}</Text>
               </View>
 
-              <Pressable style={styles.trashUser} onPress={(e) => deleteUser(user['id'])}>
+              <Pressable style={styles.trashUser} onPress={() => confirmDeleteUser(user['id'])}>
                 <Ionicons name='trash-outline' style={styles.deleteAUserText} />
               </Pressable>
 
             </View>
           ))
         ) : (
-          <Text style={styles.textUser}>Não há ninguém aqui =(</Text>
+          <Text style={styles.textUser}>Compartilhe o código para que as pessoas acessem seu horário</Text>
         )}
+
+        <Pressable style={styles.deleteButton} onPress={() => setPopup2(true)}>
+          <Text style={styles.codeText}>Parar de compartilhar</Text>
+        </Pressable>
+
+
       </ScrollView>
 
-      {popup && (
+      {popup1 && (
         <Popup
-          title = "Atenção"
-          message="Tem certeza que deseja excluir sua conta?"
+          title="Atenção"
+          message={`Tem certeza que deseja remover ${popupText} de sua lista?`}
           option="Confirmar"
-          handle={setPopup}
-          specialHandle={deleteUser}
+          link="/pages/SharePage"
+          handle={setPopup1}
+          specialHandle={() => deleteUser(idClickUser)}
+        />
+      )}
+
+      {popup2 && (
+        <Popup
+          title="Atenção"
+          message="Tem certeza que deseja parar de compartilhar?"
+          option="Confirmar"
+          link="/pages/pagesWithHeader/HomePage"
+          handle={setPopup2}
+          specialHandle={deleteAllUsersFromShare}
         />
       )}
     </>

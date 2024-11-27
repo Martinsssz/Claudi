@@ -20,7 +20,7 @@ import { useState, useEffect, useRef } from "react";
 import { Appearance } from "react-native";
 import cores from "../../../Util/coresPadrao";
 import { Link, router } from "expo-router";
-import { mostrarUsuario } from "../../../sqlite/dbService";
+import { adicionarFixado, deleteFixado, mostrarFixados, mostrarUsuario } from "../../../sqlite/dbService";
 import ip from "../../../Util/localhost";
 
 export default function HomePage() {
@@ -53,6 +53,8 @@ export default function HomePage() {
       console.log(timelines)
 
       setHorarios(timelines['timelines']);
+      //fixar tabelas
+      fixarHorarios()
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
@@ -62,8 +64,15 @@ export default function HomePage() {
     getData()
   }, [refresh])
 
-
-
+  async function fixarHorarios() {
+    await mostrarFixados().then(element => {
+      if (element.length > 0) {
+        element.forEach(id => {
+          handleFixarHorario(id, true)
+        })
+      }
+    })
+  }
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
 
@@ -105,6 +114,29 @@ export default function HomePage() {
         body: JSON.stringify({
           timelineId: id,
           user: user.id
+        }),
+      });
+
+      if (response.status == 200) {
+        setRefresh((prev) => prev + 1)
+        closeModal()
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
+
+  async function copyTimeline(id){
+    let user = await mostrarUsuario()
+    try {
+      const response = await fetch(`${ip}/copyTimeline`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timelineId: id,
+          userId: user.id
         }),
       });
 
@@ -180,14 +212,21 @@ export default function HomePage() {
     setModalVisible(false)
   }
 
-  const handleFixarHorario = (id) => {
+  const handleFixarHorario = async (id, alredyInBD, user) => {
+
+
+
     setFixedHorarios((prevFixed) => {
-      if (prevFixed.includes(id)) {
+      if (prevFixed.includes(id) && user) {
+        deleteFixado(id)
         return prevFixed.filter((horarioId) => horarioId !== id)
       } else {
+        alredyInBD ? null : adicionarFixado(id)
         return [id, ...prevFixed]
+
       }
     })
+
 
     setHorarios((prevHorarios) => {
       const horarioToFix = prevHorarios.find((horario) => horario.id === id)
@@ -198,6 +237,7 @@ export default function HomePage() {
   }
 
   const shareTimeline = (id) => {
+    console.log(`aaaaa: ${fixedHorarios}`)
     router.push({
       pathname: "../../SharePage",
       params: { idTable: id }
@@ -363,13 +403,13 @@ export default function HomePage() {
         ) : (
           <>
             <Text style={{
-              color: colorScheme == "dark" ? cores.ghostWhite: cores.black,
+              color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
               fontSize: PixelRatio.getFontScale() * 40,
-              marginBottom: PixelRatio.get()*5
+              marginBottom: PixelRatio.get() * 5
             }}>Bem-Vindo</Text>
 
             <Text style={{
-              color: colorScheme == "dark" ? cores.ghostWhite: cores.black,
+              color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
               fontSize: PixelRatio.getFontScale() * 23
             }}>Aperte o botão abaixo para criar um horário</Text>
           </>
@@ -400,7 +440,7 @@ export default function HomePage() {
               <Ionicons name="cloud-upload" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Exportar horário</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem} onPress={() => handleFixarHorario(horarioEditando)}>
+            <TouchableOpacity style={styles.menuItem} onPress={() => handleFixarHorario(horarioEditando, false, true)}>
               <Ionicons name="pin" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>{fixedHorarios.includes(horarioEditando) ? "Desfixar horário" : "Fixar horário"}</Text>
             </TouchableOpacity>
@@ -416,6 +456,11 @@ export default function HomePage() {
                 <Text style={styles.menuItemText}>Compartilhar</Text>
               </TouchableOpacity>
             )}
+
+            <TouchableOpacity style={styles.menuItem} onPress={() => copyTimeline(horarioEditando)}>
+              <Ionicons name="copy" size={20} style={styles.icon} />
+              <Text style={styles.menuItemText}>Fazer uma cópia</Text>
+            </TouchableOpacity>
 
           </Animated.View>
         </View>

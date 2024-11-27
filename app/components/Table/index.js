@@ -8,6 +8,7 @@ import {
   ScrollView,
   Appearance,
   Dimensions,
+  PixelRatio,
 } from "react-native";
 import cores from "../../Util/coresPadrao";
 
@@ -194,10 +195,10 @@ export default function TabelaTarefas({ data, visualizacao }) {
                           acumulador + valorAtual
                         , 0)
                       )
-                    );
-                    const duracaoDia = dia[1].reduce((acumulador, valorAtual) => acumulador + valorAtual, 0)
+                    ) 
+                    const duracaoDia = dia[1].reduce((acumulador, valorAtual) => acumulador + valorAtual, 0) 
                     const constanteAltura = tamanhoMaximo / duracaoDia
-                    const taskDuration = tarefasSemana[columnIndex][1][index];
+                    const taskDuration = tarefasSemana[columnIndex][1][index]
                     const isLast = dia[0][dia[0].length - 1] == tarefa;
 
                     return !isEmpty ? (

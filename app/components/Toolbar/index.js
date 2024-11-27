@@ -11,13 +11,15 @@ import {
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import cores from "../../Util/coresPadrao";
+import { router } from "expo-router";
+import ip from "../../Util/localhost";
 
-export default function Toolbar({ visualizacao, setVisualizacao }) {
+export default function Toolbar({ visualizacao, setVisualizacao, table }) {
   //*************************************************HOOKS********************************************************************//
 
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
-
   const ScreenHeight = Dimensions.get("window").height;
+  const [dataAnswer, setDataAnswer] = useState({});
 
 
   //**********************************************Alteração automática de tema*****************************************************//
@@ -30,7 +32,41 @@ export default function Toolbar({ visualizacao, setVisualizacao }) {
   }, []);
 
   //************************************************Funções**********************************************************************//
+  async function getDataAnswer(){
+    try {
+      const response = await fetch(`${ip}/getDataAnswer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_timeline: table,
+        }),
+      });
 
+      const data = await response.json();
+      if(response.status == 200){
+        setDataAnswer(data)
+      }
+    
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }   
+  }
+
+  useEffect(() => {
+    getDataAnswer()
+  }, [])
+
+
+  
+  function editTable(){
+    console.log(JSON.stringify(dataAnswer['json']))
+    router.push({
+      pathname: "../..//FluxoRotina/TimelineDays",
+      params: {data: JSON.stringify(dataAnswer['json']), id: dataAnswer['id']}
+    })
+  }
   //**********************************************Animações**********************************************************************//
 
   //***********************************************Estilos************************************************************************//
@@ -73,7 +109,7 @@ export default function Toolbar({ visualizacao, setVisualizacao }) {
 
   return (
     <View style={styles.toolbar}>
-      <TouchableOpacity style={styles.iconContainer}>
+      <TouchableOpacity style={styles.iconContainer} onPress={editTable}>
         <Ionicons name="pencil" color={colorScheme === "dark" ? cores.ghostWhite : cores.black} size={20} />
       </TouchableOpacity>
 

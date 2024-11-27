@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Appearance, Pressable } from "react-native";
+import { StyleSheet, Appearance, Pressable, Image, PixelRatio, Text} from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 //import * as Google from "expo-auth-session/providers/google"
@@ -24,8 +24,9 @@ export default function Loginwith({ tipo }) {
 
   let styles = StyleSheet.create({
     icone: {
-      fontSize: 40,
-      color: colorScheme == "dark" ? "white" : "black",
+      width: 50,
+      aspectRatio: 1,
+      resizeMode: "stretch",
     },
   });
 
@@ -52,11 +53,13 @@ export default function Loginwith({ tipo }) {
   }
   */
 
-  let icones = ["logo-google", "logo-facebook", "logo-microsoft"];
+  let icones = ["google", "facebook", "microsoft"];
 
   return (
-    <Pressable>
-      <Ionicons name={icones[parseInt(tipo)]} style={styles.icone}></Ionicons>
+    <Pressable style={{height: 50, width: 50}}>
+      <Image
+        source={require('../../../assets/images/microsoft.png')}
+      />
     </Pressable>
   );
 }
