@@ -12,7 +12,7 @@ import {
   Animated,
   Dimensions,
 } from "react-native";
-import TabelaTarefas from "../../../components/Table";
+import TabelaTarefas from "../../../components/PersonalTable";
 import cores from "../../../Util/coresPadrao";
 import ip from "../../../Util/localhost";
 import Toolbar from "../../../components/Toolbar";

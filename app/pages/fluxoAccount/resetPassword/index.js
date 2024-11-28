@@ -1,9 +1,19 @@
-import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  PixelRatio,
+} from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
-import { Link, router, useGlobalSearchParams} from "expo-router";
+import { Link, router, useGlobalSearchParams } from "expo-router";
 
 import { ScrollView } from "moti";
 
@@ -17,7 +27,7 @@ import { checkPassword } from "../../../Util/checkData";
 import { sendToken } from "../../../Util/sendToken";
 
 export default function ResetPassword() {
-//**********************************************Alteração automática de tema***************************************************//
+  //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
 
   useEffect(() => {
@@ -27,15 +37,17 @@ export default function ResetPassword() {
     return () => listener.remove();
   }, []);
 
-//**********************************************Animações**********************************************************************//
-const { email } = useGlobalSearchParams();
+  //**********************************************Animações**********************************************************************//
+  const { email } = useGlobalSearchParams();
 
-//**********************************************HOOKS**********************************************************************//
+  //**********************************************HOOKS**********************************************************************//
 
-//************************************************Funções**********************************************************************/
+  //************************************************Funções**********************************************************************/
   const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const { width, height } = Dimensions.get("window");
 
   const [popupVisibility, setPopupVisibility] = useState(false);
   const [popupText, setPopupText] = useState("");
@@ -43,35 +55,36 @@ const { email } = useGlobalSearchParams();
   const [popupColor, setPopupColor] = useState("");
 
   async function handleSubmit() {
-    let passwordVerification = checkPassword(newPassword, confirmPassword)
+    let passwordVerification = checkPassword(newPassword, confirmPassword);
 
-    if(passwordVerification.validate){
+    if (passwordVerification.validate) {
       try {
-        const response = await fetch(
-          `${ip}/resetPasswordConfirm`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              token: token, 
-              password: newPassword, 
-            }),
-          }
-        );
+        const response = await fetch(`${ip}/resetPasswordConfirm`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: token,
+            password: newPassword,
+          }),
+        });
         const data = await response.json();
-        
+
         if (response.status === 200) {
-          popup("Senha alterada com sucesso", ["Ir para tela de login", "../Login"], "green")
+          popup(
+            "Senha alterada com sucesso",
+            ["Ir para tela de login", "../Login"],
+            "green"
+          );
         } else {
-          popup("Código inválido", null, "red")
+          popup("Código inválido", null, "red");
         }
       } catch (error) {
-        popup("Erro no sistema, tente novamente mais tarde", null, "orange")
+        popup("Erro no sistema, tente novamente mais tarde", null, "orange");
       }
-    }else{
-      popup(passwordVerification.message, null, "red")
+    } else {
+      popup(passwordVerification.message, null, "red");
     }
   }
 
@@ -88,15 +101,22 @@ const { email } = useGlobalSearchParams();
     }
   }
 
-  function reSendCode(){
-    sendToken(email)
+  function reSendCode() {
+    sendToken(email);
   }
 
-//***********************************************Estilos************************************************************************//
+  //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+    keyboard: {
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+      height: height,
+    },
+    scroll: {
+      height: height,
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
+      paddingHorizontal: 20,
     },
 
     header: {
@@ -108,30 +128,27 @@ const { email } = useGlobalSearchParams();
       paddingHorizontal: 20,
     },
 
-    content: {
-      padding: 20,
-      width: "100%"
-    },
-    
-    contentContainer:{
-      flexDirection:"column",
-      justifyContent: "center",
+    contentContainer: {
+      height: height * 0.9,
+      width: "100%",
+      flexDirection: "column",
       alignItems: "center",
-      gap:5,
-      paddingVertical:10,
+      justifyContent: "center",
+      gap: PixelRatio.get() * 5,
     },
 
     title: {
+      marginTop: 50,
       fontSize: 18,
       fontWeight: "bold",
       color: "#FFFF",
-      textAlign:"center"
+      textAlign: "center",
     },
     input: {
-      height: "auto",
       width: "100%",
       padding: 10,
-      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       color: "black",
       paddingLeft: 7,
       fontSize: 19,
@@ -141,6 +158,7 @@ const { email } = useGlobalSearchParams();
       borderColor: "black",
       borderRadius: 7,
       marginTop: 20,
+      alignSelf: "center",
     },
 
     button: {
@@ -149,27 +167,30 @@ const { email } = useGlobalSearchParams();
         textAlign: "center",
         fontSize: 19,
       },
-      backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
+      backgroundColor:
+        colorScheme === "dark" ? cores.azulDark : cores.azulLight,
       padding: 13,
       borderRadius: 7,
       width: "100%",
       marginTop: 40,
     },
 
-    opcoesAlternativasText:{
-      fontSize:20,
+    opcoesAlternativasText: {
+      fontSize: 20,
       color: colorScheme == "dark" ? "white" : "black",
       textDecorationLine: "underline",
       marginTop: "5%",
-      textAlign: "center"
+      textAlign: "center",
     },
   });
 
-//***********************************************Tela***************************************************************************//
+  //***********************************************Tela***************************************************************************//
   return (
     <>
-      <View style={styles.container}>
-      
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboard}
+      >
         <View style={styles.header}>
           <Pressable>
             <Link replace href={"../changePassword"}>
@@ -177,40 +198,48 @@ const { email } = useGlobalSearchParams();
             </Link>
           </Pressable>
         </View>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.contentContainer}
+        >
+          <View style={styles.contentContainer}>
+            <Logo />
+            <Text style={styles.title}>
+              Confirmação de redefinição de senha
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Código"
+              value={token}
+              onChangeText={(text) => setToken(text)}
+            />
 
-        <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-          <Logo/>
-          <Text style={styles.title}>Confirmação de redefinição de senha</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Código"
-            value={token}
-            onChangeText={(text) => setToken(text)}
-          />
+            <PasswordInput
+              placeHolder={"Digite sua nova senha"}
+              handleText={setNewPassword}
+              style={styles.input}
+            />
 
-          <PasswordInput
-            placeHolder= {"Digite sua nova senha"}
-            handleText={setNewPassword}
-            style={styles.input}
-          />
+            <PasswordInput
+              placeHolder={"Repita sua nova senha"}
+              handleText={setConfirmPassword}
+              style={styles.input}
+            />
 
-          <PasswordInput
-            placeHolder= {"Repita sua nova senha"}
-            handleText={setConfirmPassword}
-            style={styles.input}
-          />
-
-          <Pressable style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.button.text}>Redefinir senha</Text>
-          </Pressable>
-
-          {email && (
-            <Pressable onPress={reSendCode}>
-              <Text style={styles.opcoesAlternativasText}>Reenviar código</Text>
+            <Pressable style={styles.button} onPress={handleSubmit}>
+              <Text style={styles.button.text}>Redefinir senha</Text>
             </Pressable>
-          )}
+
+            {email && (
+              <Pressable onPress={reSendCode}>
+                <Text style={styles.opcoesAlternativasText}>
+                  Reenviar código
+                </Text>
+              </Pressable>
+            )}
+          </View>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
 
       {popupVisibility && (
         <Popup

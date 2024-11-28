@@ -7,13 +7,13 @@ async function abrirBanco() {
 }
 
 async function drop() {
-  await db.execAsync("DROP TABLE IF EXISTS user");
+  await db.execAsync("DROP TABLE IF EXISTS users");
 }
 
 export async function criarTabela() {
   await abrirBanco();
   await db.execAsync(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS user (
       id INTEGER PRIMARY KEY NOT NULL,
       username TEXT NOT NULL,
       email TEXT NOT NULL,

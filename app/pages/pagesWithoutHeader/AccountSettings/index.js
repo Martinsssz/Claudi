@@ -14,7 +14,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { Appearance } from "react-native";
 import cores from "../../../Util/coresPadrao";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import Popup from "../../../components/Popup";
 import {
   mostrarUsuario,
@@ -199,6 +199,16 @@ export default function HomePage() {
       alignSelf: "flex-end",
       bottom: 0,
     },
+    changePass: {
+      marginTop: 10,
+      padding: 15,
+      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
+      borderRadius: 10,
+      alignSelf: "flex-start",
+    },
+    changePassText: {
+      fontSize: 18,
+    }
   });
   //***********************************************Tela***************************************************************************//
   return (
@@ -241,12 +251,9 @@ export default function HomePage() {
               handleInputChange={setInputEmail}
             />
 
-            <EditableInputLabel
-              label="Senha"
-              type="password"
-              value={inputPassword}
-              handleInputChange={setInputPassword}
-            />
+            <Pressable style={styles.changePass} onPress={() => router.push('/pages/fluxoAccount/changePassword')}>
+              <Text style={styles.changePassText}>Mudar senha</Text>
+            </Pressable>
           </ScrollView>
 
           <Pressable
@@ -282,8 +289,7 @@ export default function HomePage() {
       {popup1 && (
         <Popup
           title="Informações salvas!"
-          message="Suas informações foram atualizadas, deseja voltar para a tela inicial?"
-          option="Voltar"
+          message="Suas informações foram atualizadas!"
           link="/pages/pagesWithHeader/HomePage"
           handle={setPopup1}
           specialHandle={updateUserData}
