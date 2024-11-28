@@ -47,14 +47,14 @@ import {
         padding: 10,
       },
       diarioButton: {
-        backgroundColor: visualizacao === "diaria" ? "#1E2F3C" : "#C4CACE",
+        backgroundColor: visualizacao === "turma" ? "#1E2F3C" : "#C4CACE",
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 8,
         marginLeft: 10,
       },
       semanalButton: {
-        backgroundColor: visualizacao === "semanal" ? "#1E2F3C" : "#C4CACE",
+        backgroundColor: visualizacao === "professor" ? "#1E2F3C" : "#C4CACE",
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 8,
@@ -95,12 +95,12 @@ import {
   
         <TouchableOpacity
           style={styles.diarioButton}
-          onPress={() => setVisualizacao("diaria")}
+          onPress={() => setVisualizacao("turma")}
         >
           <Text
             style={[
               styles.buttonText,
-              visualizacao === "diaria" && styles.activeButtonText,
+              visualizacao === "turma" && styles.activeButtonText,
             ]}
           >
             Turma
@@ -109,12 +109,12 @@ import {
   
         <TouchableOpacity
           style={styles.semanalButton}
-          onPress={() => setVisualizacao("semanal")}
+          onPress={() => setVisualizacao("professor")}
         >
           <Text
             style={[
               styles.buttonText,
-              visualizacao === "semanal" && styles.activeButtonText,
+              visualizacao === "professor" && styles.activeButtonText,
             ]}
           >
             Professor

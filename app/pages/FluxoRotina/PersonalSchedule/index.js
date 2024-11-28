@@ -32,6 +32,7 @@ export default function TableData() {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const [data, setData] = useState({});
   const [visualizacao, setVisualizacao] = useState("diaria");
+  
   const scrollViewRef = useRef(null);
   const scrollBarWidth = ScreenWidth - 30;
   const scrollBallSize = ScreenWidth * 0.12;

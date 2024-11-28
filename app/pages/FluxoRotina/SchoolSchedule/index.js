@@ -31,7 +31,8 @@ export default function TableData() {
 
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const [data, setData] = useState({});
-  const [visualizacao, setVisualizacao] = useState("diaria");
+  const [visualizacao, setVisualizacao] = useState("turma");
+
   const scrollViewRef = useRef(null);
   const scrollBarWidth = ScreenWidth - 30;
   const scrollBallSize = ScreenWidth * 0.12;
@@ -161,29 +162,28 @@ export default function TableData() {
           setVisualizacao={setVisualizacao}
         />
 
-        {visualizacao === "semanal" && (
-          <View style={styles.scrollContainer}>
-            <View style={styles.scrollBar}>
-              <Animated.View
-                {...panResponder.panHandlers}
-                style={[
-                  styles.scrollBall,
-                  { transform: [{ translateX: scrollBallPosition }] },
-                ]}
-              />
-            </View>
-          </View>
-        )}
 
-        <View style={styles.tabelaContainer}>
+        <View style={styles.scrollContainer}>
+          <View style={styles.scrollBar}>
+            <Animated.View
+              {...panResponder.panHandlers}
+              style={[
+                styles.scrollBall,
+                { transform: [{ translateX: scrollBallPosition }] },
+              ]}
+            />
+          </View>
+        </View>
+
+
+        <View style={{ flex: 1 }}>
           <ScrollView
             ref={scrollViewRef}
             horizontal={true}
             scrollEnabled={true}
             showsHorizontalScrollIndicator={true}
-            showsVerticalScrollIndicator={visualizacao === "diaria"}
+            showsVerticalScrollIndicator={visualizacao === "turma"}
             onScroll={handleScroll}
-            
           >
             <TabelaAulas data={data} visualizacao={visualizacao} />
           </ScrollView>
