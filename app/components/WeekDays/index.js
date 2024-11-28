@@ -97,7 +97,7 @@ function getColorText(day){
       width: (orientation == "column" ? "15%": "100%"),
       alignItems: "center",
       justifyContent: "space-around",
-      padding: background ? (PixelRatio.get() * (orientation == "column" ? 5 : 5) ) : 0, 
+      padding: background ? (PixelRatio.get() * (orientation == "column" ? 8 : 5) ) : 0, 
       gap: PixelRatio.get() * (orientation == "column" ? 10 : 2), 
       alignSelf: "flex-start"
     },

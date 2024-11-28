@@ -3,7 +3,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { Appearance } from "react-native";
 import { useState, useEffect } from "react";
 import React from "react";
-import { Link, router, useRouter } from "expo-router";
+import { Link, router, useGlobalSearchParams, useRouter } from "expo-router";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 //**********************************************COMPONENTES************************************************************/
@@ -23,6 +23,8 @@ export default function ChangePassword() {
     });
     return () => listener.remove();
   }, []);
+
+ let {data} = useGlobalSearchParams()
 
 //************************************************HOOKS*****************************************************/
   const [email, setEmail] = useState("");
@@ -158,7 +160,7 @@ export default function ChangePassword() {
         <View style={styles.container}>
           <View style={styles.header}>
             <Pressable>
-              <Link replace href={"../Login"}>
+              <Link replace href={data ? "../../pagesWithoutHeader/AccountSettings" : "../Login"}>
                 <Icon name="arrow-back" size={24} color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} />
               </Link>
             </Pressable>

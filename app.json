@@ -4,12 +4,12 @@
     "slug": "claudi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/logoDarkTeste.png",
     "userInterfaceStyle": "automatic",
     "scheme": "claudi",
     "splash": {
-      "image": "./assets/images/logo.png",
-      "resizeMode": "contain",
+      "image": "./assets/images/SplashScreen.png",
+      "resizeMode": "stretch",
       "backgroundColor": "#D7E6F4"
     },
     "ios": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
+        "foregroundImage": "./assets/images/SplashScreen.png",
         "backgroundColor": "#D7E6F4"
       },
       "package": "com.pietrombatistela.claudi"

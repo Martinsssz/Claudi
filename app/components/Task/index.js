@@ -147,7 +147,7 @@ export default function Task({data, handleData, id}){
           handleText={ (text) => setName(text) }
         />
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          <WeekDays handleWeek={setDataTask} orientation={"column"} data={dataTask} dias={days} background={true}/>
+          <WeekDays handleWeek={setDataTask} orientation={"column"} data={dataTask} dias={days} background={false}/>
 
           <View style={styles.labels}>
             {days.map((component) => (

@@ -154,7 +154,7 @@ export default function HomePage() {
       flexDirection: "column",
       gap: 20,
       alignItems: "center",
-      
+
     },
 
     form: {
@@ -251,7 +251,14 @@ export default function HomePage() {
               handleInputChange={setInputEmail}
             />
 
-            <Pressable style={styles.changePass} onPress={() => router.push('/pages/fluxoAccount/changePassword')}>
+            <Pressable style={styles.changePass} onPress={() => {
+              router.push({
+                pathname: '/pages/fluxoAccount/changePassword',
+                params: {
+                  data: JSON.stringify({ data: 1 }) 
+                },
+              })
+            }}>
               <Text style={styles.changePassText}>Mudar senha</Text>
             </Pressable>
           </ScrollView>

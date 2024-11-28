@@ -16,7 +16,7 @@ export default function InputLabel( {label, typeInput, handleText, value} ){
       justifyContent:"center",
     },
     input:{
-      flex:3,
+      flex:1,
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
@@ -32,8 +32,7 @@ export default function InputLabel( {label, typeInput, handleText, value} ){
       //Fim da borda
     },
     text:{
-      flex:1,
-      fontSize: PixelRatio.get()*8,
+      fontSize: PixelRatio.getFontScale()*20,
       color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
     },
       

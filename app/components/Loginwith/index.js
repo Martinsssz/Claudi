@@ -24,9 +24,9 @@ export default function Loginwith({ tipo }) {
 
   let styles = StyleSheet.create({
     icone: {
-      width: 50,
-      aspectRatio: 1,
-      resizeMode: "stretch",
+      width: "100%",
+      height: "100%",
+      resizeMode: "cover",
     },
   });
 
@@ -55,10 +55,17 @@ export default function Loginwith({ tipo }) {
 
   let icones = ["google", "facebook", "microsoft"];
 
+  const iconSources = [
+    require('../../../assets/images/google.png'),
+    require('../../../assets/images/facebook.png'),
+    require('../../../assets/images/microsoft.png'),
+  ];
+
   return (
-    <Pressable style={{height: 50, width: 50}}>
+    <Pressable style={{height: 40, width: 40}}>
       <Image
-        source={require('../../../assets/images/microsoft.png')}
+        style={styles.icone}
+        source={iconSources[parseInt(tipo)]}
       />
     </Pressable>
   );

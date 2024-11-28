@@ -227,7 +227,7 @@ export default function Signup() {
       justifyContent: "center",
       gap: 50,
       opacity: opacityForm,
-      
+      marginTop: height/60
     },
   });
 

@@ -7,7 +7,8 @@ import {
   ScrollView,
   Animated,
   Appearance,
-  PixelRatio
+  PixelRatio,
+  Dimensions
 } from 'react-native'
 //********************************************Import de depêndencias e componentes***********************************************//
 import cores from '../../../Util/coresPadrao'
@@ -37,6 +38,8 @@ export default function Login() {
   const [popupText, setPopupText] = useState("")
   const [popupOption, setPopupOption] = useState([])
   const [popupColor, setPopupColor] = useState("")
+
+  const ScreenHeight = Dimensions.get("window").height;
 
   //**********************************************Alteração automática de tema*****************************************************//
   useEffect(() => {
@@ -191,7 +194,7 @@ export default function Login() {
         fontSize: 19
       },
       backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.azulLight,
-      padding: 13,
+      padding: ScreenHeight/55,
       borderRadius: 7
     },
 

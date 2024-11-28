@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import cores from "../../Util/coresPadrao";
 
-export default function TabelaAulas({ data, visualizacao }) {
+export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, maxClasses, professores, aulasTurmas }) {
   //*************************************************HOOKS********************************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const screenWidth = Dimensions.get("window").width;
@@ -57,113 +57,6 @@ export default function TabelaAulas({ data, visualizacao }) {
 
   //************************************************Funções**********************************************************************//
 
-  let diasDeAula = Object.keys(data);
-
-  let aulasTurmas = {};
-  Object.keys(data).forEach((dia) => {
-    Object.keys(data[dia]).forEach((turma) => {
-      aulasTurmas[turma] ? null : (aulasTurmas[turma] = {});
-      aulasTurmas[turma][dia] = [[], []];
-    });
-  });
-
-  Object.keys(data).forEach((dia) => {
-    Object.keys(data[dia]).forEach((turma) => {
-      Object.values(data[dia][turma]).forEach((atividade) => {
-        aulasTurmas[turma][dia][0].push(
-          atividade == null ? null : atividade["subject"]
-        );
-        aulasTurmas[turma][dia][1].push(
-          atividade == null ? null : atividade["start"]
-        );
-      });
-    });
-  });
-  //console.log(JSON.stringify(aulasTurmas, null, 2))
-
-  let professores = {};
-
-  Object.keys(data).forEach((dia) => {
-    Object.keys(data[dia]).forEach((turma) => {
-      Object.values(data[dia][turma]).forEach((atividade) => {
-        if (atividade != null) {
-          let teacher = atividade["teacher"];
-          professores[teacher] ? null : (professores[teacher] = {});
-          professores[teacher][dia]
-            ? null
-            : (professores[teacher][dia] = [[], []]);
-
-          professores[teacher][dia][0].push(turma);
-          professores[teacher][dia][1].push(atividade["start"]);
-        }
-      });
-    });
-  });
-
-  console.log(JSON.stringify(professores, null, 2));
-
-  let daysMax = [];
-
-  diasDeAula.forEach((dia) => {
-    const tamanhoMaximo = Math.max(
-      ...Object.values(aulasTurmas).map((turma) => turma[dia][0].length)
-    );
-    daysMax.push(tamanhoMaximo);
-  });
-
-  let maxClasses = {};
-  diasDeAula.forEach((dia) => {
-    const tamanhoMaximo = Math.max(
-      ...Object.values(professores).map((professor) => {
-        return professor[dia] ? professor[dia][0].length : 0;
-      })
-    );
-    maxClasses[dia] = tamanhoMaximo;
-  });
-
-  Object.keys(aulasTurmas).forEach((turma) => {
-    Object.values(diasDeAula).forEach(dia => {
-
-      if (!aulasTurmas[turma][dia]) {
-        aulasTurmas[turma][dia] = [[], []]
-        for (let i = 0; i < maxClasses[dia]; i++) {
-          aulasTurmas[turma][dia][0].push(null)
-          aulasTurmas[turma][dia][1].push(null)
-        }
-      }
-
-      if (aulasTurmas[turma][dia][0].length < maxClasses[dia]) {
-        let difference = maxClasses[dia] - aulasTurmas[turma][dia][0].length
-
-        for (let i = 0; i < difference; i++) {
-          aulasTurmas[turma][dia][0].push(null)
-          aulasTurmas[turma][dia][1].push(null)
-        }
-      }
-    })
-  })
-
-  Object.keys(professores).forEach((professor) => {
-    Object.values(diasDeAula).forEach((dia) => {
-      if (!professores[professor][dia]) {
-        professores[professor][dia] = [[], []];
-        for (let i = 0; i < maxClasses[dia]; i++) {
-          professores[professor][dia][0].push(null);
-          professores[professor][dia][1].push(null);
-        }
-      }
-
-      if (professores[professor][dia][0].length < maxClasses[dia]) {
-        let difference =
-          maxClasses[dia] - professores[professor][dia][0].length;
-
-        for (let i = 0; i < difference; i++) {
-          professores[professor][dia][0].push(null);
-          professores[professor][dia][1].push(null);
-        }
-      }
-    });
-  });
 
   //**********************************************Animações**********************************************************************//
 
@@ -178,12 +71,12 @@ export default function TabelaAulas({ data, visualizacao }) {
     },
     blackbox: {
       backgroundColor: colorScheme === "dark" ? "#000" : cores.azulEscuroDark,
-      width: PixelRatio.get() * 30,
-      aspectRatio: 0.75,
+      width: screenWidth/8,
+      height: screenHeight/ 10,
       borderWidth: 1,
     },
     diaDaSemana: {
-      width: PixelRatio.get() * 30,
+      width: screenWidth/8,
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 1,
@@ -197,7 +90,7 @@ export default function TabelaAulas({ data, visualizacao }) {
     },
     textContent: {
       color: "#ffff",
-      fontSize: PixelRatio.getFontScale() * 18,
+      fontSize: PixelRatio.getFontScale() * 20,
     },
   });
 
@@ -231,9 +124,9 @@ export default function TabelaAulas({ data, visualizacao }) {
         {Object.keys(aulasTurmas).map((turma, index) => (
           <View
             key={`${turma}-${index}`}
-            style={[styles.column, { width: PixelRatio.get() * 70 }]}
+            style={[styles.column, { width: screenWidth / 2 }]}
           >
-            <View style={[styles.column, { height: PixelRatio.get() * 40 }]}>
+            <View style={[styles.column, { height: screenHeight/ 10 }]}>
               <View
                 style={{
                   flex: 1,
