@@ -255,11 +255,13 @@ app.post("/renameTimeline", async (req, res) => {
 app.post("/addShareTimeline", async (req, res) => {
   const { code, userId } = req.body;
   let codeVerification = await ShareToken.findOne({ where: { token: code } })
+
   if (codeVerification) {
     console.log(codeVerification)
 
     try {
-      let timelineId = codeVerification['dataValues']['id']
+      let timelineId = codeVerification['dataValues']['timeline_id']
+      console.log(codeVerification)
       let userHasAcess = await Access.findOne({ where: { user_id: userId, timeline_id: timelineId } })
       if (!userHasAcess) {
         Access.create({

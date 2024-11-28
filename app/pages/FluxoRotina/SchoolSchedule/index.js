@@ -163,6 +163,7 @@ export default function TableData() {
         <SchoolToolbar
           visualizacao={visualizacao}
           setVisualizacao={setVisualizacao}
+          table={idTable}
         />
 
         <View style={styles.scrollContainer}>

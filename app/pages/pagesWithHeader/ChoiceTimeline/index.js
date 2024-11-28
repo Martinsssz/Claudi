@@ -86,7 +86,7 @@ export default function ChoiceTimeline() {
       } else if(response.status === 400){
         popupFunction("Você já possui acesso a esse horário", null, "")
       }else if(response.status === 500){
-        popupFunction("Erro no servidor, temte novamente mais tarde", null, "")
+        popupFunction("Erro no servidor, tente novamente mais tarde", null, "")
       }else if(response.status == 200){
         router.navigate("pages/pagesWithHeader/HomePage")
       }

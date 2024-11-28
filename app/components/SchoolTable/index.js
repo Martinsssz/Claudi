@@ -121,6 +121,28 @@ export default function TabelaAulas({ data, visualizacao }) {
     maxClasses[dia] = tamanhoMaximo;
   });
 
+  Object.keys(aulasTurmas).forEach((turma) => {
+    Object.values(diasDeAula).forEach(dia => {
+
+      if (!aulasTurmas[turma][dia]) {
+        aulasTurmas[turma][dia] = [[], []]
+        for (let i = 0; i < maxClasses[dia]; i++) {
+          aulasTurmas[turma][dia][0].push(null)
+          aulasTurmas[turma][dia][1].push(null)
+        }
+      }
+
+      if (aulasTurmas[turma][dia][0].length < maxClasses[dia]) {
+        let difference = maxClasses[dia] - aulasTurmas[turma][dia][0].length
+
+        for (let i = 0; i < difference; i++) {
+          aulasTurmas[turma][dia][0].push(null)
+          aulasTurmas[turma][dia][1].push(null)
+        }
+      }
+    })
+  })
+
   Object.keys(professores).forEach((professor) => {
     Object.values(diasDeAula).forEach((dia) => {
       if (!professores[professor][dia]) {

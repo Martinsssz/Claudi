@@ -35,7 +35,7 @@ export default function SchoolDays() {
   const [duration, setDuration] = useState('')
 
   const [jsonData, setJsonData] = useState(() => {
-    if (data) {
+    if (data && data['days']) {
       let jsonData = JSON.parse(data)
       let copyOfOnDays = onDays
       let copyOfSchoolDays = schoolDays
@@ -64,7 +64,6 @@ export default function SchoolDays() {
       }
     }
   })
-
 
   const { width, height } = Dimensions.get('window')
   //**********************************************Alteração automática de tema*****************************************************//

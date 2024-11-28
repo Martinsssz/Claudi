@@ -63,7 +63,7 @@ export default function Toolbar({ visualizacao, setVisualizacao, table }) {
   function editTable(){
     console.log(JSON.stringify(dataAnswer['json']))
     router.push({
-      pathname: "../..//FluxoRotina/TimelineDays",
+      pathname: "../../FluxoRotina/TimelineDays",
       params: {data: JSON.stringify(dataAnswer['json']), id: dataAnswer['id']}
     })
   }
