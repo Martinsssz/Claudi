@@ -25,9 +25,8 @@ import { useGlobalSearchParams } from "expo-router";
 const ScreenWidth = Dimensions.get("window").width;
 const ScreenHeight = Dimensions.get("window").height;
 
-
 export default function TableData() {
-  let { idTable } = useGlobalSearchParams()
+  let { idTable } = useGlobalSearchParams();
 
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const [data, setData] = useState({});
@@ -37,35 +36,33 @@ export default function TableData() {
   const scrollBarWidth = ScreenWidth - 30;
   const scrollBallSize = ScreenWidth * 0.12;
   const scrollBallPosition = useRef(new Animated.Value(0)).current;
-  const tableWidth = ScreenWidth * 1.5;
+  const tableWidth = ScreenWidth * 4;
   const scrollRatio = tableWidth / (scrollBarWidth - scrollBallSize);
-
 
   //**********************************************Alteração automática de tema*****************************************************//
 
   useEffect(() => {
     const listener = Appearance.addChangeListener((scheme) => {
-      setColorScheme(scheme.colorScheme)
-    })
-    return () => listener.remove()
-  }, [])
-
+      setColorScheme(scheme.colorScheme);
+    });
+    return () => listener.remove();
+  }, []);
 
   //************************************************Funções**********************************************************************//
 
   async function getData() {
     try {
       const response = await fetch(`${ip}/timelines`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id_timeline: idTable
+          id_timeline: idTable,
         }),
       });
       const timelines = await response.json();
-      const parsedData = JSON.parse(timelines)
+      const parsedData = JSON.parse(timelines);
 
       setData(parsedData);
     } catch (error) {
@@ -75,15 +72,20 @@ export default function TableData() {
 
   useEffect(() => {
     getData();
-    console.log(data)
+    console.log(data);
   }, []);
 
   const handleScroll = (event) => {
     const scrollX = event.nativeEvent.contentOffset.x;
-    const ballPos = scrollX / scrollRatio;
-    Animated.timing(scrollBallPosition, {
+
+    const ballPos = Math.min(
+      scrollX / scrollRatio,
+      scrollBarWidth - scrollBallSize
+    );
+
+    Animated.spring(scrollBallPosition, {
       toValue: ballPos,
-      duration: 70,
+      friction: 6,
       useNativeDriver: false,
     }).start();
   };
@@ -92,7 +94,7 @@ export default function TableData() {
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        const maxLimit = scrollBarWidth - scrollBallSize * 1.6;
+        const maxLimit = scrollBarWidth - scrollBallSize;
 
         const newPos = Math.max(
           0,
@@ -124,10 +126,11 @@ export default function TableData() {
       flex: 1,
       backgroundColor:
         colorScheme === "dark" ? cores.azulEscuroDark : cores.azulClaro1Light,
-      paddingVertical: ScreenHeight * -0.02
+      paddingVertical: ScreenHeight * -0.02,
     },
     scrollContainer: {
-      backgroundColor: colorScheme === "dark" ? cores.black : cores.azulEscuroDark,
+      backgroundColor:
+        colorScheme === "dark" ? cores.black : cores.azulEscuroDark,
       marginTop: ScreenHeight * 0.01,
       height: ScreenHeight * 0.06,
     },
@@ -162,7 +165,6 @@ export default function TableData() {
           setVisualizacao={setVisualizacao}
         />
 
-
         <View style={styles.scrollContainer}>
           <View style={styles.scrollBar}>
             <Animated.View
@@ -174,7 +176,6 @@ export default function TableData() {
             />
           </View>
         </View>
-
 
         <View style={{ flex: 1 }}>
           <ScrollView
