@@ -4,20 +4,22 @@ import {
   View , 
   Text, 
   StyleSheet,
+  Animated,
   PixelRatio} from "react-native";
 
 
 //********************************************Import de depêndencias e componentes**********************************************//
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import cores from "../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Hamburguer from "../Hamburguer";
 import Logo from "../Logo";
+import BackArrow from "../BackArrow";
   
 
-export default function Header({handle, showMenu}){
+export default function Header({handle, showMenu, showArrowForward}){
 //**********************************************UseStates**********************************************************************//
 
 //**********************************************Alteração automática de tema**************************************************//
@@ -31,6 +33,33 @@ useEffect(() => {
 }, [])
 
 //**********************************************Animações**********************************************************************//
+const opacityAni = useRef(new Animated.Value(1)).current;  
+
+function clique(){
+  Animated.sequence([
+    Animated.timing(opacityAni, {
+      toValue:0.3,
+      duration: 50,
+      useNativeDriver: false
+    }),
+    Animated.timing(opacityAni, {
+      toValue:1,
+      duration: 50,
+      useNativeDriver: false
+    }),
+  ]).start()
+
+  setTimeout(() => {
+    if(data){
+      router.push({
+        pathname: link,
+        params: {data:  JSON.stringify(data)}
+      })
+    }else{
+      router.replace(link)
+    }
+  }, 100);
+}
 
 //************************************************Funções**********************************************************************//
 
@@ -52,18 +81,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  foto:{
-    width: "40%",
-    height: "100%",
-    aspectRatio: 1,
-    justifyContent:"center",
-    alignItems: "center",
-    backgroundColor: "black"
-  },
+
   nome:{
     fontSize: 40,
     color: colorScheme === "dark" ? "#FFFFFF" : "#000000",
   },
+  arrow: {
+    opacity: opacityAni,
+    transform: [{rotate: '180deg'}],
+
+  }
 })
 //***********************************************Tela****************************************************************************//
 return(
@@ -77,6 +104,10 @@ return(
     {showMenu && (
       <Hamburguer handleSidebar={handle}/>
     )}
+    {showArrowForward && (
+      <BackArrow style={styles.arrow} link={"../../pagesWithHeader/HomePage"}/>
+    )}
+   
     
   </View>
 )

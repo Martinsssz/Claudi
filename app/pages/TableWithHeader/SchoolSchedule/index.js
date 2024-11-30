@@ -134,26 +134,25 @@ export default function TableData() {
   });
 
   Object.keys(aulasTurmas).forEach((turma) => {
-    Object.values(diasDeAula).forEach(dia => {
-
+    Object.values(diasDeAula).forEach((dia) => {
       if (!aulasTurmas[turma][dia]) {
-        aulasTurmas[turma][dia] = [[], []]
+        aulasTurmas[turma][dia] = [[], []];
         for (let i = 0; i < maxClasses[dia]; i++) {
-          aulasTurmas[turma][dia][0].push(null)
-          aulasTurmas[turma][dia][1].push(null)
+          aulasTurmas[turma][dia][0].push(null);
+          aulasTurmas[turma][dia][1].push(null);
         }
       }
 
       if (aulasTurmas[turma][dia][0].length < maxClasses[dia]) {
-        let difference = maxClasses[dia] - aulasTurmas[turma][dia][0].length
+        let difference = maxClasses[dia] - aulasTurmas[turma][dia][0].length;
 
         for (let i = 0; i < difference; i++) {
-          aulasTurmas[turma][dia][0].push(null)
-          aulasTurmas[turma][dia][1].push(null)
+          aulasTurmas[turma][dia][0].push(null);
+          aulasTurmas[turma][dia][1].push(null);
         }
       }
-    })
-  })
+    });
+  });
 
   Object.keys(professores).forEach((professor) => {
     Object.values(diasDeAula).forEach((dia) => {
@@ -176,14 +175,13 @@ export default function TableData() {
       }
     });
   });
-  
-  const scrollViewRef = useRef(null);
-  const scrollBarWidth = ScreenWidth/1.1;
-  const scrollBallSize = ScreenWidth /7;
-  const scrollBallPosition = useRef(new Animated.Value(0)).current;
-  const tableWidth = (ScreenWidth/2) * Object.keys(aulasTurmas).length 
-  const scrollRatio = tableWidth / (scrollBarWidth - scrollBallSize);
 
+  const scrollViewRef = useRef(null);
+  const scrollBarWidth = ScreenWidth / 1.1;
+  const scrollBallSize = ScreenWidth / 7;
+  const scrollBallPosition = useRef(new Animated.Value(0)).current;
+  const tableWidth = (ScreenWidth / 2.2) * Object.keys(aulasTurmas).length;
+  const scrollRatio = tableWidth / (scrollBarWidth - scrollBallSize);
 
   //**********************************************Animações**********************************************************************//
   const handleScroll = (event) => {
@@ -194,9 +192,9 @@ export default function TableData() {
       scrollBarWidth - scrollBallSize
     );
 
-    Animated.spring(scrollBallPosition, {
+    Animated.timing(scrollBallPosition, {
       toValue: ballPos,
-      friction: 6,
+      duration: 70,
       useNativeDriver: false,
     }).start();
   };
@@ -205,7 +203,7 @@ export default function TableData() {
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        const maxLimit = scrollBarWidth - scrollBallSize;
+        const maxLimit = scrollBarWidth - scrollBallSize 
 
         const newPos = Math.max(
           0,
@@ -220,7 +218,7 @@ export default function TableData() {
 
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
-            x: newPos * scrollRatio,
+            x: newPos + scrollRatio,
             animated: false,
           });
         }
@@ -292,8 +290,8 @@ export default function TableData() {
             ref={scrollViewRef}
             horizontal={true}
             scrollEnabled={true}
-            showsHorizontalScrollIndicator={true}
-            showsVerticalScrollIndicator={visualizacao === "turma"}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             onScroll={handleScroll}
           >
             <TabelaAulas
@@ -303,7 +301,7 @@ export default function TableData() {
               aulasTurmas={aulasTurmas}
               professores={professores}
               daysMax={daysMax}
-              maxCLasses={maxClasses}
+              maxClasses={maxClasses}
             />
           </ScrollView>
         </View>

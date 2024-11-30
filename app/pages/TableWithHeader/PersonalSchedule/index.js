@@ -81,9 +81,10 @@ export default function TableData() {
   const handleScroll = (event) => {
     const scrollX = event.nativeEvent.contentOffset.x;
     const ballPos = scrollX / scrollRatio;
-    Animated.timing(scrollBallPosition, {
+    
+    Animated.spring(scrollBallPosition, {
       toValue: ballPos,
-      duration: 70,
+      friction: 6,
       useNativeDriver: false,
     }).start();
   };

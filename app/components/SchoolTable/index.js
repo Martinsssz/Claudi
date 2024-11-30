@@ -11,7 +11,15 @@ import {
 } from "react-native";
 import cores from "../../Util/coresPadrao";
 
-export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, maxClasses, professores, aulasTurmas }) {
+export default function TabelaAulas({
+  data,
+  visualizacao,
+  diasDeAula,
+  daysMax,
+  maxClasses,
+  professores,
+  aulasTurmas,
+}) {
   //*************************************************HOOKS********************************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   const screenWidth = Dimensions.get("window").width;
@@ -57,7 +65,6 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
 
   //************************************************Funções**********************************************************************//
 
-
   //**********************************************Animações**********************************************************************//
 
   //***********************************************Estilos************************************************************************//
@@ -71,12 +78,12 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
     },
     blackbox: {
       backgroundColor: colorScheme === "dark" ? "#000" : cores.azulEscuroDark,
-      width: screenWidth/8,
-      height: screenHeight/ 10,
+      width: screenWidth / 8,
+      height: screenHeight / 10,
       borderWidth: 1,
     },
     diaDaSemana: {
-      width: screenWidth/8,
+      width: screenWidth / 8,
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 1,
@@ -84,13 +91,13 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
     text: {
       color: "#ffff",
       transform: [{ rotate: "-90deg" }],
-      fontSize: PixelRatio.getFontScale() * 30,
+      fontSize: PixelRatio.getFontScale() * 18,
       width: PixelRatio.get() * 30 * 2,
       textAlign: "center",
     },
     textContent: {
       color: "#ffff",
-      fontSize: PixelRatio.getFontScale() * 20,
+      fontSize: PixelRatio.getFontScale() * 18,
     },
   });
 
@@ -126,7 +133,7 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
             key={`${turma}-${index}`}
             style={[styles.column, { width: screenWidth / 2 }]}
           >
-            <View style={[styles.column, { height: screenHeight/ 10 }]}>
+            <View style={[styles.column, { height: screenHeight / 10 }]}>
               <View
                 style={{
                   flex: 1,
@@ -255,13 +262,7 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
                   {
                     height: PixelRatio.get() * maxClasses[day] * 17.5,
                     backgroundColor:
-                      colorScheme === "dark"
-                        ? index % 2 == 0
-                          ? cores.azulClaro
-                          : cores.azulDark
-                        : index % 2 == 0
-                        ? `${cores.azulEscuro2Light}CC`
-                        : cores.azulEscuro2Light,
+                      colorScheme === "dark" ? "#012643" : cores.azulDark,
                   },
                 ]}
               >
@@ -276,14 +277,12 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
             key={`${professor}-${index}`}
             style={[styles.column, { width: PixelRatio.get() * 70 }]}
           >
-            <View style={[styles.column, { height: PixelRatio.get() * 40 }]}>
+            <View style={[styles.column, { height: screenHeight / 10 }]}>
               <View
                 style={{
                   flex: 1,
                   backgroundColor:
-                    colorScheme == "dark"
-                      ? cores.azulDark
-                      : cores.azulEscuro2Light,
+                    colorScheme === "dark" ? "#012643" : cores.azulDark,
                   borderWidth: 1,
                   justifyContent: "center",
                   alignItems: "center",
@@ -296,9 +295,7 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
                 style={{
                   flex: 1,
                   backgroundColor:
-                    colorScheme == "dark"
-                      ? cores.azulDark
-                      : cores.azulEscuro2Light,
+                    colorScheme === "dark" ? "#012643" : cores.azulDark,
                   flexDirection: "row",
                   borderWidth: 1,
                 }}
@@ -335,12 +332,12 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
                     style={{
                       backgroundColor:
                         colorScheme === "dark"
-                          ? !indexDay % 2 == 0
+                          ? indexDay % 2 == 0
                             ? cores.azulDark
-                            : `${cores.azulClaro}44`
-                          : !indexDay % 2 == 0
-                          ? `${cores.azulEscuro2Light}CC`
-                          : cores.azulEscuro2Light,
+                            : cores.azulEscuroDark
+                          : indexDay % 2 == 0
+                          ? cores.azulLight
+                          : `${cores.azulDark}aa`,
                       flexDirection: "row",
                       borderWidth: 1,
                       height: PixelRatio.get() * 17.5,
@@ -354,7 +351,15 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
                         borderRightWidth: 1,
                       }}
                     >
-                      <Text style={styles.textContent}>
+                      <Text
+                        style={[
+                          styles.textContent,
+                          {
+                            color:
+                              colorScheme === "dark" ? "#fff" : cores.black,
+                          },
+                        ]}
+                      >
                         {professores[professor][dia][1][index] || "X"}
                       </Text>
                     </View>
@@ -366,7 +371,17 @@ export default function TabelaAulas({ data, visualizacao,diasDeAula, daysMax, ma
                         alignItems: "center",
                       }}
                     >
-                      <Text style={styles.textContent}>{atividade || "X"}</Text>
+                      <Text
+                        style={[
+                          styles.textContent,
+                          {
+                            color:
+                              colorScheme === "dark" ? "#fff" : cores.black,
+                          },
+                        ]}
+                      >
+                        {atividade || "X"}
+                      </Text>
                     </View>
                   </View>
                 ))

@@ -357,7 +357,7 @@ export default function HomePage() {
                 <TouchableOpacity
 
                   onPress={() => router.push({
-                    pathname: horario.type == 0 ? '/pages/FluxoRotina/PersonalSchedule' : '/pages/FluxoRotina/SchoolSchedule',
+                    pathname: horario.type == 0 ? '/pages/TableWithHeader/PersonalSchedule' : '/pages/TableWithHeader/SchoolSchedule',
                     params: { idTable: JSON.stringify(horario.id) }
                   })}
 
