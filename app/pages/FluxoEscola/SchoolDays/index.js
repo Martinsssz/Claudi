@@ -191,11 +191,11 @@ export default function SchoolDays() {
     setUpBox: {
       backgroundColor: colorScheme == "dark" ? cores.azulDark : cores.ghostWhite2,
       paddingHorizontal: PixelRatio.get() * 10,
-      paddingVertical: PixelRatio.get() * 5,
-      height: height / 6.5,
+      paddingVertical: height*0.02,
+      height: height / 6,
       borderColor: "black",
       borderWidth: 1,
-      gap: PixelRatio.get() * 8,
+      gap: height * 0.02,
       borderRadius: PixelRatio.get()*4
     },
 
@@ -203,7 +203,7 @@ export default function SchoolDays() {
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: 7,
+      height: height * 0.05,
       borderRadius: 7,
       paddingLeft: 7,
       //borda

@@ -22,6 +22,7 @@ import cores from "../../../Util/coresPadrao";
 import { Link, router } from "expo-router";
 import { adicionarFixado, deleteFixado, mostrarFixados, mostrarUsuario } from "../../../sqlite/dbService";
 import ip from "../../../Util/localhost";
+import Popup from "../../../components/Popup";
 
 export default function HomePage() {
   //**********************************************HOOKS**********************************************************************//
@@ -35,6 +36,8 @@ export default function HomePage() {
   const [refresh, setRefresh] = useState(0)
 
   const [horarios, setHorarios] = useState([])
+
+  const [popup, setPopup] = useState(false)
 
   async function getData() {
     let user = await mostrarUsuario();
@@ -103,7 +106,7 @@ export default function HomePage() {
     }
   }
 
-  async function deleteTimeline(id) {
+  async function deleteTimeline() {
     let user = await mostrarUsuario()
     try {
       const response = await fetch(`${ip}/deleteTimeline`, {
@@ -112,7 +115,7 @@ export default function HomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          timelineId: id,
+          timelineId: horarioEditando,
           user: user.id
         }),
       });
@@ -126,7 +129,7 @@ export default function HomePage() {
     }
   }
 
-  async function copyTimeline(id){
+  async function copyTimeline(id) {
     let user = await mostrarUsuario()
     try {
       const response = await fetch(`${ip}/copyTimeline`, {
@@ -444,7 +447,7 @@ export default function HomePage() {
               <Text style={styles.menuItemText}>{fixedHorarios.includes(horarioEditando) ? "Desfixar horário" : "Fixar horário"}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem} onPress={() => deleteTimeline(horarioEditando)}>
+            <TouchableOpacity style={styles.menuItem} onPress={() => {setPopup(true); closeModal()}}>
               <Ionicons name="trash" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Excluir horário</Text>
             </TouchableOpacity>
@@ -477,6 +480,17 @@ export default function HomePage() {
           </Pressable>
         </Link>
       </View>
+
+      {popup && (
+        <Popup
+          title={"Atenção"}
+          message={"Tem certeza que deseja apagar esse horário?"}
+          option={"Apagar"}
+          link={'#'}
+          specialHandle={deleteTimeline}
+          handle={setPopup}
+        />
+      )}
     </>
   );
 }

@@ -103,7 +103,6 @@ function getColorText(day){
     },
 
     weekDay:{
-      padding: PixelRatio.get() * (orientation == "column" ? 2 : 0),
       height: height * 0.04,
       aspectRatio:1,
       borderRadius: 50,

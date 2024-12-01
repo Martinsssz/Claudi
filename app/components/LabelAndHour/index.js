@@ -5,6 +5,7 @@ import {
   Appearance,
   TextInput,
   PixelRatio,
+  Dimensions,
 } from 'react-native'
 
 import React, { useState, useEffect } from 'react'
@@ -24,6 +25,8 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
       setValueDormir(data['days'][id]['end'])
     }
   }, [data])
+
+  const {width, height} = Dimensions.get('window')
 
 
 
@@ -102,19 +105,23 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
     main: {
-      width: data['schoolTime'] ? "100%" : "80%",
+      width: data['schoolTime'] ? "100%" : "100%",
       flexDirection: "row",
-      justifyContent: data['schoolTime'] ? "space-between" : "space-around",
+      justifyContent: data['schoolTime'] ? "space-between" : "flex-start" ,
+      gap: label1 == "Entrada:" ? width*0.03 : 0,
+      paddingHorizontal: data['schoolTime'] ? "" : label1 =="Entrada:" ? "" : width*0.05,
     },
     
     inputArea: {
-      width: data['schoolTime'] ? "50%" : "auto",
+      flex: label1 == "Entrada:" ? null : 1,
+      width: data['schoolTime'] ? "100%" : "auto",
       flexDirection: "row",
       alignItems: "center",
+      gap: PixelRatio.get()*2,
+      
     },
     
     input: {
-      color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       backgroundColor: isActived ? 
       colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite
@@ -133,7 +140,6 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
     },
     text: {
       color: colorScheme == "dark" ? "white" : "black",
-      marginRight: PixelRatio.get()* 2,
       fontSize: data['schoolTime'] ? PixelRatio.getFontScale() * 17 : 15
     }
   })

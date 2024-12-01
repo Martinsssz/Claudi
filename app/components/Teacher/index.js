@@ -81,11 +81,13 @@ export default function Teacher({ data, handleData, id, popup }) {
       borderRadius: PixelRatio.get() * 4,
       borderColor: cores.black,
       borderWidth: 1,
+      width: "100%"
     },
 
     styleContent: {
       justifyContent: "flex-start",
-      gap: PixelRatio.get() * 15
+      gap: PixelRatio.get() * 15,
+      width: "100%"
     },
 
     scroll: {
@@ -94,6 +96,7 @@ export default function Teacher({ data, handleData, id, popup }) {
     },
 
     scrollContent: {
+      width: "100%",
       flexDirection: "row",
       justifyContent: "flex-start",
       left: 0
@@ -128,11 +131,9 @@ export default function Teacher({ data, handleData, id, popup }) {
       borderRadius: 7,
       paddingRight: 7
       //Fim da borda
-      //Fim da borda
     },
     labels: {
       width: "100%",
-      alignItems: "flex-start",
       justifyContent:  "space-around",
     },
   })

@@ -118,7 +118,6 @@ export default function TimelineDays(){
 
     labels:{
       width: "100%",
-      alignItems: "flex-start",
       justifyContent:  "space-around",
     },
 

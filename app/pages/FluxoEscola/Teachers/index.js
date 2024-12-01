@@ -113,7 +113,8 @@ export default function Teachers() {
 
     styleContent: {
       justifyContent: "flex-start",
-      gap: PixelRatio.get() * 10
+      gap: PixelRatio.get() * 10,
+      width: "100%"
     },
 
     title: {
@@ -124,7 +125,8 @@ export default function Teachers() {
 
     tasks: {
       gap: PixelRatio.get() * 10,
-      marginBottom: PixelRatio.get() * 50
+      marginBottom: PixelRatio.get() * 50,
+      width: "100%"
     },
 
     createATask: {
@@ -151,7 +153,8 @@ export default function Teachers() {
 
     taskView: {
       flexDirection: "column",
-      gap: PixelRatio.get() * 15
+      gap: PixelRatio.get() * 15,
+      width: "100%"
 
     },
 

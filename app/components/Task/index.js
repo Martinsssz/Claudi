@@ -128,7 +128,7 @@ export default function Task({data, handleData, id}){
 
     labels:{
       width: "100%",
-      alignItems: "flex-start",
+      alignItems: "space-evenly",
       justifyContent:  "space-around",
     },
   })
@@ -151,8 +151,8 @@ export default function Task({data, handleData, id}){
           <View style={styles.labels}>
             {days.map((component) => (
               <LabelAndHour 
-                label1={"Início: "} 
-                label2={"Fim: "}  
+                label1={"Início:"} 
+                label2={"Fim:"}  
                 handleData={setDataTask} 
                 data={dataTask}
                 isActived={ component in dataTask['days'] }
