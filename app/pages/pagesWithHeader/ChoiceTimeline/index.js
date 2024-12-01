@@ -203,10 +203,6 @@ export default function ChoiceTimeline() {
           </AnimatedPressable>
         </View>
 
-        <View style={styles.youtube}>
-          <Ionicons name="information-circle-outline" color={colorScheme === "dark" ? "#FFFFFF" : "#000000"} size={50} />
-        </View>
-
       </View>
 
       {popup && (

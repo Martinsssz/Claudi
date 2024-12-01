@@ -164,6 +164,17 @@ export default function Sidebar({ rotaAtual }) {
                 <Text style={styles.optionText}>Importar horário</Text>
               </Pressable>
             </Link>
+            <Link href={"/pages/pagesWithHeader/AboutUs"} asChild>
+              <Pressable
+                style={
+                  tela === "/pages/pagesWithHeader/AboutUs"
+                    ? styles.selecionado
+                    : styles.option
+                }
+              >
+                <Text style={styles.optionText}>Sobre nós</Text>
+              </Pressable>
+            </Link>
 
             <View style={styles.toggleSwitch}>
               <Image source={imagem1} style={styles.moon} />

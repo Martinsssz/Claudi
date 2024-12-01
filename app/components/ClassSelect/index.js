@@ -89,6 +89,7 @@ export default function ClassSelect({ data, classesData, handleClasses, id }) {
         style={styles.input}
         placeholder='Quantidade'
         value={qntd}
+        keyboardType="numeric"
         onChangeText={text => setQntd(text)}
       />
     </View>

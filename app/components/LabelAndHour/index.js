@@ -5,6 +5,7 @@ import {
   Appearance,
   TextInput,
   PixelRatio,
+  Dimensions,
 } from 'react-native'
 
 import React, { useState, useEffect } from 'react'
@@ -24,6 +25,8 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
       setValueDormir(data['days'][id]['end'])
     }
   }, [data])
+
+  const { width, height} = Dimensions.get("window")
 
 
 
@@ -121,6 +124,8 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
       :colorScheme === "dark" ? '#77878877' : '#44434477',
       fontSize: 19,
       padding: 7,
+      paddingVertical: 7,
+      paddingHorizontal: width * 0.01,
       borderRadius: 7,
       //borda
       borderWidth: 1,

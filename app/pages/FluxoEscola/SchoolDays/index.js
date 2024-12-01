@@ -242,6 +242,7 @@ export default function SchoolDays() {
                 style={styles.input}
                 value={duration}
                 onChangeText={text => setDuration(text)}
+                keyboardType="numeric"
                 placeholder={"Tempo em minutos"}
               />
             </View>

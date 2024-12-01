@@ -19,6 +19,9 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Appearance } from "react-native";
 import cores from "../../../Util/coresPadrao";
+import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
+import * as Sharing from "expo-sharing"
 import { Link, router } from "expo-router";
 import { adicionarFixado, deleteFixado, mostrarFixados, mostrarUsuario } from "../../../sqlite/dbService";
 import ip from "../../../Util/localhost";
@@ -27,54 +30,54 @@ import Popup from "../../../components/Popup";
 export default function HomePage() {
   //**********************************************HOOKS**********************************************************************//
 
-  const [modalVisible, setModalVisible] = useState(false)
-  const panY = useRef(new Animated.Value(0)).current
-  const [isEditing, setIsEditing] = useState(false)
-  const [horarioEditando, setHorarioEditando] = useState(null)
-  const [fixedHorarios, setFixedHorarios] = useState([])
+  const [modalVisible, setModalVisible] = useState(false);
+  const panY = useRef(new Animated.Value(0)).current;
+  const [isEditing, setIsEditing] = useState(false);
+  const [horarioEditando, setHorarioEditando] = useState(null);
+  const [fixedHorarios, setFixedHorarios] = useState([]);
 
-  const [refresh, setRefresh] = useState(0)
+  const [refresh, setRefresh] = useState(0);
 
-  const [horarios, setHorarios] = useState([])
+  const [horarios, setHorarios] = useState([]);
 
-  const [popup, setPopup] = useState(false)
+  const [popup, setPopup] = useState(false);
 
   async function getData() {
     let user = await mostrarUsuario();
     try {
       const response = await fetch(`${ip}/getTimelines`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.id
+          userId: user.id,
         }),
       });
 
       const timelines = await response.json();
-      console.log(timelines)
+      console.log(timelines);
 
-      setHorarios(timelines['timelines']);
+      setHorarios(timelines["timelines"]);
       //fixar tabelas
-      fixarHorarios()
+      fixarHorarios();
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
   }
 
   useEffect(() => {
-    getData()
-  }, [refresh])
+    getData();
+  }, [refresh]);
 
   async function fixarHorarios() {
-    await mostrarFixados().then(element => {
+    await mostrarFixados().then((element) => {
       if (element.length > 0) {
-        element.forEach(id => {
-          handleFixarHorario(id, true)
-        })
+        element.forEach((id) => {
+          handleFixarHorario(id, true);
+        });
       }
-    })
+    });
   }
   //**********************************************Alteração automática de tema***************************************************//
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -92,13 +95,13 @@ export default function HomePage() {
   async function changeNameOnDataBase(id, newName) {
     try {
       await fetch(`${ip}/renameTimeline`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           timelineId: id,
-          newName: newName
+          newName: newName,
         }),
       });
     } catch (error) {
@@ -107,22 +110,22 @@ export default function HomePage() {
   }
 
   async function deleteTimeline() {
-    let user = await mostrarUsuario()
+    let user = await mostrarUsuario();
     try {
       const response = await fetch(`${ip}/deleteTimeline`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           timelineId: horarioEditando,
-          user: user.id
+          user: user.id,
         }),
       });
 
       if (response.status == 200) {
-        setRefresh((prev) => prev + 1)
-        closeModal()
+        setRefresh((prev) => prev + 1);
+        closeModal();
       }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -130,27 +133,81 @@ export default function HomePage() {
   }
 
   async function copyTimeline(id) {
-    let user = await mostrarUsuario()
+    let user = await mostrarUsuario();
     try {
       const response = await fetch(`${ip}/copyTimeline`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           timelineId: id,
-          userId: user.id
+          userId: user.id,
         }),
       });
 
       if (response.status == 200) {
-        setRefresh((prev) => prev + 1)
-        closeModal()
+        setRefresh((prev) => prev + 1);
+        closeModal();
       }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
   }
+
+  async function downloadTimeline(id) {
+    let allDataTimeline = {};
+    try {
+      const response = await fetch(`${ip}/takeDataTimeline`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          timelineId: horarioEditando,
+        }),
+      });
+
+      if (response.status == 200) {
+        setRefresh((prev) => prev + 1);
+        closeModal();
+        allDataTimeline = await response.json();
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+
+    handleSaveFile(allDataTimeline)
+  }
+
+  const handleSaveFile = async (timelineContent) => {
+    // Conteúdo do arquivo
+    const content = JSON.stringify(timelineContent)
+    const fileUri = `${FileSystem.documentDirectory}timeline.txt`;
+
+    // Cria o arquivo TXT
+    await FileSystem.writeAsStringAsync(fileUri, content)
+      .then(() => {
+        shareFile(fileUri)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const shareFile = async (fileUri) => {
+    // Verifica se o compartilhamento é suportado
+    if (!(await Sharing.isAvailableAsync())) {
+      console.error('Sharing is not available on this platform');
+      return;
+    }
+  
+    // Compartilha o arquivo
+    await Sharing.shareAsync(fileUri, {
+      dialogTitle: 'Escolha onde salvar o arquivo',
+      UTI: 'public.plain-text',
+    });
+  };
 
   const handleNomeChange = (id, novoNome) => {
     setHorarios((prevHorarios) =>
@@ -158,21 +215,20 @@ export default function HomePage() {
         horario.id === id ? { ...horario, name: novoNome } : horario
       )
     );
-
   };
 
   const findTimeline = (timeline_id) => {
     // Achando o elemento para editar
-    let result = horarios.filter((item) => item.id == timeline_id)
-    return result[0]
-  }
+    let result = horarios.filter((item) => item.id == timeline_id);
+    return result[0];
+  };
 
   useEffect(() => {
     if (!isEditing && horarioEditando != null) {
-      let horario = findTimeline(horarioEditando)
-      changeNameOnDataBase(horarioEditando, horario['name'])
+      let horario = findTimeline(horarioEditando);
+      changeNameOnDataBase(horarioEditando, horario["name"]);
     }
-  }, [isEditing, horarioEditando])
+  }, [isEditing, horarioEditando]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -196,56 +252,50 @@ export default function HomePage() {
         }
       },
     })
-  ).current
+  ).current;
 
   const openModal = (id) => {
-    setHorarioEditando(id)
+    setHorarioEditando(id);
     panY.setValue(0);
     setModalVisible(true);
-  }
+  };
 
   const handleEditClick = () => {
-    setIsEditing(true)
-    setModalVisible(false)
-
-  }
+    setIsEditing(true);
+    setModalVisible(false);
+  };
 
   const closeModal = () => {
-    setIsEditing(false)
-    setModalVisible(false)
-  }
+    setIsEditing(false);
+    setModalVisible(false);
+  };
 
   const handleFixarHorario = async (id, alredyInBD, user) => {
-
-
-
     setFixedHorarios((prevFixed) => {
       if (prevFixed.includes(id) && user) {
-        deleteFixado(id)
-        return prevFixed.filter((horarioId) => horarioId !== id)
+        deleteFixado(id);
+        return prevFixed.filter((horarioId) => horarioId !== id);
       } else {
-        alredyInBD ? null : adicionarFixado(id)
-        return [id, ...prevFixed]
-
+        alredyInBD ? null : adicionarFixado(id);
+        return [id, ...prevFixed];
       }
-    })
-
+    });
 
     setHorarios((prevHorarios) => {
-      const horarioToFix = prevHorarios.find((horario) => horario.id === id)
-      const otherHorarios = prevHorarios.filter((horario) => horario.id !== id)
-      return [horarioToFix, ...otherHorarios]
-    })
-    setModalVisible(false)
-  }
+      const horarioToFix = prevHorarios.find((horario) => horario.id === id);
+      const otherHorarios = prevHorarios.filter((horario) => horario.id !== id);
+      return [horarioToFix, ...otherHorarios];
+    });
+    setModalVisible(false);
+  };
 
   const shareTimeline = (id) => {
-    console.log(`aaaaa: ${fixedHorarios}`)
+    console.log(`aaaaa: ${fixedHorarios}`);
     router.push({
       pathname: "../../SharePage",
-      params: { idTable: id }
-    })
-  }
+      params: { idTable: id },
+    });
+  };
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
@@ -259,7 +309,7 @@ export default function HomePage() {
       flexDirection: "column",
       alignItems: "flex-start",
       paddingVertical: 30,
-      flexGrow: 1
+      flexGrow: 1,
     },
 
     dashboard: {
@@ -344,7 +394,7 @@ export default function HomePage() {
       right: 5,
       zIndex: 1,
       transform: [{ rotate: "45deg" }],
-    }
+    },
   });
   //***********************************************Tela***************************************************************************//
   return (
@@ -356,64 +406,97 @@ export default function HomePage() {
         {horarios && horarios[0] ? (
           <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
             {horarios.map((horario) => (
-              <View key={horario.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+              <View
+                key={horario.id}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 10,
+                }}
+              >
                 <TouchableOpacity
-
-                  onPress={() => router.push({
-                    pathname: horario.type == 0 ? '/pages/TableWithHeader/PersonalSchedule' : '/pages/TableWithHeader/SchoolSchedule',
-                    params: { idTable: JSON.stringify(horario.id) }
-                  })}
-
+                  onPress={() =>
+                    router.push({
+                      pathname:
+                        horario.type == 0
+                          ? "/pages/TableWithHeader/PersonalSchedule"
+                          : "/pages/TableWithHeader/SchoolSchedule",
+                      params: { idTable: JSON.stringify(horario.id) },
+                    })
+                  }
                   style={styles.containerHorario}
                 >
                   {fixedHorarios.includes(horario.id) && (
                     <Ionicons
                       name="pin"
                       size={20}
-                      color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuro}
-                      style={styles.iconFixed} />
-
+                      color={
+                        colorScheme === "dark"
+                          ? cores.ghostWhite
+                          : cores.azulEscuro
+                      }
+                      style={styles.iconFixed}
+                    />
                   )}
                   {horarioEditando === horario.id && isEditing ? (
                     <TextInput
                       value={horario.name}
-                      onChangeText={(text) => handleNomeChange(horario.id, text)}
+                      onChangeText={(text) =>
+                        handleNomeChange(horario.id, text)
+                      }
                       autoFocus={true}
                       style={styles.tituloHorario}
                       onBlur={() => {
-                        setIsEditing(false)
-                        closeModal()
+                        setIsEditing(false);
+                        closeModal();
                       }}
                     />
                   ) : (
                     <Text style={styles.tituloHorario}>{horario.name}</Text>
                   )}
-                  <Text style={styles.subtituloHorario}> {horario.type == 0 ? "Horário pessoal" : "Horário escolar"}</Text>
+                  <Text style={styles.subtituloHorario}>
+                    {" "}
+                    {horario.type == 0 ? "Horário pessoal" : "Horário escolar"}
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => openModal(horario.id)} style={styles.dotsButton}>
+                <TouchableOpacity
+                  onPress={() => openModal(horario.id)}
+                  style={styles.dotsButton}
+                >
                   <Ionicons
                     name="ellipsis-horizontal"
                     size={35}
-                    color={colorScheme === "dark" ? cores.ghostWhite : cores.azulEscuroDark}
+                    color={
+                      colorScheme === "dark"
+                        ? cores.ghostWhite
+                        : cores.azulEscuroDark
+                    }
                   />
                 </TouchableOpacity>
               </View>
             ))}
           </View>
-
         ) : (
           <>
-            <Text style={{
-              color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
-              fontSize: PixelRatio.getFontScale() * 40,
-              marginBottom: PixelRatio.get() * 5
-            }}>Bem-Vindo</Text>
+            <Text
+              style={{
+                color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
+                fontSize: PixelRatio.getFontScale() * 40,
+                marginBottom: PixelRatio.get() * 5,
+              }}
+            >
+              Bem-Vindo
+            </Text>
 
-            <Text style={{
-              color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
-              fontSize: PixelRatio.getFontScale() * 23
-            }}>Aperte o botão abaixo para criar um horário</Text>
+            <Text
+              style={{
+                color: colorScheme == "dark" ? cores.ghostWhite : cores.black,
+                fontSize: PixelRatio.getFontScale() * 23,
+              }}
+            >
+              Aperte o botão abaixo para criar um horário
+            </Text>
           </>
         )}
       </ScrollView>
@@ -431,39 +514,65 @@ export default function HomePage() {
           >
             <View style={styles.dragIndicator} />
 
-            {findTimeline(horarioEditando) && findTimeline(horarioEditando)['owner'] && (
-              <TouchableOpacity style={styles.menuItem} onPress={handleEditClick}>
-                <Ionicons name="pencil" size={20} style={styles.icon} />
-                <Text style={styles.menuItemText}>Editar nome</Text>
-              </TouchableOpacity>
-            )}
+            {findTimeline(horarioEditando) &&
+              findTimeline(horarioEditando)["owner"] && (
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={handleEditClick}
+                >
+                  <Ionicons name="pencil" size={20} style={styles.icon} />
+                  <Text style={styles.menuItemText}>Editar nome</Text>
+                </TouchableOpacity>
+              )}
 
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => downloadTimeline()}
+            >
               <Ionicons name="cloud-upload" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Exportar horário</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem} onPress={() => handleFixarHorario(horarioEditando, false, true)}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => handleFixarHorario(horarioEditando, false, true)}
+            >
               <Ionicons name="pin" size={20} style={styles.icon} />
-              <Text style={styles.menuItemText}>{fixedHorarios.includes(horarioEditando) ? "Desfixar horário" : "Fixar horário"}</Text>
+              <Text style={styles.menuItemText}>
+                {fixedHorarios.includes(horarioEditando)
+                  ? "Desfixar horário"
+                  : "Fixar horário"}
+              </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem} onPress={() => {setPopup(true); closeModal()}}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                setPopup(true);
+                closeModal();
+              }}
+            >
               <Ionicons name="trash" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Excluir horário</Text>
             </TouchableOpacity>
 
-            {findTimeline(horarioEditando) && findTimeline(horarioEditando)['owner'] && (
-              <TouchableOpacity style={styles.menuItem} onPress={() => shareTimeline(horarioEditando)}>
-                <Ionicons name="arrow-redo" size={20} style={styles.icon} />
-                <Text style={styles.menuItemText}>Compartilhar</Text>
-              </TouchableOpacity>
-            )}
+            {findTimeline(horarioEditando) &&
+              findTimeline(horarioEditando)["owner"] && (
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => shareTimeline(horarioEditando)}
+                >
+                  <Ionicons name="arrow-redo" size={20} style={styles.icon} />
+                  <Text style={styles.menuItemText}>Compartilhar</Text>
+                </TouchableOpacity>
+              )}
 
-            <TouchableOpacity style={styles.menuItem} onPress={() => copyTimeline(horarioEditando)}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => copyTimeline(horarioEditando)}
+            >
               <Ionicons name="copy" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Fazer uma cópia</Text>
             </TouchableOpacity>
-
           </Animated.View>
         </View>
       </Modal>
@@ -486,7 +595,7 @@ export default function HomePage() {
           title={"Atenção"}
           message={"Tem certeza que deseja apagar esse horário?"}
           option={"Apagar"}
-          link={'#'}
+          link={"#"}
           specialHandle={deleteTimeline}
           handle={setPopup}
         />

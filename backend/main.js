@@ -3,7 +3,14 @@ const express = require("express");
 const cors = require("cors");
 const { Sequelize, where } = require("sequelize");
 const nodemailer = require("nodemailer");
-const { User, Token, Timeline, Answers, Access, ShareToken } = require("./models");
+const {
+  User,
+  Token,
+  Timeline,
+  Answers,
+  Access,
+  ShareToken,
+} = require("./models");
 
 //**********************************************************Emails*****************************************************/
 const transporter = nodemailer.createTransport({
@@ -135,11 +142,11 @@ app.post("/forgotPassword", async (req, res) => {
       email,
       "Redefinição de Senha",
       `Olá, ${user.name}. \n\n` +
-      "Recebemos uma solicitação para redefinir a sua senha. Para prosseguir com a redefinição, por favor, utilize o código abaixo: \n\n" +
-      `Código de Redefinição: ${token} \n\n` +
-      "Insira este código na página de redefinição de senha para criar uma nova senha. Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Se precisar de ajuda, entre em contato com o suporte. \n\n" +
-      "Atenciosamente, \n" +
-      "MENPP"
+        "Recebemos uma solicitação para redefinir a sua senha. Para prosseguir com a redefinição, por favor, utilize o código abaixo: \n\n" +
+        `Código de Redefinição: ${token} \n\n` +
+        "Insira este código na página de redefinição de senha para criar uma nova senha. Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Se precisar de ajuda, entre em contato com o suporte. \n\n" +
+        "Atenciosamente, \n" +
+        "MENPP"
     );
 
     res.status(200).send({
@@ -191,11 +198,11 @@ app.post("/delete-account", async (req, res) => {
 
 app.post("/timelines", async (req, res) => {
   const { id_timeline } = req.body;
-  
+
   try {
     const timelines = await Timeline.findByPk(id_timeline);
-    console.log(timelines['dataValues']['json'])
-    res.json(timelines['dataValues']['json'])
+    console.log(timelines["dataValues"]["json"]);
+    res.json(timelines["dataValues"]["json"]);
   } catch (error) {
     console.log("Erro ao buscar dados:", error);
   }
@@ -203,36 +210,40 @@ app.post("/timelines", async (req, res) => {
 
 app.post("/getTimelines", async (req, res) => {
   const { userId } = req.body;
-  console.log("------")
+  console.log("------");
   try {
     //Procurar as timelines que o usuário tem acesso
     const timelinesAccess = await Access.findAll({
-      attributes: ['timeline_id'],
-      where: { user_id: userId }
+      attributes: ["timeline_id"],
+      where: { user_id: userId },
     });
 
     //Colocar os IDs dentro de um array
-    let timelinesId = []
+    let timelinesId = [];
     timelinesAccess.forEach((item) => {
-      timelinesId.push(item['dataValues']['timeline_id'])
-    })
+      timelinesId.push(item["dataValues"]["timeline_id"]);
+    });
 
     //Procurando os dados das timelines que o usuáriuo tem acesso
-    let timelines = []
+    let timelines = [];
     for (const id of timelinesId) {
       const foundTimeline = await Timeline.findOne({
-        attributes: ['name', 'type'],
-        where: { id: id }
+        attributes: ["name", "type"],
+        where: { id: id },
       });
-      let timeline = await foundTimeline['dataValues']
-      timeline['id'] = id
-      timeline['owner'] = await Timeline.findOne({ where: { user_id: userId, id: id } }) ? true : false
-      console.log(timeline)
-      timelines.push(timeline)
+      let timeline = await foundTimeline["dataValues"];
+      timeline["id"] = id;
+      timeline["owner"] = (await Timeline.findOne({
+        where: { user_id: userId, id: id },
+      }))
+        ? true
+        : false;
+      console.log(timeline);
+      timelines.push(timeline);
     }
-    console.log({ timelines })
+    console.log({ timelines });
 
-    res.json({ timelines })
+    res.json({ timelines });
   } catch (error) {
     console.log("Erro ao buscar dados:", error);
   }
@@ -254,20 +265,22 @@ app.post("/renameTimeline", async (req, res) => {
 
 app.post("/addShareTimeline", async (req, res) => {
   const { code, userId } = req.body;
-  let codeVerification = await ShareToken.findOne({ where: { token: code } })
+  let codeVerification = await ShareToken.findOne({ where: { token: code } });
 
   if (codeVerification) {
-    console.log(codeVerification)
+    console.log(codeVerification);
 
     try {
-      let timelineId = codeVerification['dataValues']['timeline_id']
-      console.log(codeVerification)
-      let userHasAcess = await Access.findOne({ where: { user_id: userId, timeline_id: timelineId } })
+      let timelineId = codeVerification["dataValues"]["timeline_id"];
+      console.log(codeVerification);
+      let userHasAcess = await Access.findOne({
+        where: { user_id: userId, timeline_id: timelineId },
+      });
       if (!userHasAcess) {
         Access.create({
           user_id: userId,
           timeline_id: timelineId,
-        })
+        });
         res.status(200).json({ error: "OK" });
       } else {
         res.status(400).json({ error: "User already has access" });
@@ -276,147 +289,160 @@ app.post("/addShareTimeline", async (req, res) => {
       console.log("Erro ao buscar dados:", error);
       res.status(500).json({ error: "Server error" });
     }
-
   } else {
     res.status(404).json({ error: "Token not found" });
   }
-
 });
 
 app.post("/timelineShareData", async (req, res) => {
   //Verificações
   const { timelineId, userId } = req.body;
-  let alreadyHasAToken = await ShareToken.findOne({ where: { timeline_id: timelineId } })
-  const token = alreadyHasAToken ? alreadyHasAToken['dataValues']['token'] : await generateLargeToken()
-  console.log(token)
+  let alreadyHasAToken = await ShareToken.findOne({
+    where: { timeline_id: timelineId },
+  });
+  const token = alreadyHasAToken
+    ? alreadyHasAToken["dataValues"]["token"]
+    : await generateLargeToken();
+  console.log(token);
 
   try {
     //Criando Token em necessidade
     if (!alreadyHasAToken) {
-      if (await Timeline.findOne({ where: { id: timelineId, user_id: userId } })) {
+      if (
+        await Timeline.findOne({ where: { id: timelineId, user_id: userId } })
+      ) {
         await ShareToken.create({
           token: token,
-          timeline_id: timelineId
-        })
+          timeline_id: timelineId,
+        });
       }
     }
 
     //Resgantando os usuários que tem acesso
     let usersInTheTimeline = await Access.findAll({
       where: {
-        timeline_id: timelineId
-      }
-    })
+        timeline_id: timelineId,
+      },
+    });
 
     // Resgatando os IDs dos usuários com acesso
-    let usersId = []
-    usersInTheTimeline.forEach(item => {
-      usersId.push(item['dataValues']['user_id'])
-    })
-    usersId = usersId.filter(id => id != userId)
+    let usersId = [];
+    usersInTheTimeline.forEach((item) => {
+      usersId.push(item["dataValues"]["user_id"]);
+    });
+    usersId = usersId.filter((id) => id != userId);
 
     //Finalizando
-    const dataUsers = []
+    const dataUsers = [];
     for (const id of usersId) {
       const foundUser = await User.findOne({
-        attributes: ['username'],
-        where: { id: id }
+        attributes: ["username"],
+        where: { id: id },
       });
-      let user = await foundUser['dataValues']
-      user['id'] = id
-      dataUsers.push(user)
+      let user = await foundUser["dataValues"];
+      user["id"] = id;
+      dataUsers.push(user);
     }
 
-    res.status(200).json({ usersData: dataUsers, token: token })
-
+    res.status(200).json({ usersData: dataUsers, token: token });
   } catch (error) {
-    res.status(500)
+    res.status(500);
   }
-
 });
 
 app.post("/deleteTimeline", async (req, res) => {
   const { timelineId, user } = req.body;
-  const isOwner = await Timeline.findOne({ where: { user_id: user, id: timelineId } })
+  const isOwner = await Timeline.findOne({
+    where: { user_id: user, id: timelineId },
+  });
 
   try {
     //await Access.destroy({ where: { timeline_id: timelineId, user_id: user } })
 
     if (isOwner) {
-      let idAnswer = await Timeline.findOne({ attributes: ['answer_id'], where: { id: timelineId } })
-      await Answers.destroy({ where: { id: idAnswer['dataValues']['answer_id'] } })
+      let idAnswer = await Timeline.findOne({
+        attributes: ["answer_id"],
+        where: { id: timelineId },
+      });
+      await Answers.destroy({
+        where: { id: idAnswer["dataValues"]["answer_id"] },
+      });
     }
-    res.status(200).json({ message: "ok" })
-
+    res.status(200).json({ message: "ok" });
   } catch (error) {
-    console.log("Erro ao buscar dados:", error)
-    res.status(200)
+    console.log("Erro ao buscar dados:", error);
+    res.status(200);
   }
 });
 
 app.post("/removeAccessOf", async (req, res) => {
   const { timelineId, user } = req.body;
   try {
-    await Access.destroy({ where: { timeline_id: timelineId, user_id: user } })
-    res.status(200).json({ message: "ok" })
+    await Access.destroy({ where: { timeline_id: timelineId, user_id: user } });
+    res.status(200).json({ message: "ok" });
   } catch (error) {
-    console.log("Erro ao buscar dados:", error)
-    res.status(200)
+    console.log("Erro ao buscar dados:", error);
+    res.status(200);
   }
 });
 
 app.post("/removeAllAccesses", async (req, res) => {
   const { timelineId, userId } = req.body;
   try {
-    let accesses = await Access.findAll({ where: { timeline_id: timelineId } })
+    let accesses = await Access.findAll({ where: { timeline_id: timelineId } });
 
-    let usersId = []
-    accesses.forEach(item => {
-      usersId.push(item['dataValues']['user_id'])
-    })
-    usersId = usersId.filter(id => id != userId)
+    let usersId = [];
+    accesses.forEach((item) => {
+      usersId.push(item["dataValues"]["user_id"]);
+    });
+    usersId = usersId.filter((id) => id != userId);
 
     for (const id of usersId) {
-      await Access.destroy({ where: { timeline_id: timelineId, user_id: id } })
+      await Access.destroy({ where: { timeline_id: timelineId, user_id: id } });
     }
 
-    await ShareToken.destroy({ where: { timeline_id: timelineId } })
-    res.status(200).json({ message: "ok" })
+    await ShareToken.destroy({ where: { timeline_id: timelineId } });
+    res.status(200).json({ message: "ok" });
   } catch (error) {
-    console.log("Erro ao buscar dados:", error)
-    res.status(200)
+    console.log("Erro ao buscar dados:", error);
+    res.status(200);
   }
 });
 
 app.post("/randomCodeAgain", async (req, res) => {
   const { timelineId } = req.body;
   try {
-    const newCode = await generateLargeToken()
-    await ShareToken.update({ token: newCode }, { where: { timeline_id: timelineId } })
-    res.status(200).json({ message: "ok" })
+    const newCode = await generateLargeToken();
+    await ShareToken.update(
+      { token: newCode },
+      { where: { timeline_id: timelineId } }
+    );
+    res.status(200).json({ message: "ok" });
   } catch (error) {
-    console.log("Erro ao buscar dados:", error)
-    res.status(200)
+    console.log("Erro ao buscar dados:", error);
+    res.status(200);
   }
 });
 
 app.post("/getDataAnswer", async (req, res) => {
   const { id_timeline } = req.body;
   try {
-    const idAnswer = await Timeline.findOne({ where: { id: id_timeline } }).then(data => {
-      return data['dataValues']['fk_id_answer']
+    const idAnswer = await Timeline.findOne({
+      where: { id: id_timeline },
+    }).then((data) => {
+      return data["dataValues"]["fk_id_answer"];
     });
-    const answers = await Answers.findOne({ where: { id: idAnswer } }).then(data => {
-      return data['dataValues']['json']
-    })
-    console.log(idAnswer)
-    console.log(answers)
-    res.status(200).json({ id: idAnswer, json: JSON.parse(answers) })
-
-
+    const answers = await Answers.findOne({ where: { id: idAnswer } }).then(
+      (data) => {
+        return data["dataValues"]["json"];
+      }
+    );
+    console.log(idAnswer);
+    console.log(answers);
+    res.status(200).json({ id: idAnswer, json: JSON.parse(answers) });
   } catch (error) {
-    console.log("Erro ao buscar dados:", error)
-    res.status(200)
+    console.log("Erro ao buscar dados:", error);
+    res.status(200);
   }
 });
 
@@ -424,45 +450,71 @@ app.post("/copyTimeline", async (req, res) => {
   const { timelineId, userId } = req.body;
 
   try {
-    const timeline = await Timeline.findOne({ where: { id: timelineId } }).then(data => {
-      return data['dataValues']
-    })
+    const timeline = await Timeline.findOne({ where: { id: timelineId } }).then(
+      (data) => {
+        return data["dataValues"];
+      }
+    );
 
-    const answers = await Answers.findOne({ where: { id: timeline['fk_id_answer'] } }).then(data => {
-      return data['dataValues']
-    })
+    const answers = await Answers.findOne({
+      where: { id: timeline["fk_id_answer"] },
+    }).then((data) => {
+      return data["dataValues"];
+    });
 
     let newAnswers = await Answers.create({
-      name: `copy-${answers['name']}`,
-      type: answers['type'],
-      json: JSON.parse(answers['json']),
-      user_id: userId
-    });
-
-    let newIdAnswer = newAnswers['dataValues']['id']
-    let newTimeline = await Timeline.create({
-      name: `copy-${timeline['name']}`,
-      type: timeline['type'],
-      json: JSON.parse(timeline['json']),
+      name: `copy-${answers["name"]}`,
+      type: answers["type"],
+      json: JSON.parse(answers["json"]),
       user_id: userId,
-      answer_id: newIdAnswer
     });
 
-    let newIdTimeline = newTimeline['dataValues']['id']
+    let newIdAnswer = newAnswers["dataValues"]["id"];
+    let newTimeline = await Timeline.create({
+      name: `copy-${timeline["name"]}`,
+      type: timeline["type"],
+      json: JSON.parse(timeline["json"]),
+      user_id: userId,
+      answer_id: newIdAnswer,
+    });
+
+    let newIdTimeline = newTimeline["dataValues"]["id"];
     await Access.create({
       user_id: userId,
-      timeline_id: newIdTimeline
-    })
-    res.status(200).json({"message": "ok"})
-
-
+      timeline_id: newIdTimeline,
+    });
+    res.status(200).json({ message: "ok" });
   } catch (error) {
-    console.log("Erro ao buscar dados:", error)
-    res.status(200)
+    console.log("Erro ao buscar dados:", error);
+    res.status(200);
   }
 });
 
+app.post("/takeDataTimeline", async (req, res) => {
+  const { timelineId } = req.body;
+  try {
+    const idAnswer = await Timeline.findOne({
+      where: { id: timelineId },
+    }).then((data) => {
+      return data["dataValues"]["fk_id_answer"];
+    });
+    const answers = await Answers.findOne({ where: { id: idAnswer } }).then(
+      (data) => {
+        return data["dataValues"]["json"];
+      }
+    );
+    const timeline = await Timeline.findOne({ where: { id: timelineId } }).then(data => {
+      return data['dataValues']['json']
+    })
 
+    console.log(timeline, 'a')
+    console.log(answers)
+    res.status(200).json({ timeline: JSON.parse(timeline), answers: JSON.parse(answers) });
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error);
+    res.status(200);
+  }
+});
 
 //*********************************************************FUNÇÕES******************************************************/
 async function updateDataUser(id, name, email, password) {
@@ -605,15 +657,16 @@ async function generateLargeToken() {
 
   while (counter < 6) {
     result += caracteres.charAt(Math.floor(Math.random() * caracteresLength));
-    counter += 1
+    counter += 1;
   }
 
-  let tokenVerification = await ShareToken.findOne({ where: { token: result } })
+  let tokenVerification = await ShareToken.findOne({
+    where: { token: result },
+  });
 
   if (!tokenVerification) {
-    return result
+    return result;
   } else {
-    generateLargeToken()
+    generateLargeToken();
   }
-
 }

@@ -316,6 +316,7 @@ export default function Subject({ data, handleData, id, popup }) {
               <TextInput
                 placeholder={"Min"}
                 value={min}
+                keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(text) => setMin(text)}
               />
@@ -326,6 +327,7 @@ export default function Subject({ data, handleData, id, popup }) {
               <TextInput
                 placeholder={"Max"}
                 style={styles.input}
+                keyboardType="numeric"
                 value={max}
                 onChangeText={(text) => setMax(text)}
               />
