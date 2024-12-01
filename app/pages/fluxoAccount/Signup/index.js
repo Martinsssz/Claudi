@@ -76,9 +76,9 @@ export default function Signup() {
 
         const data = await response.json()
         if (response.status === 201) {
-          popup("Sucesso", "Usuario cadastrado com sucesso", ["Fazer login", "../Login"], "green")
+          popup("Sucesso", "Usuario cadastrado com sucesso", ["Fazer login", "../../fluxoAccount/Login"], "green")
         } else if (response.status === 500) {
-          popup("Email já cadastrado", "Deseja fazer login?", ["Sim", "../Login"], "yellow")
+          popup("Email já cadastrado", "Deseja fazer login?", ["Sim", "../../fluxoAccount/Login"], "yellow")
         } else {
           alert("Erro ao criar usuário.")
           popup("Erro ao criar usuário. Tente novamente mais tarde", null, "orange")
@@ -88,7 +88,7 @@ export default function Signup() {
         alert("Erro de rede ou no servidor.");
       }
     } else {
-      popup(dadosFiltrados.message, null, "red");
+      popup("Erro", dadosFiltrados.message, null, null);
     }
 
   }
@@ -292,7 +292,6 @@ export default function Signup() {
         <Popup
           title={popupTitle != "" ? popupTitle : ""}
           message={popupText}
-          cor={popupColor}
           option={popupOption.length !== 0 ? popupOption[0] : ""}
           link={popupOption.length !== 0 ? popupOption[1] : ""}
           handle={setPopupVisibility}

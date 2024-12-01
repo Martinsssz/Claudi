@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 export default function Layout() {
   const pathname = usePathname();
   const [currentScreen, setCurrentScreen] = useState('');
+  const [refresh, setRefresh] = useState(0)
   
   useEffect(() => {
     setCurrentScreen(pathname);
@@ -18,7 +19,7 @@ export default function Layout() {
       <Header handle={setSidebar} showMenu={true}/>
       <Slot/>
       {sidebar &&(
-        <Sidebar rotaAtual={currentScreen}/>
+        <Sidebar rotaAtual={currentScreen} refresh={ () => setRefresh((pre) => pre + 1) }/>
       )}
     </>
   );

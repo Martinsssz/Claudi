@@ -17,10 +17,10 @@ export async function sendToken(popup, email) {
         });
         const data = await response.json();
         if (response.status == 200) {
-          popup(`Enviamos um e-mail para a conta ${email}`, null, "green")
+          popup("Sucesso", `Enviamos um e-mail para a conta ${email}`, null, "green")
           return true
         } else {
-          popup("Erro ao enviar e-mail para a conta", null, "red")
+          popup("Erro", "Erro ao enviar e-mail para a conta", null, "red")
           return false
         }
       } catch (error) {

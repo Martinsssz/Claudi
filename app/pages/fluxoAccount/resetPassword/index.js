@@ -53,6 +53,7 @@ export default function ResetPassword() {
   const [popupText, setPopupText] = useState("");
   const [popupOption, setPopupOption] = useState([]);
   const [popupColor, setPopupColor] = useState("");
+  const [title, setTitle] = useState("")
 
   async function handleSubmit() {
     let passwordVerification = checkPassword(newPassword, confirmPassword);
@@ -73,24 +74,26 @@ export default function ResetPassword() {
 
         if (response.status === 200) {
           popup(
+            "Sucesso",
             "Senha alterada com sucesso",
-            ["Ir para tela de login", "../Login"],
+            ["Fazer login", "../Login"],
             "green"
           );
         } else {
-          popup("Código inválido", null, "red");
+          popup(null, "Código inválido", null, "red");
         }
       } catch (error) {
-        popup("Erro no sistema, tente novamente mais tarde", null, "orange");
+        popup(null, "Erro no sistema, tente novamente mais tarde", null, "orange");
       }
     } else {
-      popup(passwordVerification.message, null, "red");
+      popup(null, passwordVerification.message, null, "red");
     }
   }
 
-  function popup(text, options = null, color = null) {
+  function popup(title, text, options = null, color = null) {
     setPopupVisibility(true);
     setPopupText(text);
+    setTitle(title || "Erro")
 
     if (options) {
       setPopupOption([...options]);
@@ -243,6 +246,7 @@ export default function ResetPassword() {
 
       {popupVisibility && (
         <Popup
+          title={title}
           message={popupText}
           cor={popupColor}
           option={popupOption.length !== 0 ? popupOption[0] : ""}

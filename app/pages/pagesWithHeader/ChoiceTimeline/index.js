@@ -203,6 +203,8 @@ export default function ChoiceTimeline() {
           </AnimatedPressable>
         </View>
 
+        
+
       </View>
 
       {popup && (

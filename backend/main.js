@@ -493,26 +493,62 @@ app.post("/copyTimeline", async (req, res) => {
 app.post("/takeDataTimeline", async (req, res) => {
   const { timelineId } = req.body;
   try {
-    const idAnswer = await Timeline.findOne({
-      where: { id: timelineId },
-    }).then((data) => {
-      return data["dataValues"]["fk_id_answer"];
+    const idAnswer = await Timeline.findOne({ where: { id: timelineId } }).then(data => {
+      return data['dataValues']['fk_id_answer']
     });
-    const answers = await Answers.findOne({ where: { id: idAnswer } }).then(
-      (data) => {
-        return data["dataValues"]["json"];
-      }
-    );
-    const timeline = await Timeline.findOne({ where: { id: timelineId } }).then(data => {
+
+    const answers = await Answers.findOne({ where: { id: idAnswer } }).then(data => {
       return data['dataValues']['json']
     })
 
-    console.log(timeline, 'a')
-    console.log(answers)
-    res.status(200).json({ timeline: JSON.parse(timeline), answers: JSON.parse(answers) });
+    const timeline = await Timeline.findOne({ where: { id: timelineId } }).then(data => {
+      return data['dataValues']
+    })
+
+    
+    res.status(200).json({ timeline: JSON.parse(timeline['json']), answers: JSON.parse(answers), type: timeline['type'] })
+
+
   } catch (error) {
-    console.log("Erro ao buscar dados:", error);
-    res.status(200);
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
+  }
+});
+
+
+
+app.post("/saveImport", async (req, res) => {
+  const { timelineData, userId } = req.body;
+
+  console.log(userId)
+  try {
+
+    let newAnswers = await Answers.create({
+      name: `Horário Importado`,
+      type: timelineData['type'],
+      json: timelineData['answers'],
+      user_id: userId
+    });
+    let newIdAnswer = newAnswers['dataValues']['id']
+
+    let newTimeline = await Timeline.create({
+      name: `Horário Importado`,
+      type: timelineData['type'],
+      json: timelineData['timeline'],
+      user_id: userId,
+      answer_id: newIdAnswer
+    });
+
+    let newIdTimeline = newTimeline['dataValues']['id']
+    await Access.create({
+      user_id: userId,
+      timeline_id: newIdTimeline
+    })
+    
+    res.status(200).json({})
+  } catch (error) {
+    console.log("Erro ao buscar dados:", error)
+    res.status(200)
   }
 });
 

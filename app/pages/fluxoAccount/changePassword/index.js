@@ -32,15 +32,17 @@ export default function ChangePassword() {
   const [popupText, setPopupText] = useState("");
   const [popupOption, setPopupOption] = useState([]);
   const [popupColor, setPopupColor] = useState("");
+  const [title, setTitle] = useState("")
 
   const router = useRouter()
 //**********************************************Animações**********************************************************************//
 
 //************************************************Funções**********************************************************************/
 
-  function popup(text, options = null, color = null) {
+  function popup(title, text, options = null, color = null) {
     setPopupVisibility(true);
     setPopupText(text);
+    setTitle(title)
 
     if (options) {
       setPopupOption([...options]);
@@ -193,6 +195,7 @@ export default function ChangePassword() {
 
       {popupVisibility && (
         <Popup
+          title={title}
           message={popupText}
           cor={popupColor}
           option={popupOption.length !== 0 ? popupOption[0] : ""}

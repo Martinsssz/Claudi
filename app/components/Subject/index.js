@@ -329,6 +329,7 @@ export default function Subject({ data, handleData, id, popup }) {
                 style={styles.input}
                 keyboardType="numeric"
                 value={max}
+                keyboardType="numeric"
                 onChangeText={(text) => setMax(text)}
               />
             </View>

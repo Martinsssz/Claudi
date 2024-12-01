@@ -15,13 +15,19 @@ import { useState, useEffect, useRef } from "react";
 import cores from "../../Util/coresPadrao";
 import { Appearance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import Popup from "../Popup";
-import { deletarUsuario } from "../../sqlite/dbService";
 
-export default function Sidebar({ rotaAtual }) {
+import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
+
+import { deletarUsuario, mostrarUsuario } from "../../sqlite/dbService";
+import ip from "../../Util/localhost";
+
+export default function Sidebar({ rotaAtual, refresh }) {
   //**********************************************UseStates**********************************************************************//
-  const [popup, setPopup] = useState(false);
+  const [popup1, setPopup1] = useState(false);
+  const [popup2, setPopup2] = useState(false)
   const [tela, setTela] = useState(rotaAtual);
 
   useEffect(() => {
@@ -63,6 +69,47 @@ export default function Sidebar({ rotaAtual }) {
   //************************************************Funções**********************************************************************//
   async function sairDaConta() {
     await deletarUsuario();
+  }
+
+  async function saveData(data) {
+    let user = await mostrarUsuario();
+    try {
+      const response = await fetch(`${ip}/saveImport`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timelineData: data,
+          userId: user.id
+        }),
+      });
+
+      if (response.status == 200) {
+        router.push("../../pagesWithHeader/HomePage")
+      }
+
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
+
+  async function importar() {
+    try {
+      const res = await DocumentPicker.getDocumentAsync({
+        type: 'text/plain',
+      })
+
+      if (res.canceled === false) {
+        const uri = res.assets[0].uri;
+        const content = JSON.parse(await FileSystem.readAsStringAsync(uri))
+        console.log(content)
+        await saveData(content)
+      }
+    } catch (err) {
+      return
+    }
+
   }
 
   //***********************************************Estilos************************************************************************//
@@ -176,6 +223,18 @@ export default function Sidebar({ rotaAtual }) {
               </Pressable>
             </Link>
 
+            <Pressable
+              onPress={() => setPopup2(true)}
+              style={
+                tela === "/pages/pagesWithHeader/ImportTimeline"
+                  ? styles.selecionado
+                  : styles.option
+              }
+            >
+              <Text style={styles.optionText}>Importar horário</Text>
+            </Pressable>
+
+
             <View style={styles.toggleSwitch}>
               <Image source={imagem1} style={styles.moon} />
               <Switch
@@ -189,21 +248,31 @@ export default function Sidebar({ rotaAtual }) {
             </View>
           </View>
 
-          <Pressable style={styles.option} onPress={() => setPopup(!popup)}>
+          <Pressable style={styles.option} onPress={() => setPopup1(!popup1)}>
             <Ionicons></Ionicons>
             <Text style={styles.optionText}>Sair da conta</Text>
           </Pressable>
         </Animated.View>
       </View>
 
-      {popup && (
+      {popup1 && (
         <Popup
           title="Sair da Conta"
           message="Tem certeza que deseja sair da sua conta?"
           option="Sair"
           link="/pages/fluxoAccount/Signup"
-          handle={setPopup}
+          handle={setPopup1}
           specialHandle={sairDaConta}
+        />
+      )}
+
+      {popup2 && (
+        <Popup
+          title="Importar"
+          message="Selecione um arquivo para importar"
+          option="Selecionar"
+          handle={() => setPopup2(false)}
+          specialHandle={importar}
         />
       )}
     </>

@@ -18,6 +18,10 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Appearance } from "react-native";
+
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+
 import cores from "../../../Util/coresPadrao";
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
@@ -155,40 +159,40 @@ export default function HomePage() {
     }
   }
 
-  async function downloadTimeline(id) {
-    let allDataTimeline = {};
+  async function downloadTimeline() {
+    let allDataTimeline = {}
     try {
       const response = await fetch(`${ip}/takeDataTimeline`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           timelineId: horarioEditando,
         }),
       });
-
+      const data = await response.json()
       if (response.status == 200) {
-        setRefresh((prev) => prev + 1);
-        closeModal();
-        allDataTimeline = await response.json();
+        setRefresh((prev) => prev + 1)
+        closeModal()
+        allDataTimeline = data
       }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
-
     handleSaveFile(allDataTimeline)
+
   }
 
   const handleSaveFile = async (timelineContent) => {
     // Conteúdo do arquivo
-    const content = JSON.stringify(timelineContent)
+    const content = JSON.stringify(timelineContent);
     const fileUri = `${FileSystem.documentDirectory}timeline.txt`;
 
     // Cria o arquivo TXT
     await FileSystem.writeAsStringAsync(fileUri, content)
       .then(() => {
-        shareFile(fileUri)
+        shareFile(fileUri);
       })
       .catch((error) => {
         console.error(error);
@@ -296,6 +300,10 @@ export default function HomePage() {
       params: { idTable: id },
     });
   };
+
+  
+
+
 
   //***********************************************Estilos************************************************************************//
   const styles = StyleSheet.create({
@@ -525,10 +533,7 @@ export default function HomePage() {
                 </TouchableOpacity>
               )}
 
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => downloadTimeline()}
-            >
+            <TouchableOpacity style={styles.menuItem} onPress={() => downloadTimeline()}>
               <Ionicons name="cloud-upload" size={20} style={styles.icon} />
               <Text style={styles.menuItemText}>Exportar horário</Text>
             </TouchableOpacity>
