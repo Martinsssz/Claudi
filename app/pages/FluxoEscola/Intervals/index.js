@@ -30,6 +30,8 @@ export default function Intervals() {
   const [popupOption, setPopupOption] = useState([])
   const [jsonData, setJsonData] = useState()
 
+  const {width, height} = Dimensions.get('window')
+
   try {
     data = JSON.parse(data)
     useEffect(() => {
@@ -140,7 +142,9 @@ export default function Intervals() {
     createATask: {
       alignSelf: "center",
       backgroundColor: colorScheme == "dark" ? cores.azulClaro1Light : cores.azulEscuro1Light,
-      padding: PixelRatio.get() * 2,
+      justifyContent:"center",
+      alignItems: "center",
+      height: height * 0.05,
       aspectRatio: 1,
       borderRadius: 1000,
       alignItems: "center",

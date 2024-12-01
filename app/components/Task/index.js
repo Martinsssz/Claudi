@@ -102,16 +102,16 @@ export default function Task({data, handleData, id}){
     principal:{
       backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.ghostWhite2,
       height: "auto",
-      paddingVertical:20,
-      paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(15),
       borderRadius: PixelRatio.get() * 3,
       borderColor: cores.black,
       borderWidth: 2,
+      
     },
     
     styleContent:{
-      justifyContent:"flex-start",
-      gap: 0
+      justifyContent:"center",
+      paddingVertical:20,
+      paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(10),
     },
 
     scroll:{
@@ -122,8 +122,7 @@ export default function Task({data, handleData, id}){
     scrollContent:{
       flexDirection:"row",
       justifyContent: "flex-start",
-      gap:PixelRatio.get() * 5,
-      paddingVertical: PixelRatio.get()*10,
+      paddingVertical: PixelRatio.get()*3,
       left:0
     },
 
@@ -152,8 +151,8 @@ export default function Task({data, handleData, id}){
           <View style={styles.labels}>
             {days.map((component) => (
               <LabelAndHour 
-                label1={"Início"} 
-                label2={"Fim"}  
+                label1={"Início: "} 
+                label2={"Fim: "}  
                 handleData={setDataTask} 
                 data={dataTask}
                 isActived={ component in dataTask['days'] }

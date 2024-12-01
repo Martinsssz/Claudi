@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  PixelRatio,
 } from 'react-native'
 import React, { useState, useEffect,  } from 'react'
 import { router, useGlobalSearchParams } from 'expo-router'
@@ -100,7 +101,7 @@ export default function TimelineDays(){
     },
     
     styleContent:{
-      justifyContent:"flex-start"
+      justifyContent:"flex-start",
     },
 
     scroll:{
@@ -110,7 +111,7 @@ export default function TimelineDays(){
     scrollContent:{
       flexDirection:"row",
       justifyContent: "flex-start",
-      gap:10,
+      gap: PixelRatio.get()*0,
       paddingVertical:50,
       left:0
     },
@@ -151,8 +152,8 @@ export default function TimelineDays(){
             <View style={styles.labels}>
               {numeroComponents.map((component) => (
                 <LabelAndHour 
-                  label1={"Início"} 
-                  label2={"Fim"} 
+                  label1={"Início: "} 
+                  label2={"Fim: "} 
                   handleData={setDataWeek} 
                   data={dataWeek}
                   isActived={ dataWeek['days'].hasOwnProperty(component) }

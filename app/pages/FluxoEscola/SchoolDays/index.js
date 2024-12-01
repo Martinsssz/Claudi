@@ -190,9 +190,9 @@ export default function SchoolDays() {
     },
     setUpBox: {
       backgroundColor: colorScheme == "dark" ? cores.azulDark : cores.ghostWhite2,
-      paddingHorizontal: PixelRatio.get() * 7,
+      paddingHorizontal: PixelRatio.get() * 10,
       paddingVertical: PixelRatio.get() * 5,
-      height: height / 6,
+      height: height / 6.5,
       borderColor: "black",
       borderWidth: 1,
       gap: PixelRatio.get() * 8,
@@ -200,13 +200,19 @@ export default function SchoolDays() {
     },
 
     input: {
-      width: "100%",
-      borderColor: "black",
+      color: "black",
+      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
+      fontSize: 19,
+      padding: 7,
+      borderRadius: 7,
+      paddingLeft: 7,
+      //borda
       borderWidth: 1,
-      backgroundColor: colorScheme == "dark" ? cores.azulClaroDark : cores.ghostWhite,
-      paddingHorizontal: PixelRatio.get() * 3,
-      paddingVertical: PixelRatio.get() * 2,
-      fontSize: PixelRatio.getFontScale() * 17,
+      borderStyle: "solid",
+      borderBlockColor: "black",
+      borderRadius: 7,
+      paddingRight: 7
+      //Fim da borda
     }
 
   })

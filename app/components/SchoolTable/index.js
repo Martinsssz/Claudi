@@ -30,11 +30,13 @@ export default function TabelaAulas({
   }, [data]);
 
   const diasSemana = {
+    sunday: "Domingo",
     monday: "Segunda",
     tuesday: "Terça",
     wednesday: "Quarta",
     thursday: "Quinta",
     friday: "Sexta",
+    saturday: "Sábado",
   };
 
   /*const aulasSemana =
@@ -116,7 +118,7 @@ export default function TabelaAulas({
                 style={[
                   styles.diaDaSemana,
                   {
-                    height: PixelRatio.get() * daysMax[index] * 17.5,
+                    height: PixelRatio.get() * daysMax[day] * 17.5,
                     backgroundColor:
                       colorScheme === "dark" ? "#012643" : cores.azulDark,
                   },
@@ -247,7 +249,9 @@ export default function TabelaAulas({
         ))}
       </View>
     </ScrollView>
+    //***********************************************Turmas****************************************************************************//
   ) : (
+    //***********************************************Professores****************************************************************************//
     <ScrollView>
       <View style={styles.table}>
         {/* Primeira */}
@@ -275,7 +279,7 @@ export default function TabelaAulas({
         {Object.keys(professores).map((professor, index) => (
           <View
             key={`${professor}-${index}`}
-            style={[styles.column, { width: PixelRatio.get() * 70 }]}
+            style={[styles.column, { width: screenWidth / 2 }]}
           >
             <View style={[styles.column, { height: screenHeight / 10 }]}>
               <View

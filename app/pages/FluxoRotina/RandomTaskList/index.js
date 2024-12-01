@@ -140,7 +140,9 @@ export default function RandomTasksList() {
     createATask: {
       alignSelf: "center",
       backgroundColor: colorScheme == "dark" ? cores.azulClaro1Light : cores.azulEscuro1Light,
-      padding: PixelRatio.get() * 2,
+      justifyContent:"center",
+      alignItems: "center",
+      height: height * 0.05,
       aspectRatio: 1,
       borderRadius: 1000,
       alignItems: "center",

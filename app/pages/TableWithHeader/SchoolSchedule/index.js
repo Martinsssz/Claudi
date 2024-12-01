@@ -70,7 +70,7 @@ export default function TableData() {
   }, []);
 
   let diasDeAula = Object.keys(data);
-
+  console.log
   let aulasTurmas = {};
   Object.keys(data).forEach((dia) => {
     Object.keys(data[dia]).forEach((turma) => {
@@ -112,18 +112,18 @@ export default function TableData() {
     });
   });
 
-  console.log(JSON.stringify(professores, null, 2));
+  //console.log(JSON.stringify(professores, null, 2));
 
-  let daysMax = [];
+  let daysMax = {}; // turmas
 
   diasDeAula.forEach((dia) => {
     const tamanhoMaximo = Math.max(
       ...Object.values(aulasTurmas).map((turma) => turma[dia][0].length)
     );
-    daysMax.push(tamanhoMaximo);
+    daysMax[dia] = tamanhoMaximo;
   });
 
-  let maxClasses = {};
+  let maxClasses = {}; // professores
   diasDeAula.forEach((dia) => {
     const tamanhoMaximo = Math.max(
       ...Object.values(professores).map((professor) => {
@@ -132,6 +132,8 @@ export default function TableData() {
     );
     maxClasses[dia] = tamanhoMaximo;
   });
+  console.log("a:", maxClasses)
+  console.log("b:", daysMax)
 
   Object.keys(aulasTurmas).forEach((turma) => {
     Object.values(diasDeAula).forEach((dia) => {
@@ -175,12 +177,12 @@ export default function TableData() {
       }
     });
   });
-
+  
   const scrollViewRef = useRef(null);
-  const scrollBarWidth = ScreenWidth / 1.1;
-  const scrollBallSize = ScreenWidth / 7;
+  const scrollBarWidth = ScreenWidth/1.1;
+  const scrollBallSize = ScreenWidth /7;
   const scrollBallPosition = useRef(new Animated.Value(0)).current;
-  const tableWidth = (ScreenWidth / 2.2) * Object.keys(aulasTurmas).length;
+  const tableWidth = (ScreenWidth/2) * (visualizacao == "turma" ? Object.keys(aulasTurmas).length : Object.keys(professores).length) + ScreenWidth/8
   const scrollRatio = tableWidth / (scrollBarWidth - scrollBallSize);
 
   //**********************************************Animações**********************************************************************//

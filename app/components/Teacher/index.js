@@ -118,19 +118,22 @@ export default function Teacher({ data, handleData, id, popup }) {
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: PixelRatio.get()*1.5,
+      padding: 7,
+      borderRadius: 7,
       paddingLeft: 7,
       //borda
       borderWidth: 1,
       borderStyle: "solid",
       borderBlockColor: "black",
+      borderRadius: 7,
       paddingRight: 7
+      //Fim da borda
       //Fim da borda
     },
     labels: {
       width: "100%",
       alignItems: "flex-start",
-      justifyContent: "space-between",
+      justifyContent:  "space-around",
     },
   })
   //***********************************************Tela****************************************************************************//

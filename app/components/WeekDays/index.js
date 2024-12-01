@@ -96,15 +96,15 @@ function getColorText(day){
       borderWidth:colorScheme == "dark" ? 0 : 1,
       width: (orientation == "column" ? "15%": "100%"),
       alignItems: "center",
-      justifyContent: "space-around",
-      padding: background ? (PixelRatio.get() * (orientation == "column" ? 8 : 5) ) : 0, 
-      gap: PixelRatio.get() * (orientation == "column" ? 10 : 2), 
-      alignSelf: "flex-start"
+      justifyContent: "space-between",
+      padding: PixelRatio.get() * (orientation == "column" ? 8 : 5) , 
+      gap: height * (orientation == "column" ? .04 : .01), 
+      alignSelf: "flex-start",
     },
 
     weekDay:{
       padding: PixelRatio.get() * (orientation == "column" ? 2 : 0),
-      height: PixelRatio.get() * (orientation == "column" ? 14 : 12),
+      height: height * 0.04,
       aspectRatio:1,
       borderRadius: 50,
       justifyContent: "center",

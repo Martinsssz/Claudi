@@ -140,7 +140,7 @@ export default function RandomTask({ data, handleData, id, popup }) {
       backgroundColor: colorScheme === "dark" ? cores.azulDark : cores.ghostWhite2,
       height: "auto",
       paddingVertical: 20,
-      paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(15),
+      paddingHorizontal: PixelRatio.getPixelSizeForLayoutSize(10),
       borderRadius: PixelRatio.get() * 3,
       borderColor: cores.black,
       borderWidth: 2,
@@ -148,7 +148,8 @@ export default function RandomTask({ data, handleData, id, popup }) {
 
     styleContent: {
       justifyContent: "flex-start",
-      gap: PixelRatio.get() * 5
+      gap: height * 0.008,
+      
     },
 
     scroll: {
@@ -169,12 +170,13 @@ export default function RandomTask({ data, handleData, id, popup }) {
     },
     titulo2: {
       color: colorScheme == "dark" ? "#FFFFFF" : "#000000",
-      fontSize: PixelRatio.getFontScale() * 18,
+      fontSize: PixelRatio.getFontScale() * 20,
     },
 
     vertical: {
+      width: "100%",
       flexDirection: 'column',
-      gap: PixelRatio.get() * 5,
+      gap: height * 0.01,
       marginTop: PixelRatio.get() * 5
     },
 
@@ -199,7 +201,7 @@ export default function RandomTask({ data, handleData, id, popup }) {
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: 10,
+      padding: 7,
       borderRadius: 7,
       paddingLeft: 7,
       //borda

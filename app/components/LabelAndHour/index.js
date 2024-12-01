@@ -106,21 +106,30 @@ export default function LabelAndHour({ label1, label2, handleData, isActived, id
       flexDirection: "row",
       justifyContent: data['schoolTime'] ? "space-between" : "space-around",
     },
+    
     inputArea: {
       width: data['schoolTime'] ? "50%" : "auto",
       flexDirection: "row",
       alignItems: "center",
-
     },
+    
     input: {
-      borderColor: cores.black,
+      color: "black",
+      backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
+      backgroundColor: isActived ? 
+      colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite
+      :colorScheme === "dark" ? '#77878877' : '#44434477',
+      fontSize: 19,
+      padding: 7,
+      borderRadius: 7,
+      paddingLeft: 7,
+      //borda
       borderWidth: 1,
-      padding: 5,
-      fontSize: 17,
-      backgroundColor: isActived ? cores.ghostWhite : '#44434477',
-      color: cores.black,
-      placeholderTextColor: cores.black,
-      width: data['schoolTime'] ? "50%" : "auto"
+      borderStyle: "solid",
+      borderBlockColor: "black",
+      borderRadius: 7,
+      paddingRight: 7
+      //Fim da borda
     },
     text: {
       color: colorScheme == "dark" ? "white" : "black",

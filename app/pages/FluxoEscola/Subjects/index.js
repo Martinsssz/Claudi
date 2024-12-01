@@ -6,7 +6,8 @@ import {
   Appearance,
   KeyboardAvoidingView,
   Platform,
-  PixelRatio
+  PixelRatio,
+  Dimensions
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { router, useGlobalSearchParams } from 'expo-router'
@@ -28,6 +29,8 @@ export default function Subjects() {
   const [popupText, setPopupText] = useState("")
   const [popupOption, setPopupOption] = useState([])
   const [jsonData, setJsonData] = useState()
+
+  const {height, width} = Dimensions.get("window")
 
   try {
     data = JSON.parse(data)
@@ -128,7 +131,9 @@ export default function Subjects() {
     createATask: {
       alignSelf: "center",
       backgroundColor: colorScheme == "dark" ? cores.azulClaro1Light : cores.azulEscuro1Light,
-      padding: PixelRatio.get() * 2,
+      justifyContent:"center",
+      alignItems: "center",
+      height: height * 0.05,
       aspectRatio: 1,
       borderRadius: 1000,
       alignItems: "center",

@@ -33,6 +33,8 @@ export default function Subject({ data, handleData, id, popup }) {
   const [min, setMin] = useState("")
   const [max, setMax] = useState("")
 
+  const {height, width} = Dimensions.get('window')
+
   useEffect(() => {
     if (data['subjects'][id] !== null) {
       let thisSubject = data['subjects'][id]
@@ -169,25 +171,20 @@ export default function Subject({ data, handleData, id, popup }) {
       fontSize: PixelRatio.getFontScale() * 18,
     },
 
-    inputLabel: {
-      flex: 1,
-      flexDirection: "row",
-      gap: PixelRatio.get() * 2,
-      width: "100%",
-      alignItems: "center"
-    },
 
     input: {
       flex: 1,
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: PixelRatio.get() * 1.8,
+      padding: 7,
+      borderRadius: 7,
       paddingLeft: 7,
       //borda
       borderWidth: 1,
       borderStyle: "solid",
       borderBlockColor: "black",
+      borderRadius: 7,
       paddingRight: 7
       //Fim da borda
     },
@@ -195,7 +192,9 @@ export default function Subject({ data, handleData, id, popup }) {
     createATask: {
       alignSelf: "center",
       backgroundColor: colorScheme == "dark" ? cores.azulClaro1Light : cores.azulEscuro1Light,
-      padding: PixelRatio.get() * .6,
+      justifyContent:"center",
+      alignItems: "center",
+      width: width * 0.085,
       aspectRatio: 1,
       borderRadius: 1000,
       alignItems: "center",
@@ -203,7 +202,7 @@ export default function Subject({ data, handleData, id, popup }) {
 
     createATaskText: {
       color: colorScheme == "dark" ? cores.azulEscuro1Light : cores.azulClaro1Light,
-      fontSize: PixelRatio.getFontScale() * 30
+      fontSize: PixelRatio.getFontScale() * 25
     },
 
     optionsTasks: {

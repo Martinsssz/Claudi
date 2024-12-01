@@ -110,7 +110,7 @@ export default function Interval({ data, handleData, id, popup }) {
 
     styleContent: {
       justifyContent: "flex-start",
-      gap: PixelRatio.get() * 10
+      gap: PixelRatio.get() * 15
     },
 
     titulo: {
@@ -122,27 +122,19 @@ export default function Interval({ data, handleData, id, popup }) {
       fontSize: PixelRatio.getFontScale() * 18,
     },
 
-    inputLabel: {
-      flex: 1,
-      flexDirection: "row",
-      gap: PixelRatio.get() * 2,
-      width: "100%",
-      alignItems: "center",
-      marginBottom: PixelRatio.get()
-
-    },
-
     input: {
       flex: 1,
       color: "black",
       backgroundColor: colorScheme === "dark" ? cores.azulClaroDark : cores.ghostWhite,
       fontSize: 19,
-      padding: PixelRatio.get()*1.8,
+      padding: 7,
+      borderRadius: 7,
       paddingLeft: 7,
       //borda
       borderWidth: 1,
       borderStyle: "solid",
       borderBlockColor: "black",
+      borderRadius: 7,
       paddingRight: 7
       //Fim da borda
     },
@@ -150,15 +142,8 @@ export default function Interval({ data, handleData, id, popup }) {
     vertical: {
       flexDirection: 'column',
       gap: PixelRatio.get() * 5,
-      marginTop: PixelRatio.get() * 5
     },
 
-    horizontal: {
-      flexDirection: 'row',
-      justifyContent: "space-between",
-      gap: PixelRatio.get() * 5
-
-    },
 
     inputLabel: {
       flex: 1,
@@ -188,8 +173,8 @@ export default function Interval({ data, handleData, id, popup }) {
 
         <View style={{ gap: PixelRatio.get() * 3, width: "115%" }}>
           <LabelAndHour
-            label1={"Começo"}
-            label2={"Fim"}
+            label1={"Começo:  "}
+            label2={"Fim:  "}
             handleData={setOnDays}
             data={onDays}
             isActived={true}
