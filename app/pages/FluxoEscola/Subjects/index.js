@@ -7,7 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   PixelRatio,
-  Dimensions
+  Dimensions,
+  LogBox
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { router, useGlobalSearchParams } from 'expo-router'
@@ -20,11 +21,12 @@ import Popup from '../../../components/Popup'
 import Subject from '../../../components/Subject'
 
 
+
 export default function Subjects() {
   //**********************************************HOOKS**********************************************************************//
   let { data } = useGlobalSearchParams()
 
-
+  LogBox.ignoreAllLogs();
   const [popupVisibility, setPopupVisibility] = useState(false)
   const [popupText, setPopupText] = useState("")
   const [popupOption, setPopupOption] = useState([])

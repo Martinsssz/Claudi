@@ -89,7 +89,7 @@ export default function EditableInputLabel({
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <PasswordInput
               placeholder={"Senha"}
-              handleText={handleInputChange}
+              handleText={(text) => handleInputChange(text)}
               value={value}
               style={styles.inputAfter}
             />

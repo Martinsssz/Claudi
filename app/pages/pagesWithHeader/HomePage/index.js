@@ -58,7 +58,7 @@ export default function HomePage() {
       });
 
       const timelines = await response.json();
-      console.log(timelines);
+      console.log(timelines["timelines"]);
 
       setHorarios(timelines["timelines"]);
       //fixar tabelas
@@ -74,6 +74,7 @@ export default function HomePage() {
 
   async function fixarHorarios() {
     await mostrarFixados().then((element) => {
+      console.log(element)
       if (element.length > 0) {
         element.forEach((id) => {
           handleFixarHorario(id, true);
@@ -128,6 +129,7 @@ export default function HomePage() {
       if (response.status == 200) {
         setRefresh((prev) => prev + 1);
         closeModal();
+        deleteFixado(horarioEditando)
       }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);

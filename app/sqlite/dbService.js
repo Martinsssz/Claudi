@@ -77,6 +77,8 @@ export async function deleteFixado(id) {
   }
 }
 
+
+
 export async function criarUsuario(user) {
   //Void
   await criarTabela();

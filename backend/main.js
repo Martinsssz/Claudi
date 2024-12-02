@@ -162,8 +162,9 @@ app.post("/forgotPassword", async (req, res) => {
 
 app.post("/updateDataUser", async (req, res) => {
   const { userId, name, email, password } = req.body;
+  
 
-  resultOfUpdate = updateDataUser(userId, name, email, password);
+  let resultOfUpdate = updateDataUser(userId, name, email, password);
 
   if (resultOfUpdate) {
     try {

@@ -200,17 +200,17 @@ export default function Sidebar({ rotaAtual, refresh }) {
               </Pressable>
             </Link>
 
-            <Link href={"#"} asChild>
-              <Pressable
-                style={
-                  tela === "/pages/pagesWithHeader/ImportTimeline"
-                    ? styles.selecionado
-                    : styles.option
-                }
-              >
-                <Text style={styles.optionText}>Importar horário</Text>
-              </Pressable>
-            </Link>
+            <Pressable
+              onPress={() => setPopup2(true)}
+              style={
+                tela === "/pages/pagesWithHeader/ImportTimeline"
+                  ? styles.selecionado
+                  : styles.option
+              }
+            >
+              <Text style={styles.optionText}>Importar horário</Text>
+            </Pressable>
+
             <Link href={"/pages/pagesWithHeader/AboutUs"} asChild>
               <Pressable
                 style={
@@ -222,6 +222,9 @@ export default function Sidebar({ rotaAtual, refresh }) {
                 <Text style={styles.optionText}>Sobre nós</Text>
               </Pressable>
             </Link>
+
+
+
 
             <View style={styles.toggleSwitch}>
               <Image source={imagem1} style={styles.moon} />

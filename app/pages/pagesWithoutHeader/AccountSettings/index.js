@@ -76,6 +76,7 @@ export default function HomePage() {
   };
 
   const fetchatualizar = async (userId, nome, email, password) => {
+    console.log(userId)
     try {
       const response = await fetch(`${ip}/updateDataUser`, {
         method: "POST",
@@ -114,6 +115,7 @@ export default function HomePage() {
       const id = user.id;
 
       await fetchatualizar(id, inputNome, inputEmail, inputPassword);
+      setPopup1(true);
 
       await atualizarTabelaUsuario(id, inputNome, inputEmail, inputPassword);
     } catch (error) {
@@ -274,7 +276,7 @@ export default function HomePage() {
           <Pressable
             style={styles.save}
             onPress={() => {
-              setPopup1(true);
+              updateUserData()
             }}
           >
             <Text style={styles.text}>Salvar</Text>
@@ -299,7 +301,6 @@ export default function HomePage() {
           message="Suas informações foram atualizadas!"
           link="/pages/pagesWithHeader/HomePage"
           handle={setPopup1}
-          specialHandle={updateUserData}
         />
       )}
     </>
