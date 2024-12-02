@@ -223,18 +223,6 @@ export default function Sidebar({ rotaAtual, refresh }) {
               </Pressable>
             </Link>
 
-            <Pressable
-              onPress={() => setPopup2(true)}
-              style={
-                tela === "/pages/pagesWithHeader/ImportTimeline"
-                  ? styles.selecionado
-                  : styles.option
-              }
-            >
-              <Text style={styles.optionText}>Importar horário</Text>
-            </Pressable>
-
-
             <View style={styles.toggleSwitch}>
               <Image source={imagem1} style={styles.moon} />
               <Switch

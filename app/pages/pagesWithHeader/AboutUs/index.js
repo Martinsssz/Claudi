@@ -32,16 +32,12 @@ export default function AboutUs() {
       paddingHorizontal: 30,
       paddingVertical: 30,
       height: "100%",
+      gap: 10,
     },
-    texto1: {
-      fontSize: 18,
-      color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
-      textAlign: "justify",
-    },
+    
     texto: {
       fontSize: 18,
       color: colorScheme === "dark" ? cores.ghostWhite : cores.black,
-      marginBottom: 15,
       textAlign: "justify",
     },
   });
@@ -49,7 +45,7 @@ export default function AboutUs() {
   return (
     <>
       <View style={styles.corpo}>
-        <Text style={styles.texto1}>
+        <Text style={styles.texto}>
           Em 2024, éramos um grupo de amigos estudantes da Etec Uirapuru,
           percebemos que a organização de horários escolares é uma tarefa
           complexa e muitas vezes sobrecarregada de desafios, tanto para as

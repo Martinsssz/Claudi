@@ -23,9 +23,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 import cores from "../../../Util/coresPadrao";
-import * as FileSystem from 'expo-file-system';
-import * as DocumentPicker from 'expo-document-picker';
-import * as Sharing from "expo-sharing"
+
 import { Link, router } from "expo-router";
 import { adicionarFixado, deleteFixado, mostrarFixados, mostrarUsuario } from "../../../sqlite/dbService";
 import ip from "../../../Util/localhost";
